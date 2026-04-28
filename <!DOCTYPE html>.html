@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Degrading Interface</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: Arial, sans-serif;
+      transition: all 0.5s;
+    }
+
+    h1 {
+      font-size: 40px;
+    }
+
+    p {
+      font-size: 18px;
+      max-width: 600px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .container {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Degrading Interface</h1>
+
+    <p>
+      Click the button below.<br>
+      Observe what happens.<br><br>
+      You are part of the performance.
+    </p>
+
+    <button onclick="breakSite()">Click Me</button>
+  </div>
+
+  <script>
+    let level = 0;
+
+    function breakSite() {
+      level++;
+
+  
+      document.body.style.transform = "rotate(" + level * 2 + "deg)";
+      document.body.style.fontSize = (16 + level * 2) + "px";
+
+    
+      let r = Math.random() * 255;
+      let g = Math.random() * 255;
+      let b = Math.random() * 255;
+      document.body.style.backgroundColor = "rgb(" + r + "," + g + "," + b + ")";
+
+   
+      document.querySelectorAll("*").forEach(el => {
+        el.style.position = "relative";
+        el.style.left = (Math.random() * level * 5) + "px";
+        el.style.top = (Math.random() * level * 5) + "px";
+      });
+
+    
+      let fonts = ["serif", "monospace", "cursive", "fantasy"];
+      document.body.style.fontFamily = fonts[Math.floor(Math.random() * fonts.length)];
+
+  
+      if (level > 5) {
+        document.querySelector("h1").innerText = "SYSTEM FAILURE";
+      }
+
+      if (level > 10) {
+        document.body.innerHTML += "<p>ERROR ERROR ERROR</p>";
+      }
+
+      if (level > 15) {
+        document.body.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
+      }
+
+    
+      if (level > 20) {
+        document.body.innerHTML = "<h1>GOODBYE</h1>";
+      }
+    }
+  </script>
+
+</body>
+</html>
