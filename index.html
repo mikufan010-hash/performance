@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌾 Little Farmer · Country Life</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --soil-dark:#3d2b1f; --soil-mid:#5c3d2a; --soil-light:#7a5230;
+  --green-deep:#2d5016; --green-mid:#4a7c28; --green-bright:#7ab648; --green-light:#b8e06a;
+  --sky:#d4eaf7; --sun:#f5c842; --sun-glow:#f9e08a;
+  --cream:#fef9ee; --bark:#8b5e3c; --accent:#c25d1e;
+  --shop-bg:#fff8ee; --shop-border:#d4943a;
+  --market-bg:#fff5f0; --market-border:#c0392b; --market-dark:#8b1a1a;
+  --mkt-tag:#e8f5e9; --mkt-tag-border:#4caf50;
+  --lv1:#7ab648; --lv2:#3b82f6; --lv3:#a855f7; --lv4:#f59e0b; --lv5:#ef4444; --lv6:#10b981;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;overflow-x:hidden;}
+
+/* ── BACKGROUND ── */
+#sky-layer{position:fixed;top:0;left:0;right:0;height:240px;background:linear-gradient(180deg,#a8d8f0 0%,#d4eaf7 100%);z-index:0;overflow:hidden;}
+.cloud{position:absolute;background:#fff;border-radius:50px;opacity:.85;animation:drift linear infinite;}
+@keyframes drift{from{transform:translateX(-220px)}to{transform:translateX(calc(100vw + 220px))}}
+#sun{position:fixed;top:24px;right:56px;width:62px;height:62px;background:var(--sun);border-radius:50%;box-shadow:0 0 0 12px var(--sun-glow),0 0 0 26px rgba(245,200,66,.15);z-index:1;animation:sunpulse 4s ease-in-out infinite;}
+@keyframes sunpulse{0%,100%{box-shadow:0 0 0 12px var(--sun-glow),0 0 0 26px rgba(245,200,66,.15)}50%{box-shadow:0 0 0 20px var(--sun-glow),0 0 0 38px rgba(245,200,66,.08)}}
+#grass{position:fixed;bottom:38px;left:0;right:0;height:30px;background:var(--green-mid);z-index:4;border-top:3px solid var(--green-deep);}
+#grass::before{content:'';position:absolute;top:-8px;left:0;right:0;height:12px;background:var(--green-bright);clip-path:polygon(0 100%,2% 0,4% 100%,6% 0,8% 100%,10% 0,12% 100%,14% 0,16% 100%,18% 0,20% 100%,22% 0,24% 100%,26% 0,28% 100%,30% 0,32% 100%,34% 0,36% 100%,38% 0,40% 100%,42% 0,44% 100%,46% 0,48% 100%,50% 0,52% 100%,54% 0,56% 100%,58% 0,60% 100%,62% 0,64% 100%,66% 0,68% 100%,70% 0,72% 100%,74% 0,76% 100%,78% 0,80% 100%,82% 0,84% 100%,86% 0,88% 100%,90% 0,92% 100%,94% 0,96% 100%,98% 0,100% 100%);}
+#fence{position:fixed;bottom:0;left:0;right:0;height:38px;z-index:5;display:flex;overflow:hidden;}
+.fence-post{flex:1;border-left:3px solid var(--bark);border-top:6px solid var(--bark);}
+
+/* ── SCREENS ── */
+.screen{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:16px 16px 100px;display:none;}
+.screen.active{display:block;}
+
+/* ── NAV BAR ── */
+#nav-bar{position:fixed;top:0;left:0;right:0;z-index:20;display:none;background:var(--cream);border-bottom:3px solid var(--bark);padding:8px 16px;gap:8px;align-items:center;box-shadow:0 3px 10px rgba(0,0,0,.1);}
+#nav-bar.visible{display:flex;}
+#nav-title{font-family:'Fredoka One',cursive;font-size:19px;color:var(--soil-dark);margin-right:auto;}
+.nav-btn{padding:5px 13px;border:2px solid var(--bark);border-radius:30px;background:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--soil-dark);box-shadow:2px 2px 0 var(--bark);transition:all .15s;white-space:nowrap;}
+.nav-btn:hover{background:var(--green-light);transform:translateY(-1px);}
+.nav-btn.active{background:var(--green-mid);color:#fff;border-color:var(--green-deep);box-shadow:2px 2px 0 var(--green-deep);}
+#nav-right{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;}
+#nav-coins{font-size:13px;font-weight:600;color:var(--soil-dark);background:var(--sun-glow);border:2px solid var(--accent);border-radius:20px;padding:4px 10px;}
+#nav-basket{font-size:13px;font-weight:600;color:var(--soil-dark);background:#ffe0e0;border:2px solid var(--market-border);border-radius:20px;padding:4px 10px;cursor:pointer;transition:all .15s;}
+#nav-basket:hover{background:#ffcfcf;transform:translateY(-1px);}
+#nav-level{font-size:13px;font-weight:700;border-radius:20px;padding:4px 10px;border:2px solid;cursor:pointer;transition:all .15s;}
+#nav-level:hover{transform:translateY(-1px);}
+
+/* ── LEVEL BADGE COLOURS ── */
+.lv1-badge{background:#e8f5e9;border-color:var(--lv1)!important;color:#2d5016;}
+.lv2-badge{background:#dbeafe;border-color:var(--lv2)!important;color:#1d4ed8;}
+.lv3-badge{background:#f3e8ff;border-color:var(--lv3)!important;color:#7e22ce;}
+.lv4-badge{background:#fef3c7;border-color:var(--lv4)!important;color:#92400e;}
+.lv5-badge{background:#fee2e2;border-color:var(--lv5)!important;color:#991b1b;}
+.lv6-badge{background:#d1fae5;border-color:var(--lv6)!important;color:#065f46;}
+.level-card.lv6-card{border-color:var(--lv6);box-shadow:3px 5px 0 #065f46;}
+.lc-perk.emerald{background:#ecfdf5;border-color:var(--lv6);color:#065f46;}
+.lc-progress-lv6{background:linear-gradient(90deg,#34d399,#10b981);}
+.upgrade-btn.lv6-btn{background:#d1fae5;border-color:var(--lv6);color:#065f46;box-shadow:2px 3px 0 #065f46;}
+.upgrade-btn.lv6-btn:hover:not(:disabled){background:#a7f3d0;}
+.lc-owned.emerald{background:#d1fae5;color:#065f46;}
+
+/* ── LEVEL-UP MODAL ── */
+#lvl-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:none;align-items:center;justify-content:center;}
+#lvl-modal-backdrop.open{display:flex;}
+#lvl-modal{background:var(--cream);border:4px solid var(--bark);border-radius:24px;padding:36px 40px;text-align:center;max-width:420px;width:90%;box-shadow:6px 8px 0 var(--bark);animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+#lvl-modal .lm-stars{font-size:40px;margin-bottom:10px;}
+#lvl-modal h2{font-family:'Fredoka One',cursive;font-size:30px;margin-bottom:8px;}
+#lvl-modal .lm-badge{display:inline-block;font-family:'Fredoka One',cursive;font-size:22px;padding:6px 22px;border-radius:30px;border:3px solid;margin-bottom:14px;}
+#lvl-modal p{font-size:14px;color:var(--soil-mid);line-height:1.6;margin-bottom:20px;}
+#lvl-modal-close{padding:10px 32px;background:var(--sun);border:3px solid var(--accent);border-radius:30px;font-family:'Fredoka One',cursive;font-size:18px;cursor:pointer;color:var(--soil-dark);box-shadow:3px 3px 0 var(--accent);transition:all .15s;}
+#lvl-modal-close:hover{transform:translateY(-2px);box-shadow:3px 5px 0 var(--accent);}
+
+/* ── LEVEL SCREEN ── */
+#screen-level{padding-top:68px;}
+#level-header{background:var(--cream);border:3px solid var(--bark);border-radius:16px;padding:18px 22px;margin-bottom:20px;box-shadow:4px 5px 0 var(--bark);display:flex;align-items:center;gap:14px;}
+#level-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--soil-dark);}
+#level-header p{font-size:12px;color:var(--soil-mid);}
+#level-cards{display:flex;flex-direction:column;gap:16px;}
+.level-card{background:var(--cream);border:3px solid var(--bark);border-radius:16px;padding:20px 22px;box-shadow:3px 5px 0 var(--bark);position:relative;overflow:hidden;}
+.level-card.lv2-card{border-color:var(--lv2);box-shadow:3px 5px 0 #1d4ed8;}
+.level-card.lv3-card{border-color:var(--lv3);box-shadow:3px 5px 0 #7e22ce;}
+.level-card.lv4-card{border-color:var(--lv4);box-shadow:3px 5px 0 #b45309;}
+.level-card.lv5-card{border-color:var(--lv5);box-shadow:3px 5px 0 #b91c1c;}
+.lc-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.lc-icon{font-size:44px;line-height:1;}
+.lc-title{font-family:'Fredoka One',cursive;font-size:22px;color:var(--soil-dark);}
+.lc-subtitle{font-size:12px;color:var(--soil-mid);margin-top:2px;}
+.lc-perks{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.lc-perk{background:#f0fdf4;border:1.5px solid var(--green-bright);border-radius:10px;padding:5px 12px;font-size:12px;color:var(--green-deep);font-weight:600;}
+.lc-perk.blue{background:#eff6ff;border-color:var(--lv2);color:#1d4ed8;}
+.lc-perk.purple{background:#faf5ff;border-color:var(--lv3);color:#7e22ce;}
+.lc-perk.amber{background:#fffbeb;border-color:var(--lv4);color:#92400e;}
+.lc-perk.red{background:#fff1f2;border-color:var(--lv5);color:#991b1b;}
+.lc-bottom{display:flex;align-items:center;gap:14px;}
+.lc-progress-wrap{flex:1;height:12px;background:#e5e7eb;border-radius:6px;overflow:hidden;border:1.5px solid #d1d5db;}
+.lc-progress-bar{height:100%;border-radius:6px;transition:width .6s ease;}
+.lc-progress-lv2{background:linear-gradient(90deg,#60a5fa,#3b82f6);}
+.lc-progress-lv3{background:linear-gradient(90deg,#c084fc,#a855f7);}
+.lc-progress-lv4{background:linear-gradient(90deg,#fcd34d,#f59e0b);}
+.lc-progress-lv5{background:linear-gradient(90deg,#f87171,#ef4444);}
+.lc-progress-label{font-size:12px;font-weight:600;color:var(--soil-mid);white-space:nowrap;}
+.upgrade-btn{padding:9px 22px;border:2px solid;border-radius:24px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;box-shadow:2px 3px 0;transition:all .15s;white-space:nowrap;}
+.upgrade-btn:hover{transform:translateY(-2px);}
+.upgrade-btn:active{transform:translateY(0);}
+.upgrade-btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;}
+.upgrade-btn.lv2-btn{background:#dbeafe;border-color:var(--lv2);color:#1d4ed8;box-shadow:2px 3px 0 #1d4ed8;}
+.upgrade-btn.lv2-btn:hover:not(:disabled){background:#bfdbfe;}
+.upgrade-btn.lv3-btn{background:#f3e8ff;border-color:var(--lv3);color:#7e22ce;box-shadow:2px 3px 0 #7e22ce;}
+.upgrade-btn.lv3-btn:hover:not(:disabled){background:#e9d5ff;}
+.upgrade-btn.lv4-btn{background:#fef3c7;border-color:var(--lv4);color:#92400e;box-shadow:2px 3px 0 #b45309;}
+.upgrade-btn.lv4-btn:hover:not(:disabled){background:#fde68a;}
+.upgrade-btn.lv5-btn{background:#fee2e2;border-color:var(--lv5);color:#991b1b;box-shadow:2px 3px 0 #b91c1c;}
+.upgrade-btn.lv5-btn:hover:not(:disabled){background:#fecaca;}
+.lc-owned{padding:9px 18px;border-radius:24px;font-family:'Fredoka One',cursive;font-size:15px;font-weight:700;}
+.lc-owned.green{background:#dcfce7;color:#166534;}
+.lc-owned.blue{background:#dbeafe;color:#1d4ed8;}
+.lc-owned.purple{background:#f3e8ff;color:#7e22ce;}
+.lc-owned.amber{background:#fef3c7;color:#92400e;}
+.lc-owned.red{background:#fee2e2;color:#991b1b;}
+
+/* ── HOME ── */
+#screen-home{padding-top:140px;}
+#home-sign{background:var(--cream);border:4px solid var(--bark);border-radius:20px;padding:28px 32px 24px;text-align:center;margin-bottom:26px;position:relative;box-shadow:6px 8px 0 var(--bark);}
+#home-sign::before,#home-sign::after{content:'';position:absolute;top:-16px;width:22px;height:22px;background:var(--bark);border-radius:50%;}
+#home-sign::before{left:36px;}#home-sign::after{right:36px;}
+#home-sign h1{font-family:'Fredoka One',cursive;font-size:44px;color:var(--soil-dark);letter-spacing:2px;margin-bottom:6px;}
+#home-sign p{font-size:14px;color:var(--soil-mid);margin-bottom:26px;}
+#home-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.home-card{flex:1;min-width:140px;max-width:200px;background:var(--cream);border:3px solid var(--bark);border-radius:18px;padding:22px 16px 18px;text-align:center;cursor:pointer;box-shadow:4px 5px 0 var(--bark);transition:transform .18s,box-shadow .18s;}
+.home-card:hover{transform:translateY(-6px);box-shadow:4px 11px 0 var(--bark);}
+.home-card:active{transform:translateY(0);box-shadow:2px 3px 0 var(--bark);}
+.home-card .card-icon{font-size:46px;margin-bottom:8px;display:block;}
+.home-card h2{font-family:'Fredoka One',cursive;font-size:20px;color:var(--soil-dark);margin-bottom:5px;}
+.home-card p{font-size:11px;color:var(--soil-mid);line-height:1.5;}
+.home-card.farm-card{background:linear-gradient(145deg,#eef9e0,#d9f0bb);border-color:var(--green-mid);box-shadow:4px 5px 0 var(--green-deep);}
+.home-card.farm-card:hover{box-shadow:4px 11px 0 var(--green-deep);}
+.home-card.shop-card{background:linear-gradient(145deg,#fff8e8,#fdedc8);border-color:var(--shop-border);box-shadow:4px 5px 0 #a0620a;}
+.home-card.shop-card:hover{box-shadow:4px 11px 0 #a0620a;}
+.home-card.market-card{background:linear-gradient(145deg,#fff0ee,#fdd5cf);border-color:var(--market-border);box-shadow:4px 5px 0 var(--market-dark);}
+.home-card.market-card:hover{box-shadow:4px 11px 0 var(--market-dark);}
+.home-card.level-card-home{background:linear-gradient(145deg,#f5f3ff,#ede9fe);border-color:var(--lv3);box-shadow:4px 5px 0 #7e22ce;}
+.home-card.level-card-home:hover{box-shadow:4px 11px 0 #7e22ce;}
+.home-tagline{text-align:center;margin-top:18px;font-size:12px;color:var(--soil-mid);opacity:.7;}
+
+/* ── SHOP ── */
+#screen-shop{padding-top:68px;}
+#shop-header{background:var(--shop-bg);border:3px solid var(--shop-border);border-radius:16px;padding:16px 22px;margin-bottom:18px;box-shadow:4px 5px 0 #a0620a;display:flex;align-items:center;gap:14px;}
+#shop-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--soil-dark);}
+#shop-header p{font-size:12px;color:var(--soil-mid);}
+#shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin-bottom:20px;}
+.shop-item{background:var(--shop-bg);border:2.5px solid var(--shop-border);border-radius:14px;padding:16px 14px 13px;text-align:center;box-shadow:3px 4px 0 #a0620a;transition:transform .15s,box-shadow .15s;position:relative;}
+.shop-item:hover{transform:translateY(-4px);box-shadow:3px 8px 0 #a0620a;}
+.shop-item .s-emoji{font-size:42px;display:block;margin-bottom:6px;}
+.shop-item .s-name{font-family:'Fredoka One',cursive;font-size:16px;color:var(--soil-dark);margin-bottom:5px;}
+.shop-item .s-stats{font-size:11px;color:var(--soil-mid);line-height:1.7;margin-bottom:10px;}
+.shop-item .s-stats span{display:block;}
+.buy-btn{width:100%;padding:7px;background:var(--sun);border:2px solid var(--accent);border-radius:20px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;color:var(--soil-dark);box-shadow:2px 2px 0 var(--accent);transition:all .12s;}
+.buy-btn:hover{background:#f7d327;transform:translateY(-1px);}
+.buy-btn:active{transform:translateY(1px);box-shadow:1px 1px 0 var(--accent);}
+.buy-btn:disabled{background:#ddd;border-color:#bbb;color:#999;cursor:not-allowed;box-shadow:none;}
+.shop-owned-badge{position:absolute;top:9px;right:9px;background:var(--green-bright);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+#shop-inventory{background:var(--cream);border:2px solid var(--bark);border-radius:14px;padding:14px 18px;box-shadow:3px 4px 0 var(--bark);}
+#shop-inventory h3{font-family:'Fredoka One',cursive;font-size:17px;color:var(--soil-dark);margin-bottom:10px;}
+#inv-list{display:flex;gap:8px;flex-wrap:wrap;}
+.inv-item{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--bark);border-radius:20px;padding:5px 12px;font-size:13px;color:var(--soil-dark);}
+.inv-item .inv-count{background:var(--green-bright);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;}
+
+/* ── FARM ── */
+#screen-farm{padding-top:68px;}
+#stats-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.stat-pill{flex:1;min-width:80px;background:var(--cream);border:2px solid var(--bark);border-radius:40px;padding:8px 10px;display:flex;align-items:center;gap:6px;box-shadow:2px 3px 0 var(--bark);}
+.stat-icon{font-size:17px;}
+.stat-info{flex:1;}
+.stat-label{font-size:9px;color:var(--soil-mid);letter-spacing:.5px;}
+.stat-val{font-size:16px;font-weight:600;color:var(--soil-dark);line-height:1;}
+#toolbar{background:var(--cream);border:2px solid var(--bark);border-radius:14px;padding:11px 13px;margin-bottom:14px;box-shadow:3px 4px 0 var(--bark);}
+#toolbar-top{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap;}
+.tool-label{font-size:11px;color:var(--soil-mid);margin-right:2px;}
+.tool-btn{padding:6px 12px;border:2px solid var(--bark);border-radius:30px;background:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;color:var(--soil-dark);box-shadow:2px 2px 0 var(--bark);transition:all .12s;}
+.tool-btn:hover{background:var(--green-light);transform:translateY(-1px);}
+.tool-btn.active{background:var(--green-mid);color:#fff;border-color:var(--green-deep);box-shadow:2px 2px 0 var(--green-deep);}
+.power-btn{padding:6px 13px;border:2px solid;border-radius:30px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0;transition:all .12s;}
+.power-btn:hover{transform:translateY(-1px);}
+.power-btn:active{transform:translateY(0);}
+.power-btn.lv2{background:#dbeafe;border-color:var(--lv2);color:#1d4ed8;box-shadow:2px 2px 0 #1d4ed8;}
+.power-btn.lv3{background:#f3e8ff;border-color:var(--lv3);color:#7e22ce;box-shadow:2px 2px 0 #7e22ce;}
+.power-btn.lv4{background:#fef3c7;border-color:var(--lv4);color:#92400e;box-shadow:2px 2px 0 #b45309;}
+.power-btn.lv5{background:#fee2e2;border-color:var(--lv5);color:#991b1b;box-shadow:2px 2px 0 #b91c1c;}
+#next-day-btn{margin-left:auto;padding:7px 14px;background:var(--sun);border:2px solid var(--accent);border-radius:30px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:var(--soil-dark);box-shadow:2px 3px 0 var(--accent);transition:all .15s;white-space:nowrap;}
+#next-day-btn:hover{transform:translateY(-2px);box-shadow:2px 5px 0 var(--accent);}
+#next-day-btn:active{transform:translateY(0);box-shadow:1px 1px 0 var(--accent);}
+#seed-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+.seed-chip{padding:5px 10px;border:2px solid var(--bark);border-radius:8px;background:#fff;font-size:11px;cursor:pointer;color:var(--soil-dark);display:flex;align-items:center;gap:4px;transition:all .12s;box-shadow:2px 2px 0 rgba(0,0,0,.1);}
+.seed-chip:hover{background:#fef3d8;transform:translateY(-1px);}
+.seed-chip.selected{background:var(--green-bright);border-color:var(--green-deep);color:#fff;box-shadow:2px 2px 0 var(--green-deep);}
+.seed-chip .price{font-size:10px;opacity:.8;}
+#farm-wrapper{background:var(--soil-dark);border:3px solid var(--bark);border-radius:16px;padding:13px;box-shadow:4px 6px 0 rgba(0,0,0,.35);margin-bottom:16px;position:relative;}
+#farm-wrapper::before{content:'MY FARM';position:absolute;top:-13px;left:18px;background:var(--bark);color:var(--cream);font-size:11px;padding:2px 10px;border-radius:4px;letter-spacing:2px;font-family:'Fredoka One',cursive;}
+#farm-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;}
+.plot{aspect-ratio:1;border-radius:10px;border:2px solid rgba(255,255,255,.1);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;background:var(--soil-mid);}
+.plot:hover{transform:scale(1.07);box-shadow:0 4px 14px rgba(0,0,0,.4);border-color:rgba(255,255,255,.3);}
+.plot.tilled{background:var(--soil-light);}
+.plot.planted{background:#4a3020;}
+.plot.growing{background:#3a4020;}
+.plot.ready{background:#3d5520;border-color:var(--green-bright);animation:glow-ready 1.2s ease-in-out infinite alternate;}
+@keyframes glow-ready{from{box-shadow:0 0 6px var(--green-bright)}to{box-shadow:0 0 18px var(--green-bright),0 0 4px #fff}}
+.plot-emoji{font-size:22px;line-height:1;}
+.plot-bar-wrap{position:absolute;bottom:4px;left:4px;right:4px;height:4px;background:rgba(0,0,0,.3);border-radius:2px;overflow:hidden;}
+.plot-bar{height:100%;background:var(--green-bright);border-radius:2px;transition:width .5s ease;}
+.water-drop{position:absolute;top:3px;left:3px;font-size:10px;}
+.ready-star{position:absolute;top:3px;right:3px;font-size:10px;animation:twinkle .8s ease-in-out infinite alternate;}
+@keyframes twinkle{from{opacity:1}to{opacity:.3}}
+#log-box{background:var(--cream);border:2px solid var(--bark);border-radius:12px;padding:10px 13px;font-size:13px;color:var(--soil-dark);min-height:40px;box-shadow:2px 3px 0 var(--bark);display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+#log-icon{font-size:16px;}#log-text{flex:1;line-height:1.5;}
+#legend{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;padding:5px 0;}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--soil-dark);background:var(--cream);border:1.5px solid var(--bark);border-radius:20px;padding:3px 9px;}
+.leg-dot{width:10px;height:10px;border-radius:3px;border:1px solid rgba(0,0,0,.15);}
+
+/* ── MARKET ── */
+#screen-market{padding-top:68px;}
+#market-sign{background:var(--market-bg);border:3px solid var(--market-border);border-radius:16px;padding:16px 22px;margin-bottom:18px;box-shadow:4px 5px 0 var(--market-dark);position:relative;}
+#market-sign::before,#market-sign::after{content:'';position:absolute;top:-14px;width:18px;height:18px;background:var(--market-dark);border-radius:50%;}
+#market-sign::before{left:24px;}#market-sign::after{right:24px;}
+#market-sign-inner{display:flex;align-items:center;gap:16px;}
+#market-sign h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--market-dark);}
+#market-sign p{font-size:12px;color:#7a3030;margin-top:2px;}
+.market-decor{font-size:34px;}
+#price-board{background:var(--cream);border:2px solid var(--bark);border-radius:14px;padding:12px 16px;margin-bottom:16px;box-shadow:3px 4px 0 var(--bark);}
+#price-board h3{font-family:'Fredoka One',cursive;font-size:15px;color:var(--soil-dark);margin-bottom:8px;}
+#price-list{display:flex;gap:7px;flex-wrap:wrap;}
+.price-tag{display:flex;align-items:center;gap:5px;background:var(--mkt-tag);border:1.5px solid var(--mkt-tag-border);border-radius:10px;padding:4px 10px;font-size:12px;color:var(--soil-dark);}
+.price-tag .pt-price{font-weight:700;color:#2e7d32;}
+#basket-area{background:var(--market-bg);border:2.5px solid var(--market-border);border-radius:16px;padding:16px 18px;margin-bottom:16px;box-shadow:3px 4px 0 var(--market-dark);}
+#basket-area h3{font-family:'Fredoka One',cursive;font-size:19px;color:var(--market-dark);margin-bottom:12px;}
+#basket-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;margin-bottom:14px;}
+.basket-card{background:#fff;border:2px solid var(--market-border);border-radius:12px;padding:12px 10px;text-align:center;}
+.basket-card .bc-emoji{font-size:36px;display:block;margin-bottom:5px;}
+.basket-card .bc-name{font-family:'Fredoka One',cursive;font-size:14px;color:var(--soil-dark);margin-bottom:2px;}
+.basket-card .bc-qty{font-size:11px;color:var(--soil-mid);margin-bottom:6px;}
+.basket-card .bc-earn{font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:9px;}
+.sell-one-btn{width:100%;padding:5px;background:#e74c3c;border:2px solid var(--market-dark);border-radius:16px;font-family:'Fredoka One',cursive;font-size:12px;cursor:pointer;color:#fff;box-shadow:2px 2px 0 var(--market-dark);transition:all .12s;}
+.sell-one-btn:hover{background:#c0392b;transform:translateY(-1px);}
+#basket-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+#sell-all-main{padding:8px 20px;background:#e74c3c;border:2px solid var(--market-dark);border-radius:30px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;color:#fff;box-shadow:3px 3px 0 var(--market-dark);transition:all .15s;}
+#sell-all-main:hover{background:#c0392b;transform:translateY(-2px);box-shadow:3px 5px 0 var(--market-dark);}
+#sell-all-main:disabled{background:#ccc;border-color:#aaa;cursor:not-allowed;box-shadow:none;}
+#basket-total{font-size:13px;font-weight:700;color:var(--soil-dark);background:var(--sun-glow);border:2px solid var(--accent);border-radius:20px;padding:5px 12px;}
+#basket-empty-msg{font-size:13px;color:#a07070;font-style:italic;text-align:center;padding:18px 0;}
+#market-log{background:var(--cream);border:2px solid var(--bark);border-radius:12px;padding:10px 13px;font-size:13px;color:var(--soil-dark);min-height:38px;box-shadow:2px 3px 0 var(--bark);display:flex;align-items:center;gap:8px;}
+
+/* ── FLASH + LEVEL UP BURST ── */
+@keyframes coinflash{0%{opacity:1;transform:translateY(0)}80%{opacity:1;transform:translateY(-28px)}100%{opacity:0;transform:translateY(-38px)}}
+.coin-flash{position:fixed;font-size:15px;font-weight:700;color:#2e7d32;pointer-events:none;animation:coinflash .9s ease forwards;z-index:999;}
+@keyframes levelBurst{0%{opacity:0;transform:scale(.3)}60%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(1.5)}}
+.level-burst{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;pointer-events:none;animation:levelBurst .8s ease forwards;z-index:101;}
+
+@media(max-width:520px){
+  #home-sign h1{font-size:34px;}
+  #farm-grid{gap:4px;}
+  .plot-emoji{font-size:17px;}
+  .screen{padding-top:58px;}
+  #home-cards{gap:8px;}
+  .home-card{min-width:120px;}
+  #nav-bar{flex-wrap:wrap;padding:6px 10px;}
+}
+/* ══════════════════════════════════
+   MAP HOME SCREEN
+══════════════════════════════════ */
+#screen-home{
+  position:fixed!important;inset:0!important;
+  padding:0!important;max-width:none!important;
+  overflow:auto;z-index:10;
+}
+
+/* HUD strip at top of map */
+#map-hud{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:rgba(40,24,10,0.88);
+  border-bottom:3px solid var(--bark);
+  backdrop-filter:blur(6px);
+  display:flex;align-items:center;gap:10px;
+  padding:8px 18px;
+}
+#map-hud-title{
+  font-family:'Fredoka One',cursive;
+  font-size:20px;color:#d4f7a0;letter-spacing:1px;
+  text-shadow:1px 2px 0 rgba(0,0,0,.4);
+  margin-right:auto;
+}
+.map-hud-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+  border-radius:20px;padding:4px 11px;
+  font-family:'Fredoka One',cursive;font-size:14px;color:#fff;
+}
+#map-hud-level{
+  font-family:'Fredoka One',cursive;font-size:13px;
+  padding:4px 12px;border-radius:20px;border:2px solid;
+}
+
+/* Scrollable map canvas */
+#map-canvas{
+  position:relative;
+  width:1000px;height:720px;
+  margin:60px auto 0;
+  /* Rich grass-field background */
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 60%,rgba(180,150,60,.15) 0%,transparent 70%),
+    linear-gradient(165deg,#5a9e28 0%,#4a8c20 30%,#3d7a18 65%,#306010 100%);
+}
+
+/* Terrain decorations */
+.map-tree{
+  position:absolute;font-size:36px;pointer-events:none;user-select:none;
+  filter:drop-shadow(1px 3px 2px rgba(0,0,0,.3));
+}
+.map-flower{
+  position:absolute;font-size:22px;pointer-events:none;user-select:none;
+}
+.map-path{
+  position:absolute;background:#c4a35a;border:1.5px solid #a0883a;
+  pointer-events:none;opacity:.65;border-radius:4px;
+}
+#map-pond{
+  position:absolute;left:700px;top:60px;width:160px;height:95px;
+  background:radial-gradient(ellipse,#5bc8f5 30%,#2196f3 100%);
+  border-radius:50%;border:3px solid #1565c0;
+  box-shadow:0 4px 18px rgba(0,0,0,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;pointer-events:none;
+}
+#map-pond::after{content:'🦆';position:absolute;bottom:6px;right:12px;font-size:18px;}
+
+/* Location pins */
+.map-loc{
+  position:absolute;display:flex;flex-direction:column;
+  align-items:center;cursor:pointer;
+  text-decoration:none;z-index:10;
+  transition:transform .18s;
+}
+.map-loc:hover{transform:scale(1.09) translateY(-5px);}
+.map-loc:active{transform:scale(.97);}
+
+.map-loc-box{
+  border-radius:14px;border:3px solid;
+  padding:12px 14px 9px;text-align:center;
+  min-width:100px;
+  box-shadow:4px 5px 0 rgba(0,0,0,.28);
+  position:relative;
+  animation:mapBob 3s ease-in-out infinite;
+}
+.map-loc:nth-child(2) .map-loc-box{animation-delay:.5s;}
+.map-loc:nth-child(3) .map-loc-box{animation-delay:1s;}
+.map-loc:nth-child(4) .map-loc-box{animation-delay:1.5s;}
+.map-loc:nth-child(5) .map-loc-box{animation-delay:2s;}
+.map-loc:nth-child(6) .map-loc-box{animation-delay:2.4s;}
+@keyframes mapBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+.map-loc-icon{font-size:38px;display:block;margin-bottom:5px;line-height:1;}
+.map-loc-name{font-family:'Fredoka One',cursive;font-size:14px;color:var(--soil-dark);display:block;}
+.map-loc-hint{font-size:10px;color:var(--soil-mid);display:block;margin-top:1px;}
+.map-loc-stem{width:3px;height:12px;background:rgba(0,0,0,.25);border-radius:0 0 3px 3px;}
+
+/* Tooltip */
+.map-tooltip{
+  position:absolute;bottom:calc(100% + 14px);
+  background:rgba(28,16,5,.92);color:#fff;
+  font-size:11px;line-height:1.5;padding:5px 10px;
+  border-radius:7px;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s;
+  box-shadow:0 3px 10px rgba(0,0,0,.3);
+}
+.map-loc:hover .map-tooltip{opacity:1;}
+
+/* Box colour variants */
+.mloc-farm  {background:linear-gradient(145deg,#eef9e0,#c8eda0);border-color:var(--green-mid);box-shadow:4px 5px 0 var(--green-deep);}
+.mloc-shop  {background:linear-gradient(145deg,#fff8e8,#fdedc8);border-color:var(--shop-border);box-shadow:4px 5px 0 #a0620a;}
+.mloc-market{background:linear-gradient(145deg,#fff0ee,#fdd5cf);border-color:var(--market-border);box-shadow:4px 5px 0 var(--market-dark);}
+.mloc-level {background:linear-gradient(145deg,#f5f3ff,#ddd6fe);border-color:var(--lv3);box-shadow:4px 5px 0 #7e22ce;}
+.mloc-garden{background:linear-gradient(145deg,#ecfdf5,#a7f3d0);border-color:var(--lv6);box-shadow:4px 5px 0 #065f46;}
+.mloc-garden.locked-loc{filter:grayscale(.7);opacity:.6;cursor:not-allowed;pointer-events:none;}
+.locked-tag{
+  position:absolute;top:-10px;right:-10px;
+  background:#374151;color:#fff;font-size:10px;
+  font-weight:700;padding:2px 7px;border-radius:10px;
+  border:1.5px solid #1f2937;
+}
+
+/* Day badge bottom-left */
+#map-day-badge{
+  position:fixed;bottom:68px;left:16px;z-index:40;
+  background:rgba(40,24,10,.88);border-radius:12px;
+  border:2px solid var(--bark);padding:7px 13px;
+  backdrop-filter:blur(4px);
+}
+#map-day-badge .db-label{font-size:9px;color:#a0c070;letter-spacing:1px;}
+#map-day-badge .db-val{font-family:'Fredoka One',cursive;font-size:20px;color:#d4f7a0;}
+
+/* Compass bottom-right */
+#map-compass{
+  position:fixed;bottom:68px;right:16px;z-index:40;
+  width:52px;height:52px;
+  background:rgba(40,24,10,.88);border-radius:50%;
+  border:2px solid var(--bark);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;backdrop-filter:blur(4px);
+}
+#screen-garden{padding-top:68px;}
+#garden-header{background:linear-gradient(145deg,#ecfdf5,#a7f3d0);border:3px solid var(--lv6);border-radius:16px;padding:16px 22px;margin-bottom:18px;box-shadow:4px 5px 0 #065f46;display:flex;align-items:center;gap:14px;}
+#garden-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:#065f46;}
+#garden-header p{font-size:12px;color:#047857;}
+#farm-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.farm-tab{padding:7px 16px;border:2px solid var(--bark);border-radius:30px;background:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--soil-dark);box-shadow:2px 2px 0 var(--bark);transition:all .12s;}
+.farm-tab:hover{background:var(--green-light);transform:translateY(-1px);}
+.farm-tab.active{background:var(--green-mid);color:#fff;border-color:var(--green-deep);box-shadow:2px 2px 0 var(--green-deep);}
+.farm-tab.locked{opacity:.4;cursor:not-allowed;}
+.farm-tab.locked:hover{background:#fff;transform:none;}
+#garden-locked{background:var(--cream);border:2px dashed var(--lv6);border-radius:14px;padding:32px;text-align:center;margin-bottom:16px;}
+#garden-locked .gl-icon{font-size:48px;margin-bottom:12px;}
+#garden-locked p{font-size:14px;color:var(--soil-mid);line-height:1.6;}
+#garden-locked strong{color:#065f46;}
+.garden-wrapper{background:#1a2e1a;border:3px solid var(--lv6);border-radius:16px;padding:13px;box-shadow:4px 6px 0 #065f46;margin-bottom:16px;position:relative;}
+.garden-wrapper::before{content:'BACK GARDEN';position:absolute;top:-13px;left:18px;background:var(--lv6);color:#fff;font-size:11px;padding:2px 10px;border-radius:4px;letter-spacing:2px;font-family:'Fredoka One',cursive;}
+#garden-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;}
+.garden-new-crop{background:linear-gradient(145deg,#ecfdf5,#d1fae5);border:1.5px solid var(--lv6);border-radius:8px;padding:8px 12px;font-size:11px;color:#065f46;display:flex;flex-direction:column;gap:2px;}
+.garden-new-crop .gnc-emoji{font-size:24px;}
+.garden-new-crop .gnc-name{font-weight:700;}
+.garden-new-crop .gnc-desc{opacity:.7;font-size:10px;}
+#garden-crops-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:16px;}
+@keyframes glow-garden{from{box-shadow:0 0 6px #34d399}to{box-shadow:0 0 18px #34d399,0 0 4px #fff}}
+</style>
+<body>
+
+<!-- Background -->
+<div id="sky-layer" aria-hidden="true">
+  <div class="cloud" style="width:120px;height:38px;top:30px;left:-150px;animation-duration:28s;">
+    <div style="position:absolute;width:60px;height:60px;background:#fff;border-radius:50%;top:-28px;left:18px;"></div>
+    <div style="position:absolute;width:40px;height:44px;background:#fff;border-radius:50%;top:-22px;left:52px;"></div>
+  </div>
+  <div class="cloud" style="width:80px;height:28px;top:70px;left:-100px;animation-duration:38s;animation-delay:12s;opacity:.7;">
+    <div style="position:absolute;width:40px;height:40px;background:#fff;border-radius:50%;top:-18px;left:10px;"></div>
+  </div>
+  <div class="cloud" style="width:150px;height:44px;top:18px;left:-180px;animation-duration:50s;animation-delay:6s;opacity:.6;">
+    <div style="position:absolute;width:70px;height:70px;background:#fff;border-radius:50%;top:-36px;left:22px;"></div>
+    <div style="position:absolute;width:50px;height:50px;background:#fff;border-radius:50%;top:-28px;left:70px;"></div>
+  </div>
+</div>
+<div id="sun" aria-hidden="true"></div>
+<div id="grass" aria-hidden="true"></div>
+<div id="fence" aria-hidden="true"></div>
+
+<!-- Level-up modal -->
+<div id="lvl-modal-backdrop">
+  <div id="lvl-modal">
+    <div class="lm-stars">🌟🌟🌟</div>
+    <h2 id="lm-title">Level Up!</h2>
+    <div class="lm-badge" id="lm-badge"></div>
+    <p id="lm-desc"></p>
+    <button id="lvl-modal-close" onclick="closeLvlModal()">Let's Go! 🚀</button>
+  </div>
+</div>
+
+<!-- Nav Bar -->
+<div id="nav-bar">
+  <div id="nav-title">🌾 Little Farmer</div>
+  <button class="nav-btn" id="nav-home"   onclick="goHome()">🗺 Map</button>
+  <button class="nav-btn" id="nav-shop"   onclick="goShop()">🏪 Shop</button>
+  <button class="nav-btn" id="nav-farm"   onclick="goFarm()">🚜 Farm</button>
+  <button class="nav-btn" id="nav-market" onclick="goMarket()">🛒 Market</button>
+  <button class="nav-btn" id="nav-level"  onclick="goLevel()">⭐ Level</button>
+  <div id="nav-right">
+    <div id="nav-coins">🪙 <span id="nav-coin-val">50</span></div>
+    <div id="nav-basket" onclick="goMarket()" title="Go to Market">🧺 <span id="nav-basket-val">0</span></div>
+    <div id="nav-level-badge" class="nav-btn lv1-badge">Lv 1</div>
+  </div>
+</div>
+
+<!-- ═══ HOME / MAP ═══ -->
+<div id="screen-home" class="screen active">
+
+  <!-- Map HUD -->
+  <div id="map-hud">
+    <div id="map-hud-title">🌾 Little Farmer</div>
+    <div class="map-hud-pill">🪙 <span id="map-coin-val">50</span></div>
+    <div class="map-hud-pill">🧺 <span id="map-basket-val">0</span></div>
+    <div class="map-hud-pill">📅 Day <span id="map-day-val">1</span></div>
+    <div id="map-hud-level" class="lv1-badge">🌱 Lv 1</div>
+  </div>
+
+  <!-- The map itself -->
+  <div id="map-canvas">
+
+    <!-- Dirt paths -->
+    <div class="map-path" style="left:170px;top:270px;width:200px;height:16px;transform:rotate(-3deg)"></div>
+    <div class="map-path" style="left:350px;top:278px;width:160px;height:16px;transform:rotate(2deg)"></div>
+    <div class="map-path" style="left:260px;top:260px;width:16px;height:180px;transform:rotate(1deg)"></div>
+    <div class="map-path" style="left:260px;top:420px;width:260px;height:16px;transform:rotate(-1deg)"></div>
+    <div class="map-path" style="left:500px;top:280px;width:16px;height:160px;transform:rotate(0deg)"></div>
+
+    <!-- Pond -->
+    <div id="map-pond">🌊</div>
+
+    <!-- Trees -->
+    <div class="map-tree" style="left:18px;top:50px">🌲</div>
+    <div class="map-tree" style="left:58px;top:32px">🌳</div>
+    <div class="map-tree" style="left:102px;top:52px">🌲</div>
+    <div class="map-tree" style="left:18px;top:102px">🌳</div>
+    <div class="map-tree" style="left:65px;top:112px">🌲</div>
+    <div class="map-tree" style="left:840px;top:460px">🌲</div>
+    <div class="map-tree" style="left:888px;top:440px">🌳</div>
+    <div class="map-tree" style="left:936px;top:465px">🌲</div>
+    <div class="map-tree" style="left:870px;top:505px">🌳</div>
+
+    <!-- Flowers -->
+    <div class="map-flower" style="left:600px;top:500px">🌻</div>
+    <div class="map-flower" style="left:636px;top:520px">🌼</div>
+    <div class="map-flower" style="left:160px;top:540px">🌸</div>
+    <div class="map-flower" style="left:760px;top:390px">🍄</div>
+    <div class="map-flower" style="left:420px;top:560px">🌺</div>
+
+    <!-- ── LOCATION PINS ── -->
+
+    <!-- Farm -->
+    <div class="map-loc" style="left:120px;top:210px" onclick="goFarm()">
+      <div class="map-tooltip">Till soil, plant seeds,<br>water &amp; harvest!</div>
+      <div class="map-loc-box mloc-farm">
+        <span class="map-loc-icon">🚜</span>
+        <span class="map-loc-name">Farm</span>
+        <span class="map-loc-hint">Your fields</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Shop -->
+    <div class="map-loc" style="left:390px;top:120px" onclick="goShop()">
+      <div class="map-tooltip">Buy seed packets<br>to grow on your farm</div>
+      <div class="map-loc-box mloc-shop">
+        <span class="map-loc-icon">🏪</span>
+        <span class="map-loc-name">Seed Shop</span>
+        <span class="map-loc-hint">Buy seeds</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Market -->
+    <div class="map-loc" style="left:450px;top:300px" onclick="goMarket()">
+      <div class="map-tooltip">Sell your harvest<br>for coins!</div>
+      <div class="map-loc-box mloc-market">
+        <span class="map-loc-icon">🛒</span>
+        <span class="map-loc-name">Market</span>
+        <span class="map-loc-hint">Sell crops</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Level Up -->
+    <div class="map-loc" style="left:250px;top:420px" onclick="goLevel()">
+      <div class="map-tooltip">Spend coins to unlock<br>powerful abilities</div>
+      <div class="map-loc-box mloc-level">
+        <span class="map-loc-icon">⭐</span>
+        <span class="map-loc-name">Level Up</span>
+        <span class="map-loc-hint">Upgrade farm</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Back Garden (Lv6) -->
+    <div class="map-loc mloc-garden-loc" id="map-garden-pin" style="left:650px;top:250px" onclick="goGarden()">
+      <div class="map-tooltip">Grow lavender, roses<br>&amp; herbs — unlock at Lv 6!</div>
+      <div class="map-loc-box mloc-garden locked-loc" id="map-garden-box">
+        <div class="locked-tag" id="map-garden-lock">🔒 Lv6</div>
+        <span class="map-loc-icon">🌿</span>
+        <span class="map-loc-name">Back Garden</span>
+        <span class="map-loc-hint">Special crops</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+  </div><!-- /map-canvas -->
+
+  <!-- Day badge -->
+  <div id="map-day-badge">
+    <div class="db-label">DAY</div>
+    <div class="db-val" id="map-day-num">1</div>
+  </div>
+
+  <!-- Compass -->
+  <div id="map-compass">🧭</div>
+
+</div>
+
+<!-- ═══ SHOP ═══ -->
+<div id="screen-shop" class="screen">
+  <div id="shop-header">
+    <span style="font-size:34px">🏪</span>
+    <div><h2>Village Seed Shop</h2><p>Each packet gives you 5 seeds. Plant them on your farm!</p></div>
+  </div>
+  <div id="shop-grid"></div>
+  <div id="shop-inventory">
+    <h3>🎒 Seed Inventory</h3>
+    <div id="inv-list"></div>
+  </div>
+</div>
+
+<!-- ═══ FARM ═══ -->
+<div id="screen-farm" class="screen">
+  <div id="farm-tabs">
+    <button class="farm-tab active" id="tab-main" onclick="goFarm()">🚜 Main Farm</button>
+    <button class="farm-tab locked" id="tab-garden" onclick="goGarden()">🌿 Back Garden <span id="garden-lock-hint">🔒 Lv6</span></button>
+  </div>
+  <div id="stats-bar">
+    <div class="stat-pill"><div class="stat-icon">🪙</div><div class="stat-info"><div class="stat-label">COINS</div><div class="stat-val" id="s-coin">50</div></div></div>
+    <div class="stat-pill"><div class="stat-icon">📅</div><div class="stat-info"><div class="stat-label">DAY</div><div class="stat-val" id="s-day">1</div></div></div>
+    <div class="stat-pill"><div class="stat-icon">🧺</div><div class="stat-info"><div class="stat-label">BASKET</div><div class="stat-val" id="s-basket">0</div></div></div>
+    <div class="stat-pill"><div class="stat-icon">💰</div><div class="stat-info"><div class="stat-label">EARNED</div><div class="stat-val" id="s-earn">0</div></div></div>
+  </div>
+  <div id="toolbar">
+    <div id="toolbar-top">
+      <span class="tool-label">Tool:</span>
+      <button class="tool-btn active" id="btn-till"    onclick="setTool('till')">🪱 Till</button>
+      <button class="tool-btn"        id="btn-water"   onclick="setTool('water')">💧 Water</button>
+      <button class="tool-btn"        id="btn-harvest" onclick="setTool('harvest')">🧺 Pick</button>
+      <span id="power-btns"></span>
+      <button id="next-day-btn" onclick="nextDay()">⏭ Next Day</button>
+    </div>
+    <div id="seed-row"><span class="tool-label">Seeds:</span></div>
+  </div>
+  <div id="farm-wrapper"><div id="farm-grid"></div></div>
+  <div id="log-box"><span id="log-icon">🌱</span><span id="log-text">Visit the Shop to buy seeds, then till a plot and plant!</span></div>
+  <div id="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#5c3d2a"></div>Empty</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#7a5230"></div>Tilled</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#4a3020"></div>Seeded</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#3a4020"></div>Growing</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#3d5520;border:1.5px solid #7ab648"></div>Ready ✨</div>
+  </div>
+</div>
+
+<!-- ═══ GARDEN ═══ -->
+<div id="screen-garden" class="screen">
+  <div id="farm-tabs">
+    <button class="farm-tab" id="tab-main-g" onclick="goFarm()">🚜 Main Farm</button>
+    <button class="farm-tab active" id="tab-garden-g" onclick="goGarden()">🌿 Back Garden</button>
+  </div>
+  <div id="garden-header">
+    <span style="font-size:34px">🌿</span>
+    <div>
+      <h2>Back Garden</h2>
+      <p>Grow lavender, roses and herbs — rarer crops with higher sell prices.</p>
+    </div>
+  </div>
+  <div id="toolbar" style="margin-bottom:14px">
+    <div id="toolbar-top" style="margin-bottom:10px">
+      <span class="tool-label">Tool:</span>
+      <button class="tool-btn active" id="gbtn-till"    onclick="setTool('till')">🪱 Till</button>
+      <button class="tool-btn"        id="gbtn-water"   onclick="setTool('water')">💧 Water</button>
+      <button class="tool-btn"        id="gbtn-harvest" onclick="setTool('harvest')">🧺 Pick</button>
+      <button id="next-day-btn" onclick="nextDay();if(activeFarm==='garden')renderGarden();else renderGrid();">⏭ Next Day</button>
+    </div>
+    <div id="garden-seed-row"><span class="tool-label">Garden Seeds:</span></div>
+  </div>
+  <div class="garden-wrapper">
+    <div id="garden-grid"></div>
+  </div>
+  <div id="log-box" style="margin-bottom:14px"><span id="log-icon">🌿</span><span id="log-text">Till a plot, then plant a garden seed!</span></div>
+  <div id="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#5c3d2a"></div>Empty</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#7a5230"></div>Tilled</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#4a3020"></div>Seeded</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#3a4020"></div>Growing</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#1a4030;border:1.5px solid #34d399"></div>Ready ✨</div>
+  </div>
+</div>
+
+<!-- ═══ MARKET ═══ -->
+<div id="screen-market" class="screen">
+  <div id="market-sign">
+    <div id="market-sign-inner">
+      <span class="market-decor">🛒</span>
+      <div><h2>Farmer's Market</h2><p>Sell your fresh harvest and pocket the coins!</p></div>
+      <span class="market-decor">🥕</span>
+    </div>
+  </div>
+  <div id="price-board">
+    <h3>📋 Today's Prices</h3>
+    <div id="price-list"></div>
+  </div>
+  <div id="basket-area">
+    <h3>🧺 Your Harvest Basket</h3>
+    <div id="basket-items"></div>
+    <div id="basket-actions">
+      <button id="sell-all-main" onclick="sellAll()" disabled>Sell All</button>
+      <div id="basket-total">Total: 🪙0</div>
+    </div>
+  </div>
+  <div id="market-log"><span id="mkt-log-icon">🌿</span><span id="mkt-log-text">Bring your harvested crops here to sell for coins.</span></div>
+</div>
+
+<!-- ═══ LEVEL ═══ -->
+<div id="screen-level" class="screen">
+  <div id="level-header">
+    <span style="font-size:34px">⭐</span>
+    <div><h2>Level Up System</h2><p>Spend coins to unlock powerful farm abilities!</p></div>
+  </div>
+  <div id="level-cards">
+
+    <!-- Lv1 — current base -->
+    <div class="level-card">
+      <div class="lc-top">
+        <span class="lc-icon">🌱</span>
+        <div>
+          <div class="lc-title">Level 1 — Apprentice Farmer</div>
+          <div class="lc-subtitle">Your starting point — the basics of farming.</div>
+        </div>
+      </div>
+      <div class="lc-perks">
+        <span class="lc-perk">🪱 Manual tilling</span>
+        <span class="lc-perk">💧 Manual watering</span>
+        <span class="lc-perk">🧺 Manual harvesting</span>
+      </div>
+      <div class="lc-owned green">✅ You are here!</div>
+    </div>
+
+    <!-- Lv2 -->
+    <div class="level-card lv2-card">
+      <div class="lc-top">
+        <span class="lc-icon">🚜</span>
+        <div>
+          <div class="lc-title">Level 2 — Skilled Farmer</div>
+          <div class="lc-subtitle">Your tractor arrives — till every empty plot instantly!</div>
+        </div>
+      </div>
+      <div class="lc-perks">
+        <span class="lc-perk blue">⚡ Till All — one click tills every empty plot</span>
+        <span class="lc-perk blue">✨ All Level 1 perks</span>
+      </div>
+      <div class="lc-bottom">
+        <div class="lc-progress-wrap">
+          <div class="lc-progress-bar lc-progress-lv2" id="lv2-bar" style="width:0%"></div>
+        </div>
+        <span class="lc-progress-label" id="lv2-label">0 / 100 🪙</span>
+        <button class="upgrade-btn lv2-btn" id="lv2-btn" onclick="buyLevel(2)" disabled>Upgrade — 🪙100</button>
+      </div>
+    </div>
+
+    <!-- Lv3 -->
+    <div class="level-card lv3-card">
+      <div class="lc-top">
+        <span class="lc-icon">🌾</span>
+        <div>
+          <div class="lc-title">Level 3 — Master Farmer</div>
+          <div class="lc-subtitle">Your farm runs itself — plant all tilled plots at once!</div>
+        </div>
+      </div>
+      <div class="lc-perks">
+        <span class="lc-perk purple">🌱 Plant All — plants your selected seed on every tilled plot</span>
+        <span class="lc-perk purple">✨ All Level 2 perks</span>
+      </div>
+      <div class="lc-bottom">
+        <div class="lc-progress-wrap">
+          <div class="lc-progress-bar lc-progress-lv3" id="lv3-bar" style="width:0%"></div>
+        </div>
+        <span class="lc-progress-label" id="lv3-label">0 / 1000 🪙</span>
+        <button class="upgrade-btn lv3-btn" id="lv3-btn" onclick="buyLevel(3)" disabled>Upgrade — 🪙1000</button>
+      </div>
+    </div>
+
+    <!-- Lv4 -->
+    <div class="level-card lv4-card">
+      <div class="lc-top">
+        <span class="lc-icon">💧</span>
+        <div>
+          <div class="lc-title">Level 4 — Rain Maker</div>
+          <div class="lc-subtitle">Summon the clouds — water every growing crop at once!</div>
+        </div>
+      </div>
+      <div class="lc-perks">
+        <span class="lc-perk amber">💧 Water All — instantly waters every planted/growing crop</span>
+        <span class="lc-perk amber">✨ All Level 3 perks</span>
+      </div>
+      <div class="lc-bottom">
+        <div class="lc-progress-wrap">
+          <div class="lc-progress-bar lc-progress-lv4" id="lv4-bar" style="width:0%"></div>
+        </div>
+        <span class="lc-progress-label" id="lv4-label">0 / 3000 🪙</span>
+        <button class="upgrade-btn lv4-btn" id="lv4-btn" onclick="buyLevel(4)" disabled>Upgrade — 🪙3000</button>
+      </div>
+    </div>
+
+    <!-- Lv5 -->
+    <div class="level-card lv5-card">
+      <div class="lc-top">
+        <span class="lc-icon">🏆</span>
+        <div>
+          <div class="lc-title">Level 5 — Legendary Farmer</div>
+          <div class="lc-subtitle">The harvest machine — collect all ripe crops in one click!</div>
+        </div>
+      </div>
+      <div class="lc-perks">
+        <span class="lc-perk red">🧺 Harvest All — picks every ready crop into your basket instantly</span>
+        <span class="lc-perk red">✨ All Level 4 perks</span>
+      </div>
+      <div class="lc-bottom">
+        <div class="lc-progress-wrap">
+          <div class="lc-progress-bar lc-progress-lv5" id="lv5-bar" style="width:0%"></div>
+        </div>
+        <span class="lc-progress-label" id="lv5-label">0 / 5000 🪙</span>
+        <button class="upgrade-btn lv5-btn" id="lv5-btn" onclick="buyLevel(5)" disabled>Upgrade — 🪙5000</button>
+      </div>
+    </div>
+
+    <!-- Lv6 -->
+    <div class="level-card lv6-card">
+      <div class="lc-top">
+        <span class="lc-icon">🌿</span>
+        <div>
+          <div class="lc-title">Level 6 — Garden Master</div>
+          <div class="lc-subtitle">A new patch of land opens up behind your farmhouse!</div>
+        </div>
+      </div>
+      <div class="lc-perks">
+        <span class="lc-perk emerald">🌿 Unlocks the Back Garden — 12 new plots</span>
+        <span class="lc-perk emerald">💜 Grow lavender, roses &amp; herbs (higher sell price)</span>
+        <span class="lc-perk emerald">✨ All Level 5 perks</span>
+      </div>
+      <div class="lc-bottom">
+        <div class="lc-progress-wrap"><div class="lc-progress-bar lc-progress-lv6" id="lv6-bar" style="width:0%"></div></div>
+        <span class="lc-progress-label" id="lv6-label">0 / 8000 🪙</span>
+        <button class="upgrade-btn lv6-btn" id="lv6-btn" onclick="buyLevel(6)" disabled>Upgrade — 🪙8000</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const SEEDS=[
+  {id:'lettuce',name:'Lettuce',emoji:'🥬',cost:12,sell:8, days:2,desc:'Fast grower, low risk.'},
+  {id:'carrot', name:'Carrot', emoji:'🥕',cost:18,sell:14,days:3,desc:'Reliable and steady.'},
+  {id:'potato', name:'Potato', emoji:'🥔',cost:24,sell:22,days:4,desc:'Hearty yields.'},
+  {id:'corn',   name:'Corn',   emoji:'🌽',cost:30,sell:28,days:4,desc:'Golden summer crop.'},
+  {id:'tomato', name:'Tomato', emoji:'🍅',cost:40,sell:38,days:5,desc:'High profit, slow grow.'},
+];
+const PACKET=5;
+const GROW_EMOJI=['🌱','🌿','🌾'];
+const LOG_ICONS={ok:'✅',warn:'⚠️',info:'💬',harvest:'🧺',day:'☀️'};
+
+// level config
+const LEVELS={
+  1:{cost:0,    label:'Lv 1',cls:'lv1-badge',icon:'🌱'},
+  2:{cost:100,  label:'Lv 2',cls:'lv2-badge',icon:'🚜'},
+  3:{cost:1000, label:'Lv 3',cls:'lv3-badge',icon:'🌾'},
+  4:{cost:3000, label:'Lv 4',cls:'lv4-badge',icon:'💧'},
+  5:{cost:5000, label:'Lv 5',cls:'lv5-badge',icon:'🏆'},
+  6:{cost:8000, label:'Lv 6',cls:'lv6-badge',icon:'🌿'},
+};
+
+// Garden-only crops (Lv6)
+const GARDEN_SEEDS=[
+  {id:'lavender',name:'Lavender',emoji:'💜',cost:20,sell:45,days:4,desc:'Sells well at the flower shop.'},
+  {id:'rose',    name:'Rose',    emoji:'🌹',cost:25,sell:55,days:5,desc:'Sable\'s favourite.'},
+  {id:'herb',    name:'Herbs',   emoji:'🌿',cost:15,sell:35,days:3,desc:'Calla uses these at the clinic.'},
+];
+const ALL_SEEDS=()=>[...SEEDS,...GARDEN_SEEDS];
+
+// ── STATE ──
+let coins=50, day=1, totalEarn=0;
+let selectedSeed=null, tool='till';
+let level=1;
+let activeFarm='main'; // 'main' | 'garden'
+const inventory={};
+const basket={};
+SEEDS.forEach(s=>{inventory[s.id]=0;basket[s.id]=0;});
+GARDEN_SEEDS.forEach(s=>{inventory[s.id]=0;basket[s.id]=0;});
+const cells=Array.from({length:24},()=>({state:'empty',seed:null,daysPlanted:0,watered:false}));
+const gardenCells=Array.from({length:12},()=>({state:'empty',seed:null,daysPlanted:0,watered:false}));
+
+// ── UTILS ──
+function $(id){return document.getElementById(id);}
+function basketTotal(){return ALL_SEEDS().reduce((s,v)=>s+basket[v.id]*v.sell,0);}
+function basketCount(){return ALL_SEEDS().reduce((s,v)=>s+basket[v.id],0);}
+
+function updateNavCoins(){
+  $('nav-coin-val').textContent=coins;
+  $('nav-basket-val').textContent=basketCount();
+  // update level badge in nav
+  const lv=LEVELS[level];
+  const badge=$('nav-level-badge');
+  badge.textContent=lv.icon+' '+lv.label;
+  badge.className='nav-btn '+lv.cls;
+  // sync map HUD
+  updateMapHUD();
+  updateLevelProgress();
+}
+
+function updateMapHUD(){
+  const mc=$('map-coin-val');   if(mc) mc.textContent=coins;
+  const mb=$('map-basket-val'); if(mb) mb.textContent=basketCount();
+  const md=$('map-day-val');    if(md) md.textContent=day;
+  const mn=$('map-day-num');    if(mn) mn.textContent=day;
+  const ml=$('map-hud-level');
+  if(ml){ const lv=LEVELS[level]; ml.textContent=lv.icon+' '+lv.label; ml.className=lv.cls; }
+  // unlock garden pin when Lv6
+  const gbox=$('map-garden-box');
+  const glock=$('map-garden-lock');
+  if(gbox){ gbox.classList.toggle('locked-loc',level<6); }
+  if(glock){ glock.style.display=level>=6?'none':''; }
+  const gpin=$('map-garden-pin');
+  if(gpin){ gpin.style.pointerEvents=level>=6?'auto':'none'; }
+}
+function setLog(msg,type='info'){$('log-icon').textContent=LOG_ICONS[type]||'💬';$('log-text').textContent=msg;}
+function setMktLog(msg,icon='💰'){$('mkt-log-icon').textContent=icon;$('mkt-log-text').textContent=msg;}
+function flashCoin(amount,x,y){
+  const el=document.createElement('div');
+  el.className='coin-flash';
+  el.textContent=`+${amount}🪙`;
+  el.style.left=x+'px';el.style.top=y+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1000);
+}
+
+// ── LEVEL SYSTEM ──
+function updateLevelProgress(){
+  function applyBar(barId, labelId, btnId, ownedId, cost, lv, cls, ownedCls){
+    const pct=Math.min(100,Math.round((coins/cost)*100));
+    $(barId).style.width=pct+'%';
+    $(labelId).textContent=`${Math.min(coins,cost)} / ${cost} 🪙`;
+    $(btnId).disabled=(level>=lv||coins<cost);
+    if(level>=lv){
+      $(btnId).style.display='none';
+      if(!$(ownedId)){
+        const owned=document.createElement('div');
+        owned.id=ownedId; owned.className='lc-owned '+ownedCls;
+        owned.textContent='✅ Unlocked!';
+        $(btnId).parentNode.appendChild(owned);
+      }
+    }
+  }
+  applyBar('lv2-bar','lv2-label','lv2-btn','lv2-owned',100, 2,'lv2-badge','blue');
+  applyBar('lv3-bar','lv3-label','lv3-btn','lv3-owned',1000,3,'lv3-badge','purple');
+  applyBar('lv4-bar','lv4-label','lv4-btn','lv4-owned',3000,4,'lv4-badge','amber');
+  applyBar('lv5-bar','lv5-label','lv5-btn','lv5-owned',5000,5,'lv5-badge','red');
+  applyBar('lv6-bar','lv6-label','lv6-btn','lv6-owned',8000,6,'lv6-badge','emerald');
+  buildPowerBtns();
+}
+
+function buyLevel(lv){
+  const needed=LEVELS[lv].cost;
+  if(coins<needed||level>=lv) return;
+  coins-=needed;
+  level=lv;
+  updateNavCoins();
+  updateStats();
+  showLvlModal(lv);
+}
+
+function showLvlModal(lv){
+  const burst=document.createElement('div');
+  burst.className='level-burst';
+  burst.textContent='⭐';
+  document.body.appendChild(burst);
+  setTimeout(()=>burst.remove(),900);
+
+  $('lm-title').textContent=`Level ${lv} Unlocked!`;
+  const badge=$('lm-badge');
+  const descs={
+    2:{style:'background:#dbeafe;border-color:#3b82f6;color:#1d4ed8;',label:'🚜 Skilled Farmer',
+       desc:"Your tractor has arrived! Use \"Till All\" on your farm to till every empty plot in one click."},
+    3:{style:'background:#f3e8ff;border-color:#a855f7;color:#7e22ce;',label:'🌾 Master Farmer',
+       desc:"Planting mastery unlocked! Use \"Plant All\" to sow your selected seed on every tilled plot instantly."},
+    4:{style:'background:#fef3c7;border-color:#f59e0b;color:#92400e;',label:'💧 Rain Maker',
+       desc:"You control the rain! Use \"Water All\" to water every planted and growing crop in one click — they'll all grow twice as fast tomorrow!"},
+    5:{style:'background:#fee2e2;border-color:#ef4444;color:#991b1b;',label:'🏆 Legendary Farmer',
+       desc:"You've reached the pinnacle of farming! Use \"Harvest All\" to collect every ripe crop straight into your basket with a single click."},
+    6:{style:'background:#d1fae5;border-color:#10b981;color:#065f46;',label:'🌿 Garden Master',
+       desc:"Your Back Garden is now open! Grow lavender, roses, and herbs — special crops with higher sell prices, perfect for the characters you care about."},
+  };
+  const d=descs[lv];
+  badge.style.cssText=d.style;
+  badge.textContent=d.label;
+  $('lm-desc').textContent=d.desc;
+  $('lvl-modal-backdrop').classList.add('open');
+}
+function closeLvlModal(){$('lvl-modal-backdrop').classList.remove('open');}
+
+// ── ROUTING ──
+const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm'};
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(SCREEN_NAV[id]) $(SCREEN_NAV[id]).classList.add('active');
+  $('nav-bar').classList.toggle('visible',id!=='screen-home');
+}
+function goHome()  {updateMapHUD();showScreen('screen-home');}
+function goShop()  {renderShop();showScreen('screen-shop');}
+function goFarm()  {activeFarm='main';renderGrid();showScreen('screen-farm');}
+function goGarden(){
+  if(level<6){goLevel();return;}
+  activeFarm='garden';renderGarden();showScreen('screen-garden');
+}
+function goMarket(){renderMarket();showScreen('screen-market');}
+function goLevel() {updateLevelProgress();showScreen('screen-level');}
+
+// ── SHOP ──
+function renderShop(){
+  const grid=$('shop-grid');grid.innerHTML='';
+  SEEDS.forEach(s=>{
+    const owned=inventory[s.id];
+    const div=document.createElement('div');
+    div.className='shop-item';
+    div.innerHTML=`
+      ${owned>0?`<div class="shop-owned-badge">${owned} seeds</div>`:''}
+      <span class="s-emoji">${s.emoji}</span>
+      <div class="s-name">${s.name}</div>
+      <div class="s-stats">
+        <span>📦 ${PACKET} seeds / packet</span>
+        <span>⏱ Grows in ${s.days} days</span>
+        <span>💰 Sells for ${s.sell} coins ea.</span>
+        <span style="font-style:italic;margin-top:2px">${s.desc}</span>
+      </div>
+      <button class="buy-btn" ${coins>=s.cost?'':'disabled'} onclick="buySeed('${s.id}')">Buy — 🪙${s.cost}</button>`;
+    grid.appendChild(div);
+  });
+  // Garden seeds section (only show if Lv6)
+  if(level>=6){
+    const divider=document.createElement('div');
+    divider.style.cssText='grid-column:1/-1;padding:10px 4px 4px;font-family:\'Fredoka One\',cursive;font-size:16px;color:#065f46;border-top:2px solid #a7f3d0;margin-top:4px;';
+    divider.innerHTML='🌿 Garden Seeds — Back Garden only';
+    grid.appendChild(divider);
+    GARDEN_SEEDS.forEach(s=>{
+      const owned=inventory[s.id];
+      const div=document.createElement('div');
+      div.className='shop-item';
+      div.style.borderColor='#10b981';div.style.boxShadow='3px 4px 0 #065f46';
+      div.innerHTML=`
+        ${owned>0?`<div class="shop-owned-badge" style="background:#10b981">${owned} seeds</div>`:''}
+        <span class="s-emoji">${s.emoji}</span>
+        <div class="s-name" style="color:#065f46">${s.name}</div>
+        <div class="s-stats">
+          <span>📦 ${PACKET} seeds / packet</span>
+          <span>⏱ Grows in ${s.days} days</span>
+          <span>💰 Sells for ${s.sell} coins ea.</span>
+          <span style="font-style:italic;margin-top:2px">${s.desc}</span>
+        </div>
+        <button class="buy-btn" style="background:#d1fae5;border-color:#10b981" ${coins>=s.cost?'':'disabled'} onclick="buySeed('${s.id}')">Buy — 🪙${s.cost}</button>`;
+      grid.appendChild(div);
+    });
+  }
+  renderSeedInv();
+}
+function buySeed(id){
+  const s=ALL_SEEDS().find(x=>x.id===id);
+  if(!s||coins<s.cost) return;
+  coins-=s.cost; inventory[id]+=PACKET;
+  updateNavCoins();renderShop();
+}
+function renderSeedInv(){
+  const list=$('inv-list');list.innerHTML='';
+  const hasAny=ALL_SEEDS().some(s=>inventory[s.id]>0);
+  if(!hasAny){list.innerHTML='<span style="font-size:13px;color:var(--soil-mid);font-style:italic">No seeds yet!</span>';return;}
+  ALL_SEEDS().forEach(s=>{
+    if(!inventory[s.id]) return;
+    const d=document.createElement('div');d.className='inv-item';
+    d.innerHTML=`${s.emoji} ${s.name} <span class="inv-count">${inventory[s.id]}</span>`;
+    list.appendChild(d);
+  });
+}
+
+// ── FARM ──
+function setTool(t){
+  tool=t;
+  ['btn-till','btn-water','btn-harvest'].forEach(id=>{
+    const b=$(id);if(b) b.classList.toggle('active',id==='btn-'+t);
+  });
+}
+function updateStats(){
+  $('s-coin').textContent=coins;
+  $('s-day').textContent=day;
+  $('s-basket').textContent=basketCount();
+  $('s-earn').textContent=totalEarn;
+  updateNavCoins();
+}
+
+// Power buttons
+function buildPowerBtns(){
+  const wrap=$('power-btns');
+  if(!wrap) return;
+  wrap.innerHTML='';
+  if(level>=2){
+    const b=document.createElement('button');
+    b.className='power-btn lv2'; b.innerHTML='⚡ Till All';
+    b.title='Tills every empty plot (Level 2)'; b.onclick=tillAll;
+    wrap.appendChild(b);
+  }
+  if(level>=3){
+    const b=document.createElement('button');
+    b.className='power-btn lv3'; b.innerHTML='🌱 Plant All';
+    b.title='Plants selected seed on every tilled plot (Level 3)'; b.onclick=plantAll;
+    wrap.appendChild(b);
+  }
+  if(level>=4){
+    const b=document.createElement('button');
+    b.className='power-btn lv4'; b.innerHTML='💧 Water All';
+    b.title='Waters every growing crop (Level 4)'; b.onclick=waterAll;
+    wrap.appendChild(b);
+  }
+  if(level>=5){
+    const b=document.createElement('button');
+    b.className='power-btn lv5'; b.innerHTML='🧺 Harvest All';
+    b.title='Harvests every ready crop (Level 5)'; b.onclick=harvestAll;
+    wrap.appendChild(b);
+  }
+}
+
+function tillAll(){
+  let count=0;
+  cells.forEach(c=>{if(c.state==='empty'){c.state='tilled';count++;}});
+  if(count>0) setLog(`⚡ Tractor tilled ${count} plots instantly!`,'ok');
+  else setLog('No empty plots left to till.','warn');
+  renderGrid();
+}
+
+function plantAll(){
+  if(!selectedSeed){setLog('Select a seed first, then use Plant All!','warn');return;}
+  let count=0;
+  cells.forEach(c=>{
+    if(c.state==='tilled'&&inventory[selectedSeed.id]>0){
+      inventory[selectedSeed.id]--;
+      c.state='planted';c.seed=selectedSeed;c.daysPlanted=0;c.watered=false;
+      count++;
+    }
+  });
+  if(count>0) setLog(`🌾 Planted ${selectedSeed.emoji} ${selectedSeed.name} on ${count} plots!`,'ok');
+  else setLog('No tilled plots or no seeds left!','warn');
+  renderGrid();
+}
+
+function waterAll(){
+  let count=0;
+  cells.forEach(c=>{
+    if(['planted','growing'].includes(c.state)&&!c.watered){
+      c.watered=true; count++;
+    }
+  });
+  if(count>0) setLog(`💧 Watered ${count} crops! They'll all grow twice as fast tomorrow.`,'ok');
+  else setLog('All crops are already watered today!','warn');
+  renderGrid();
+}
+
+function harvestAll(){
+  let count=0;
+  cells.forEach(c=>{
+    if(c.state==='ready'){
+      basket[c.seed.id]++;
+      c.state='tilled'; c.seed=null; c.daysPlanted=0; c.watered=false;
+      count++;
+    }
+  });
+  if(count>0) setLog(`🧺 Harvested ${count} crops! Head to the Market to sell them 🛒`,'harvest');
+  else setLog('No crops are ready to harvest yet.','warn');
+  renderGrid();
+}
+
+function renderGrid(){
+  const grid=$('farm-grid');
+  cells.forEach((c,i)=>{
+    const el=grid.children[i];
+    el.className='plot '+c.state;
+    let inner='';
+    if(c.state==='empty')        inner='<span class="plot-emoji">🟫</span>';
+    else if(c.state==='tilled')  inner='<span class="plot-emoji">⬜</span>';
+    else if(c.state==='planted') inner=`<span class="plot-emoji">${GROW_EMOJI[0]}</span><div class="plot-bar-wrap"><div class="plot-bar" style="width:5%"></div></div>`;
+    else if(c.state==='growing'){
+      const pct=Math.round((c.daysPlanted/c.seed.days)*100);
+      inner=`<span class="plot-emoji">${GROW_EMOJI[pct<50?0:1]}</span><div class="plot-bar-wrap"><div class="plot-bar" style="width:${pct}%"></div></div>`;
+      if(c.watered) inner+='<span class="water-drop">💧</span>';
+    } else if(c.state==='ready') inner=`<span class="plot-emoji">${c.seed.emoji}</span><span class="ready-star">✨</span>`;
+    el.innerHTML=inner;
+  });
+  updateStats();
+  buildSeedRow();
+  buildPowerBtns();
+}
+
+function handlePlot(i){
+  const c=cells[i];
+  if(tool==='till'){
+    if(c.state==='empty'){c.state='tilled';setLog('Plot tilled! Pick a seed and plant it.','ok');}
+    else setLog('Already tilled or occupied.','warn');
+  } else if(tool==='water'){
+    if(['planted','growing'].includes(c.state)){
+      if(c.watered) setLog('Already watered today!','warn');
+      else{c.watered=true;setLog('Watered! Crop grows twice as fast tomorrow.','ok');}
+    } else setLog('Nothing here to water.','warn');
+  } else if(tool==='harvest'){
+    if(c.state==='ready'){
+      basket[c.seed.id]++;
+      setLog(`Picked ${c.seed.emoji} ${c.seed.name}! Added to basket. Sell at the Market 🛒`,'harvest');
+      c.state='tilled';c.seed=null;c.daysPlanted=0;c.watered=false;
+    } else if(['planted','growing'].includes(c.state)){
+      setLog(`Not ready — ${c.seed.days-c.daysPlanted} more day(s). Water to speed up!`,'warn');
+    } else setLog('No crop here to pick.','warn');
+  } else if(tool==='plant'){
+    if(!selectedSeed){setLog('Select a seed below first!','warn');return;}
+    if(c.state==='tilled'){
+      if(inventory[selectedSeed.id]<=0){setLog(`No ${selectedSeed.name} seeds left! Visit the Shop.`,'warn');return;}
+      inventory[selectedSeed.id]--;
+      c.state='planted';c.seed=selectedSeed;c.daysPlanted=0;c.watered=false;
+      setLog(`Planted ${selectedSeed.emoji} ${selectedSeed.name}! Ready in ${selectedSeed.days} day(s).`,'ok');
+    } else if(c.state==='empty') setLog('Till this plot first!','warn');
+    else setLog('There is already a crop here.','warn');
+  }
+  renderGrid();
+}
+
+function buildGrid(){
+  const grid=$('farm-grid');grid.innerHTML='';
+  cells.forEach((_,i)=>{
+    const el=document.createElement('div');
+    el.className='plot empty';
+    el.setAttribute('aria-label',`Plot ${i+1}`);
+    el.onclick=()=>handlePlot(i);
+    grid.appendChild(el);
+  });
+  buildGardenGrid();
+}
+
+function updateFarmTabs(){
+  const tabG=$('tab-garden');
+  if(tabG){
+    tabG.classList.toggle('locked',level<6);
+    const hint=$('garden-lock-hint');
+    if(hint) hint.style.display=level>=6?'none':'';
+  }
+}
+
+function buildSeedRow(){
+  const row=$('seed-row');
+  const label=row.children[0];
+  row.innerHTML='';row.appendChild(label);
+  const hasSome=SEEDS.some(s=>inventory[s.id]>0);
+  if(!hasSome){
+    const hint=document.createElement('span');
+    hint.style.cssText='font-size:12px;color:var(--soil-mid);font-style:italic';
+    hint.innerHTML='No seeds — <a href="#" style="color:var(--accent)" onclick="goShop();return false;">visit the Shop!</a>';
+    row.appendChild(hint);return;
+  }
+  SEEDS.forEach(s=>{
+    if(inventory[s.id]<=0) return;
+    const btn=document.createElement('button');
+    const sel=selectedSeed&&s.id===selectedSeed.id;
+    btn.className='seed-chip'+(sel?' selected':'');
+    btn.innerHTML=`${s.emoji} ${s.name} <span class="price">×${inventory[s.id]}</span>`;
+    btn.onclick=()=>{selectedSeed=s;setTool('plant');buildSeedRow();setLog(`Selected ${s.emoji} ${s.name} — click a tilled plot!`,'info');};
+    row.appendChild(btn);
+  });
+}
+
+function nextDay(){
+  day++;
+  let readyCnt=0;
+  // advance main farm
+  cells.forEach(c=>{
+    if(['planted','growing'].includes(c.state)){
+      c.daysPlanted=Math.min(c.seed.days,c.daysPlanted+(c.watered?2:1));
+      c.watered=false;
+      if(c.daysPlanted>=c.seed.days){c.state='ready';readyCnt++;}
+      else c.state='growing';
+    }
+  });
+  // advance garden
+  gardenCells.forEach(c=>{
+    if(['planted','growing'].includes(c.state)){
+      c.daysPlanted=Math.min(c.seed.days,c.daysPlanted+(c.watered?2:1));
+      c.watered=false;
+      if(c.daysPlanted>=c.seed.days){c.state='ready';readyCnt++;}
+      else c.state='growing';
+    }
+  });
+  if(readyCnt>0) setLog(`Day ${day} — ${readyCnt} plot(s) ready to pick! 🎉`,'day');
+  else setLog(`Day ${day} — sunshine and good vibes. Keep farming!`,'day');
+  renderGrid();
+}
+
+// ── GARDEN ──
+function buildGardenGrid(){
+  const grid=$('garden-grid'); if(!grid) return;
+  grid.innerHTML='';
+  gardenCells.forEach((_,i)=>{
+    const el=document.createElement('div');
+    el.className='plot empty';
+    el.setAttribute('aria-label',`Garden Plot ${i+1}`);
+    el.onclick=()=>handleGardenPlot(i);
+    grid.appendChild(el);
+  });
+}
+
+function renderGarden(){
+  // Update tab states
+  const mainTab=$('tab-main');
+  const gardenTab=$('tab-garden');
+  if(mainTab) mainTab.classList.toggle('active',false);
+  if(gardenTab) gardenTab.classList.toggle('active',true);
+  if(gardenTab) gardenTab.classList.remove('locked');
+
+  const grid=$('garden-grid'); if(!grid) return;
+  gardenCells.forEach((c,i)=>{
+    const el=grid.children[i]; if(!el) return;
+    el.className='plot '+c.state;
+    let inner='';
+    if(c.state==='empty')   inner='<span class="plot-emoji">🟫</span>';
+    else if(c.state==='tilled') inner='<span class="plot-emoji">⬜</span>';
+    else if(c.state==='planted') inner=`<span class="plot-emoji">${GROW_EMOJI[0]}</span><div class="plot-bar-wrap"><div class="plot-bar" style="width:5%;background:#34d399"></div></div>`;
+    else if(c.state==='growing'){
+      const pct=Math.round((c.daysPlanted/c.seed.days)*100);
+      inner=`<span class="plot-emoji">${GROW_EMOJI[pct<50?0:1]}</span><div class="plot-bar-wrap"><div class="plot-bar" style="width:${pct}%;background:#34d399"></div></div>`;
+      if(c.watered) inner+='<span class="water-drop">💧</span>';
+    } else if(c.state==='ready') inner=`<span class="plot-emoji">${c.seed.emoji}</span><span class="ready-star">✨</span>`;
+    el.innerHTML=inner;
+  });
+  buildGardenSeedRow();
+  updateStats();
+}
+
+function handleGardenPlot(i){
+  const c=gardenCells[i];
+  if(tool==='till'){
+    if(c.state==='empty'){c.state='tilled';setLog('Garden plot tilled!','ok');}
+    else setLog('Already tilled or occupied.','warn');
+  } else if(tool==='water'){
+    if(['planted','growing'].includes(c.state)){
+      if(c.watered) setLog('Already watered today!','warn');
+      else{c.watered=true;setLog('Watered! Grows twice as fast tomorrow.','ok');}
+    } else setLog('Nothing here to water.','warn');
+  } else if(tool==='harvest'){
+    if(c.state==='ready'){
+      basket[c.seed.id]++;
+      setLog(`Picked ${c.seed.emoji} ${c.seed.name}! Head to Market 🛒`,'harvest');
+      c.state='tilled';c.seed=null;c.daysPlanted=0;c.watered=false;
+    } else setLog('Not ready yet.','warn');
+  } else if(tool==='plant'){
+    if(!selectedSeed){setLog('Select a seed below first!','warn');return;}
+    // Only allow garden seeds in garden
+    if(!GARDEN_SEEDS.find(s=>s.id===selectedSeed.id)){setLog('That seed won\'t grow here. Choose a garden crop!','warn');return;}
+    if(c.state==='tilled'){
+      if(inventory[selectedSeed.id]<=0){setLog(`No ${selectedSeed.name} seeds left! Visit the Shop.`,'warn');return;}
+      inventory[selectedSeed.id]--;
+      c.state='planted';c.seed=selectedSeed;c.daysPlanted=0;c.watered=false;
+      setLog(`Planted ${selectedSeed.emoji} ${selectedSeed.name}!`,'ok');
+    } else if(c.state==='empty') setLog('Till this plot first!','warn');
+    else setLog('Already occupied.','warn');
+  }
+  renderGarden();
+}
+
+function buildGardenSeedRow(){
+  const row=$('garden-seed-row'); if(!row) return;
+  const label=row.children[0];
+  row.innerHTML=''; row.appendChild(label);
+  const hasSome=GARDEN_SEEDS.some(s=>inventory[s.id]>0);
+  if(!hasSome){
+    const hint=document.createElement('span');
+    hint.style.cssText='font-size:12px;color:var(--soil-mid);font-style:italic';
+    hint.innerHTML='No garden seeds — <a href="#" style="color:#065f46" onclick="goShop();return false;">visit the Shop!</a>';
+    row.appendChild(hint); return;
+  }
+  GARDEN_SEEDS.forEach(s=>{
+    if(inventory[s.id]<=0) return;
+    const btn=document.createElement('button');
+    const sel=selectedSeed&&s.id===selectedSeed.id;
+    btn.className='seed-chip'+(sel?' selected':'');
+    btn.style.borderColor=sel?'#065f46':'';
+    btn.style.background=sel?'#10b981':'';
+    btn.innerHTML=`${s.emoji} ${s.name} <span class="price">×${inventory[s.id]}</span>`;
+    btn.onclick=()=>{selectedSeed=s;setTool('plant');buildGardenSeedRow();setLog(`Selected ${s.emoji} ${s.name} — click a tilled garden plot!`,'info');};
+    row.appendChild(btn);
+  });
+}
+
+// ── MARKET ──
+function renderMarket(){
+  const pl=$('price-list');pl.innerHTML='';
+  ALL_SEEDS().forEach(s=>{
+    const d=document.createElement('div');d.className='price-tag';
+    d.innerHTML=`${s.emoji} ${s.name} <span class="pt-price">🪙${s.sell}</span>`;
+    pl.appendChild(d);
+  });
+  const bi=$('basket-items');bi.innerHTML='';
+  const total=basketTotal();const count=basketCount();
+  if(count===0){
+    bi.innerHTML='<div id="basket-empty-msg">Your basket is empty!<br>Head to the Farm, pick ripe crops (🧺 Pick tool), then come back to sell.</div>';
+  } else {
+    ALL_SEEDS().forEach(s=>{
+      if(basket[s.id]<=0) return;
+      const d=document.createElement('div');d.className='basket-card';
+      d.innerHTML=`
+        <span class="bc-emoji">${s.emoji}</span>
+        <div class="bc-name">${s.name}</div>
+        <div class="bc-qty">Qty: ${basket[s.id]}</div>
+        <div class="bc-earn">Sell all: 🪙${basket[s.id]*s.sell}</div>
+        <button class="sell-one-btn" onclick="sellOne('${s.id}',event)">Sell 1 → +🪙${s.sell}</button>`;
+      bi.appendChild(d);
+    });
+  }
+  $('basket-total').textContent=`Total: 🪙${total}`;
+  $('sell-all-main').disabled=count===0;
+  updateNavCoins();
+}
+
+function sellOne(id,evt){
+  if(basket[id]<=0) return;
+  const s=ALL_SEEDS().find(x=>x.id===id);
+  basket[id]--;coins+=s.sell;totalEarn+=s.sell;
+  if(evt) flashCoin(s.sell,evt.clientX-20,evt.clientY-30);
+  setMktLog(`Sold 1 ${s.emoji} ${s.name} for 🪙${s.sell}!`,'💸');
+  renderMarket();updateStats();
+}
+
+function sellAll(){
+  const total=basketTotal();if(total===0) return;
+  const rect=$('sell-all-main').getBoundingClientRect();
+  ALL_SEEDS().forEach(s=>{totalEarn+=basket[s.id]*s.sell;basket[s.id]=0;});
+  coins+=total;
+  flashCoin(total,rect.left+40,rect.top-10);
+  setMktLog(`Sold everything for 🪙${total}! Great market day! 🎉`,'🎉');
+  renderMarket();updateStats();
+}
+
+// ── FENCE ──
+function buildFence(){
+  $('fence').innerHTML=Array(Math.ceil(window.innerWidth/30)).fill('<div class="fence-post"></div>').join('');
+}
+
+// ── INIT ──
+buildGrid();
+buildFence();
+updateNavCoins();
+updateMapHUD();
+updateFarmTabs();
+window.addEventListener('resize',buildFence);
+</script>
+</body>
+</html>
