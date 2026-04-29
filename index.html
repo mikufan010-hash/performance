@@ -496,8 +496,11 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   border-radius:50%;border:3px solid #1565c0;
   box-shadow:0 4px 18px rgba(0,0,0,.25);
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;pointer-events:none;
+  font-size:26px;pointer-events:auto;cursor:pointer;
+  z-index:10;transition:transform .18s;
 }
+#map-pond:hover{transform:scale(1.06);}
+#map-pond:active{transform:scale(.97);}
 #map-pond::after{content:'🦆';position:absolute;bottom:6px;right:12px;font-size:18px;}
 
 /* Location pins */
@@ -801,7 +804,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
     <div class="map-path" style="left:500px;top:280px;width:16px;height:160px;transform:rotate(0deg)"></div>
 
     <!-- Pond — clickable! -->
-    <div id="map-pond" onclick="goFishing()" style="cursor:pointer;transition:transform .18s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">🌊
+    <div id="map-pond" onclick="goFishing()">🌊
       <div style="position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:rgba(21,101,192,.9);color:#fff;font-family:'Fredoka One',cursive;font-size:13px;padding:4px 12px;border-radius:20px;white-space:nowrap;border:1.5px solid #0d47a1;box-shadow:0 2px 8px rgba(0,0,0,.3);">🎣 Fishing Pond</div>
     </div>
 
