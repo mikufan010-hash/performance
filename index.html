@@ -268,8 +268,173 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   #nav-bar{flex-wrap:wrap;padding:6px 10px;}
 }
 /* ══════════════════════════════════
-   MAP HOME SCREEN
+   FISHING SCREEN
 ══════════════════════════════════ */
+#screen-fishing{padding-top:68px;}
+
+#fishing-scene{
+  position:relative;border-radius:20px;overflow:hidden;
+  margin-bottom:18px;height:260px;
+  background:linear-gradient(180deg,#87ceeb 0%,#b0e0f5 35%,#3a8fc0 35%,#1a6090 100%);
+  border:3px solid #1565c0;box-shadow:4px 6px 0 #0d3a6e;
+}
+/* Sky reflection */
+#fishing-scene::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:35%;
+  background:linear-gradient(180deg,#87ceeb,#b8dff0);
+}
+/* Water surface shimmer */
+#water-surface{
+  position:absolute;top:35%;left:0;right:0;height:8px;
+  background:linear-gradient(90deg,rgba(255,255,255,.4),rgba(255,255,255,.1),rgba(255,255,255,.4));
+  animation:shimmer 2s ease-in-out infinite;
+}
+@keyframes shimmer{
+  0%,100%{opacity:.6;transform:scaleX(1);}
+  50%{opacity:1;transform:scaleX(1.02);}
+}
+/* Reeds */
+.reed{
+  position:absolute;bottom:0;width:8px;
+  background:linear-gradient(to top,#5a8a20,#7ab648);
+  border-radius:4px 4px 0 0;
+}
+.reed::after{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  width:14px;height:14px;background:#8b6914;border-radius:50%;}
+
+/* Rod + line */
+#fish-rod{
+  position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  width:4px;height:90px;
+  background:linear-gradient(to bottom,#8b5e3c,#6b4423);
+  border-radius:2px;transform-origin:top center;
+  transition:transform .3s ease;
+}
+#fish-line{
+  position:absolute;top:110px;left:50%;
+  width:2px;background:rgba(255,255,255,.7);
+  transform-origin:top center;
+  transition:height .4s ease;
+}
+#fish-bobber{
+  position:absolute;left:50%;transform:translateX(-50%);
+  width:18px;height:18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#ff6b6b,#c0392b);
+  border:2px solid #922b21;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  transition:top .4s ease;
+  animation:bobberFloat 1.8s ease-in-out infinite;
+}
+@keyframes bobberFloat{
+  0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(4px);}
+}
+#fish-bobber.bite{
+  animation:bobberBite .25s ease-in-out infinite alternate!important;
+  box-shadow:0 0 12px rgba(255,200,0,.8);
+}
+@keyframes bobberBite{
+  from{transform:translateX(-50%) translateY(0);}
+  to{transform:translateX(-50%) translateY(10px);}
+}
+
+/* Catch zone bar (timing game) */
+#timing-wrap{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  width:260px;
+}
+#timing-bar-bg{
+  height:28px;background:rgba(0,0,0,.35);border-radius:14px;
+  border:2px solid rgba(255,255,255,.3);overflow:hidden;position:relative;
+}
+#timing-zone{
+  position:absolute;top:0;bottom:0;
+  background:rgba(80,220,100,.55);border-radius:0;
+  transition:left .05s linear;
+}
+#timing-indicator{
+  position:absolute;top:0;bottom:0;width:4px;
+  background:#fff;border-radius:2px;
+  box-shadow:0 0 8px rgba(255,255,255,.8);
+  transition:left .05s linear;
+}
+#timing-label{
+  text-align:center;font-family:'Fredoka One',cursive;
+  font-size:13px;color:rgba(255,255,255,.8);margin-top:6px;
+  letter-spacing:1px;
+}
+
+/* Fish display in scene */
+#caught-fish-display{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:64px;
+  animation:fishPop .4s cubic-bezier(.34,1.56,.64,1) both;
+  display:none;
+}
+@keyframes fishPop{from{opacity:0;transform:translate(-50%,-50%) scale(.3);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
+
+/* Ripple effect */
+.ripple{
+  position:absolute;border-radius:50%;
+  border:2px solid rgba(255,255,255,.5);
+  animation:rippleOut .8s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes rippleOut{from{opacity:.8;transform:scale(.2);}to{opacity:0;transform:scale(2.5);}}
+
+/* Control panel */
+#fishing-controls{
+  background:var(--cream);border:2px solid var(--bark);border-radius:14px;
+  padding:14px 18px;margin-bottom:16px;box-shadow:3px 4px 0 var(--bark);
+}
+#cast-btn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,#2196f3,#1565c0);
+  border:none;border-radius:12px;
+  font-family:'Fredoka One',cursive;font-size:20px;color:#fff;
+  box-shadow:0 4px 0 #0d47a1;cursor:pointer;
+  transition:all .12s;letter-spacing:1px;
+}
+#cast-btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 #0d47a1;}
+#cast-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0d47a1;}
+#cast-btn:disabled{background:#aaa;box-shadow:0 4px 0 #888;cursor:not-allowed;transform:none;}
+
+#fishing-status{
+  text-align:center;font-family:'Fredoka One',cursive;font-size:16px;
+  color:var(--soil-mid);margin-top:10px;min-height:24px;letter-spacing:.5px;
+}
+
+/* Fish catch result */
+#catch-result{
+  background:var(--cream);border:2px solid var(--bark);border-radius:14px;
+  padding:14px 18px;margin-bottom:16px;box-shadow:3px 4px 0 var(--bark);
+  display:none;
+}
+#catch-result h3{font-family:'Fredoka One',cursive;font-size:17px;color:var(--soil-dark);margin-bottom:10px;}
+#catch-list{display:flex;gap:8px;flex-wrap:wrap;}
+.catch-item{
+  background:#e0f7fa;border:2px solid #0097a7;border-radius:10px;
+  padding:6px 12px;display:flex;align-items:center;gap:6px;
+  font-size:13px;color:#004d5c;font-weight:600;
+}
+.catch-item .ci-count{
+  background:#0097a7;color:#fff;border-radius:8px;
+  padding:1px 7px;font-size:11px;
+}
+
+/* Fish stats bar */
+#fishing-stats{
+  display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;
+}
+.fish-stat{
+  flex:1;min-width:80px;
+  background:var(--cream);border:2px solid var(--bark);border-radius:30px;
+  padding:8px 12px;display:flex;align-items:center;gap:6px;
+  box-shadow:2px 3px 0 var(--bark);
+}
+.fish-stat .fs-icon{font-size:16px;}
+.fish-stat .fs-label{font-size:9px;color:var(--soil-mid);letter-spacing:.5px;}
+.fish-stat .fs-val{font-size:15px;font-weight:700;color:var(--soil-dark);line-height:1;}
 #screen-home{
   position:fixed!important;inset:0!important;
   padding:0!important;max-width:none!important;
@@ -382,7 +547,141 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 .mloc-market{background:linear-gradient(145deg,#fff0ee,#fdd5cf);border-color:var(--market-border);box-shadow:4px 5px 0 var(--market-dark);}
 .mloc-level {background:linear-gradient(145deg,#f5f3ff,#ddd6fe);border-color:var(--lv3);box-shadow:4px 5px 0 #7e22ce;}
 .mloc-garden{background:linear-gradient(145deg,#ecfdf5,#a7f3d0);border-color:var(--lv6);box-shadow:4px 5px 0 #065f46;}
-.mloc-garden.locked-loc{filter:grayscale(.7);opacity:.6;cursor:not-allowed;pointer-events:none;}
+.mloc-trade{background:linear-gradient(145deg,#f0fdf4,#d1fae5);border-color:#059669;box-shadow:4px 5px 0 #065f46;}
+.mloc-trade.locked-loc{filter:grayscale(.7);opacity:.6;cursor:not-allowed;pointer-events:none;}
+
+/* ══════════════════════════════════
+   TRADING POST SCREEN
+══════════════════════════════════ */
+#screen-trading{padding-top:68px;}
+
+#trade-sign{
+  background:linear-gradient(135deg,#1a3a1a,#2d5016);
+  border:3px solid #1a2e1a;border-radius:16px;
+  padding:16px 22px;margin-bottom:18px;
+  box-shadow:4px 6px 0 #0d1a0d;position:relative;
+}
+#trade-sign::before,#trade-sign::after{
+  content:'';position:absolute;top:-16px;
+  width:14px;height:18px;background:var(--bark);border-radius:2px;
+}
+#trade-sign::before{left:24px;}
+#trade-sign::after{right:24px;}
+#trade-sign-inner{display:flex;align-items:center;gap:14px;}
+#trade-sign h2{font-family:'Fredoka One',cursive;font-size:26px;color:#d4f7a0;}
+#trade-sign p{font-size:12px;color:#8bc34a;margin-top:3px;}
+.trade-decor{font-size:32px;}
+
+/* Locked overlay */
+#trade-locked{
+  background:var(--cream);border:2px dashed #059669;
+  border-radius:14px;padding:36px;text-align:center;
+  margin-bottom:16px;
+}
+#trade-locked .tl-icon{font-size:52px;margin-bottom:14px;}
+#trade-locked h3{font-family:'Fredoka One',cursive;font-size:22px;color:var(--soil-dark);margin-bottom:8px;}
+#trade-locked p{font-size:13px;color:var(--soil-mid);line-height:1.6;margin-bottom:16px;}
+#trade-locked button{
+  padding:10px 28px;background:#059669;border:2px solid #065f46;
+  border-radius:24px;font-family:'Fredoka One',cursive;font-size:16px;
+  color:#fff;cursor:pointer;box-shadow:2px 3px 0 #065f46;transition:all .15s;
+}
+#trade-locked button:hover{transform:translateY(-2px);}
+
+#trade-ui{display:none;}
+
+/* Info bar */
+#trade-info-bar{
+  display:flex;gap:8px;flex-wrap:wrap;
+  background:var(--cream);border:2px solid var(--bark);
+  border-radius:14px;padding:11px 15px;
+  margin-bottom:16px;box-shadow:3px 4px 0 var(--bark);
+  align-items:center;
+}
+.tib-pill{
+  display:flex;align-items:center;gap:6px;
+  flex:1;min-width:80px;
+}
+.tib-pill .tp-icon{font-size:18px;}
+.tib-pill .tp-label{font-size:9px;color:var(--soil-mid);letter-spacing:.5px;}
+.tib-pill .tp-val{font-size:16px;font-weight:700;color:var(--soil-dark);}
+#trade-refresh-btn{
+  margin-left:auto;padding:7px 14px;
+  background:#e8f5e9;border:2px solid #059669;border-radius:22px;
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;color:#065f46;box-shadow:2px 2px 0 #065f46;transition:all .15s;
+}
+#trade-refresh-btn:hover{background:#d1fae5;transform:translateY(-1px);}
+
+/* Price legend */
+#trade-legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.tleg{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;border:1.5px solid;}
+.tleg.hot   {background:#fff0f0;border-color:#ef4444;color:#991b1b;}
+.tleg.normal{background:#eff6ff;border-color:#3b82f6;color:#1d4ed8;}
+.tleg.cold  {background:#f0f9ff;border-color:#0ea5e9;color:#0369a1;}
+
+/* Trade grid */
+#trade-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(175px,1fr));
+  gap:12px;margin-bottom:18px;
+}
+.trade-card{
+  border-radius:14px;padding:16px 13px 13px;
+  text-align:center;position:relative;
+  border:2.5px solid;transition:transform .15s,box-shadow .15s;
+}
+.trade-card:hover{transform:translateY(-4px);}
+.trade-card.hot   {background:linear-gradient(145deg,#fff0f0,#fde8e8);border-color:#ef4444;box-shadow:3px 5px 0 #b91c1c;}
+.trade-card.hot:hover{box-shadow:3px 9px 0 #b91c1c;}
+.trade-card.normal{background:linear-gradient(145deg,#eff6ff,#dbeafe);border-color:#3b82f6;box-shadow:3px 5px 0 #1d4ed8;}
+.trade-card.normal:hover{box-shadow:3px 9px 0 #1d4ed8;}
+.trade-card.cold  {background:linear-gradient(145deg,#f0f9ff,#e0f2fe);border-color:#0ea5e9;box-shadow:3px 5px 0 #0369a1;}
+.trade-card.cold:hover{box-shadow:3px 9px 0 #0369a1;}
+.trade-card.sold  {background:#f9fafb;border-color:#d1d5db;box-shadow:3px 5px 0 #9ca3af;opacity:.6;}
+
+.tc-badge{
+  position:absolute;top:9px;right:9px;
+  font-size:10px;font-weight:700;padding:2px 7px;
+  border-radius:10px;border:1.5px solid;
+}
+.tc-badge.hot   {background:#fee2e2;border-color:#ef4444;color:#991b1b;}
+.tc-badge.normal{background:#dbeafe;border-color:#3b82f6;color:#1d4ed8;}
+.tc-badge.cold  {background:#e0f2fe;border-color:#0ea5e9;color:#0369a1;}
+.tc-badge.sold  {background:#f3f4f6;border-color:#9ca3af;color:#6b7280;}
+
+.tc-emoji{font-size:44px;display:block;margin-bottom:7px;}
+.tc-name {font-family:'Fredoka One',cursive;font-size:16px;color:var(--soil-dark);margin-bottom:5px;}
+.tc-price-today{font-size:20px;font-weight:700;color:var(--soil-dark);}
+.tc-price-today.hot-text {color:#b91c1c;}
+.tc-price-today.cold-text{color:#0369a1;}
+.tc-price-base{font-size:11px;color:#9ca3af;text-decoration:line-through;margin-bottom:2px;}
+.tc-diff{font-size:11px;font-weight:700;margin-bottom:8px;}
+.tc-diff.up  {color:#16a34a;}
+.tc-diff.down{color:#dc2626;}
+.tc-qty{font-size:11px;color:var(--soil-mid);margin-bottom:10px;}
+
+.tc-btns{display:flex;flex-direction:column;gap:5px;}
+.trade-sell-btn{
+  width:100%;padding:7px;border:2px solid;border-radius:12px;
+  font-family:'Fredoka One',cursive;font-size:12px;
+  cursor:pointer;transition:all .12s;
+}
+.trade-sell-btn:hover{transform:translateY(-1px);}
+.trade-sell-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.tsb-1  {background:#dcfce7;border-color:#16a34a;color:#166534;box-shadow:2px 2px 0 #166534;}
+.tsb-all{background:#16a34a;border-color:#14532d;color:#fff;box-shadow:2px 2px 0 #14532d;}
+.tsb-all:hover{background:#15803d;}
+
+/* Trade log */
+#trade-log-box{
+  background:var(--cream);border:2px solid var(--bark);border-radius:12px;
+  padding:10px 14px;font-size:13px;color:var(--soil-dark);
+  min-height:40px;box-shadow:2px 3px 0 var(--bark);
+  display:flex;align-items:center;gap:8px;
+}
+#tlog-icon{font-size:16px;}
+#tlog-text{flex:1;line-height:1.5;}
 .locked-tag{
   position:absolute;top:-10px;right:-10px;
   background:#374151;color:#fff;font-size:10px;
@@ -501,8 +800,10 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
     <div class="map-path" style="left:260px;top:420px;width:260px;height:16px;transform:rotate(-1deg)"></div>
     <div class="map-path" style="left:500px;top:280px;width:16px;height:160px;transform:rotate(0deg)"></div>
 
-    <!-- Pond -->
-    <div id="map-pond">🌊</div>
+    <!-- Pond — clickable! -->
+    <div id="map-pond" onclick="goFishing()" style="cursor:pointer;transition:transform .18s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">🌊
+      <div style="position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:rgba(21,101,192,.9);color:#fff;font-family:'Fredoka One',cursive;font-size:13px;padding:4px 12px;border-radius:20px;white-space:nowrap;border:1.5px solid #0d47a1;box-shadow:0 2px 8px rgba(0,0,0,.3);">🎣 Fishing Pond</div>
+    </div>
 
     <!-- Trees -->
     <div class="map-tree" style="left:18px;top:50px">🌲</div>
@@ -568,6 +869,18 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <div class="map-loc-stem"></div>
     </div>
 
+    <!-- Trading Post (Lv3) -->
+    <div class="map-loc" id="map-trade-pin" style="left:570px;top:130px" onclick="goTrading()">
+      <div class="map-tooltip">Dynamic prices — sometimes<br>above normal! Unlock at Lv 3</div>
+      <div class="map-loc-box mloc-trade locked-loc" id="map-trade-box">
+        <div class="locked-tag" id="map-trade-lock">🔒 Lv3</div>
+        <span class="map-loc-icon">📈</span>
+        <span class="map-loc-name">Trading Post</span>
+        <span class="map-loc-hint">Daily prices</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
     <!-- Back Garden (Lv6) -->
     <div class="map-loc mloc-garden-loc" id="map-garden-pin" style="left:650px;top:250px" onclick="goGarden()">
       <div class="map-tooltip">Grow lavender, roses<br>&amp; herbs — unlock at Lv 6!</div>
@@ -590,6 +903,108 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 
   <!-- Compass -->
   <div id="map-compass">🧭</div>
+
+</div>
+
+<!-- ═══ TRADING POST ═══ -->
+<div id="screen-trading" class="screen">
+
+  <div id="trade-sign">
+    <div id="trade-sign-inner">
+      <span class="trade-decor">📈</span>
+      <div>
+        <h2>Trading Post</h2>
+        <p id="trade-day-subtitle">Day <span id="trade-day-num">1</span> prices · Refreshes every new day</p>
+      </div>
+      <span class="trade-decor">💹</span>
+    </div>
+  </div>
+
+  <!-- Locked state -->
+  <div id="trade-locked">
+    <div class="tl-icon">🔒</div>
+    <h3>Trading Post Locked</h3>
+    <p>Reach <strong>Level 3 — Master Farmer</strong> to unlock the Trading Post.<br>
+    Prices fluctuate daily — sometimes far above normal Market rates!</p>
+    <button onclick="goLevel()">⭐ Go Level Up</button>
+  </div>
+
+  <!-- Unlocked UI -->
+  <div id="trade-ui">
+    <div id="trade-info-bar">
+      <div class="tib-pill"><div class="tp-icon">🪙</div><div><div class="tp-label">COINS</div><div class="tp-val" id="ti-coins">—</div></div></div>
+      <div class="tib-pill"><div class="tp-icon">🧺</div><div><div class="tp-label">BASKET</div><div class="tp-val" id="ti-basket">—</div></div></div>
+      <div class="tib-pill"><div class="tp-icon">🐟</div><div><div class="tp-label">FISH</div><div class="tp-val" id="ti-fish">—</div></div></div>
+      <button id="trade-refresh-btn" onclick="refreshTradePrices()">🔄 Refresh</button>
+    </div>
+
+    <div id="trade-legend">
+      <span class="tleg hot">🔥 Hot — above normal</span>
+      <span class="tleg normal">📊 Normal rate</span>
+      <span class="tleg cold">❄️ Below normal</span>
+    </div>
+
+    <div id="trade-grid"></div>
+
+    <div id="trade-log-box">
+      <span id="tlog-icon">📋</span>
+      <span id="tlog-text">Sell crops &amp; fish here at today's prices. Prices change every day!</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ FISHING ═══ -->
+<div id="screen-fishing" class="screen">
+
+  <div id="fishing-stats">
+    <div class="fish-stat"><div class="fs-icon">🎣</div><div><div class="fs-label">CAUGHT TODAY</div><div class="fs-val" id="fs-today">0</div></div></div>
+    <div class="fish-stat"><div class="fs-icon">🐟</div><div><div class="fs-label">TOTAL CAUGHT</div><div class="fs-val" id="fs-total">0</div></div></div>
+    <div class="fish-stat"><div class="fs-icon">🪙</div><div><div class="fs-label">COINS</div><div class="fs-val" id="fs-coins">50</div></div></div>
+  </div>
+
+  <!-- Fishing scene -->
+  <div id="fishing-scene">
+    <!-- Reeds -->
+    <div class="reed" style="left:5%;height:55%;"></div>
+    <div class="reed" style="left:8%;height:45%;"></div>
+    <div class="reed" style="right:6%;height:60%;"></div>
+    <div class="reed" style="right:10%;height:40%;"></div>
+    <div class="reed" style="left:18%;height:35%;"></div>
+    <!-- Water shimmer -->
+    <div id="water-surface"></div>
+    <!-- Scenery -->
+    <div style="position:absolute;top:5%;left:15%;font-size:28px;pointer-events:none;">🌤️</div>
+    <div style="position:absolute;top:4%;right:20%;font-size:22px;pointer-events:none;opacity:.7;">☁️</div>
+    <div style="position:absolute;bottom:5%;left:3%;font-size:22px;pointer-events:none;">🦆</div>
+    <div style="position:absolute;top:8%;left:42%;font-size:16px;color:rgba(255,255,255,.6);font-family:'Fredoka One',cursive;letter-spacing:1px;">Fernhollow Pond</div>
+    <!-- Rod -->
+    <div id="fish-rod"></div>
+    <div id="fish-line" style="height:0px;"></div>
+    <div id="fish-bobber" style="top:35%;display:none;"></div>
+    <!-- Timing bar (shown during bite) -->
+    <div id="timing-wrap" style="display:none;">
+      <div id="timing-bar-bg">
+        <div id="timing-zone" style="left:30%;width:25%;"></div>
+        <div id="timing-indicator" style="left:0%;"></div>
+      </div>
+      <div id="timing-label">PRESS CAST when the bar is in the green zone!</div>
+    </div>
+    <!-- Caught fish display -->
+    <div id="caught-fish-display"></div>
+  </div>
+
+  <!-- Controls -->
+  <div id="fishing-controls">
+    <button id="cast-btn" onclick="fishingAction()">🎣 Cast Line</button>
+    <div id="fishing-status">Choose your moment — cast your line into the pond!</div>
+  </div>
+
+  <!-- Catch basket -->
+  <div id="catch-result">
+    <h3>🧺 Catch Basket <span id="catch-sell-hint" style="font-size:12px;color:var(--soil-mid);font-weight:400">— sell at the Market!</span></h3>
+    <div id="catch-list"></div>
+  </div>
 
 </div>
 
@@ -866,6 +1281,16 @@ const GARDEN_SEEDS=[
   {id:'rose',    name:'Rose',    emoji:'🌹',cost:25,sell:55,days:5,desc:'Sable\'s favourite.'},
   {id:'herb',    name:'Herbs',   emoji:'🌿',cost:15,sell:35,days:3,desc:'Calla uses these at the clinic.'},
 ];
+
+// Fish data
+const FISH=[
+  {id:'minnow',   name:'Minnow',       emoji:'🐟',sell:8,  rarity:0.35,desc:'Common little fish.'},
+  {id:'carp',     name:'Carp',         emoji:'🐠',sell:15, rarity:0.25,desc:'A decent catch.'},
+  {id:'perch',    name:'Perch',        emoji:'🐡',sell:22, rarity:0.18,desc:'Spiny but valuable.'},
+  {id:'trout',    name:'Trout',        emoji:'🎣',sell:35, rarity:0.12,desc:'Prized by the locals.'},
+  {id:'bass',     name:'Bass',         emoji:'🦈',sell:50, rarity:0.07,desc:'A real fighter!'},
+  {id:'golden',   name:'Golden Fish',  emoji:'🌟',sell:120,rarity:0.03,desc:'Legendary. Almost never caught.'},
+];
 const ALL_SEEDS=()=>[...SEEDS,...GARDEN_SEEDS];
 
 // ── STATE ──
@@ -873,6 +1298,16 @@ let coins=50, day=1, totalEarn=0;
 let selectedSeed=null, tool='till';
 let level=1;
 let activeFarm='main'; // 'main' | 'garden'
+// Trading Post state
+let tradeDay=0, tradePrices=[];
+// Fishing state
+const fishBasket={};
+FISH.forEach(f=>{fishBasket[f.id]=0;});
+let fishingState='idle'; // idle | casting | waiting | bite | reeling
+let fishingTimer=null;
+let timingPos=0, timingDir=1, timingZoneL=30, timingZoneW=25;
+let timingRaf=null;
+let todayCaught=0, totalCaught=0;
 const inventory={};
 const basket={};
 SEEDS.forEach(s=>{inventory[s.id]=0;basket[s.id]=0;});
@@ -882,8 +1317,14 @@ const gardenCells=Array.from({length:12},()=>({state:'empty',seed:null,daysPlant
 
 // ── UTILS ──
 function $(id){return document.getElementById(id);}
-function basketTotal(){return ALL_SEEDS().reduce((s,v)=>s+basket[v.id]*v.sell,0);}
-function basketCount(){return ALL_SEEDS().reduce((s,v)=>s+basket[v.id],0);}
+function basketTotal(){
+  return ALL_SEEDS().reduce((s,v)=>s+basket[v.id]*v.sell,0)
+       + FISH.reduce((s,f)=>s+fishBasket[f.id]*f.sell,0);
+}
+function basketCount(){
+  return ALL_SEEDS().reduce((s,v)=>s+basket[v.id],0)
+       + FISH.reduce((s,f)=>s+fishBasket[f.id],0);
+}
 
 function updateNavCoins(){
   $('nav-coin-val').textContent=coins;
@@ -905,7 +1346,14 @@ function updateMapHUD(){
   const mn=$('map-day-num');    if(mn) mn.textContent=day;
   const ml=$('map-hud-level');
   if(ml){ const lv=LEVELS[level]; ml.textContent=lv.icon+' '+lv.label; ml.className=lv.cls; }
-  // unlock garden pin when Lv6
+  // Trading Post pin
+  const tbox=$('map-trade-box');
+  const tlock=$('map-trade-lock');
+  const tpin=$('map-trade-pin');
+  if(tbox)  tbox.classList.toggle('locked-loc',level<3);
+  if(tlock) tlock.style.display=level>=3?'none':'';
+  if(tpin)  tpin.style.pointerEvents=level>=3?'auto':'none';
+  // Garden pin
   const gbox=$('map-garden-box');
   const glock=$('map-garden-lock');
   if(gbox){ gbox.classList.toggle('locked-loc',level<6); }
@@ -989,7 +1437,7 @@ function showLvlModal(lv){
 function closeLvlModal(){$('lvl-modal-backdrop').classList.remove('open');}
 
 // ── ROUTING ──
-const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm'};
+const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm','screen-fishing':'nav-home','screen-trading':'nav-home'};
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');
@@ -1285,6 +1733,8 @@ function nextDay(){
   });
   if(readyCnt>0) setLog(`Day ${day} — ${readyCnt} plot(s) ready to pick! 🎉`,'day');
   else setLog(`Day ${day} — sunshine and good vibes. Keep farming!`,'day');
+  todayCaught=0; // reset daily fish count
+  tradeDay=0;    // reset trade prices so they regenerate tomorrow
   renderGrid();
 }
 
@@ -1391,20 +1841,36 @@ function renderMarket(){
     d.innerHTML=`${s.emoji} ${s.name} <span class="pt-price">🪙${s.sell}</span>`;
     pl.appendChild(d);
   });
+  // Fish prices
+  const fishDiv=document.createElement('div');
+  fishDiv.style.cssText='width:100%;font-family:\'Fredoka One\',cursive;font-size:13px;color:#0369a1;margin:6px 0 4px;';
+  fishDiv.textContent='🎣 Fish';
+  pl.appendChild(fishDiv);
+  FISH.forEach(f=>{
+    const d=document.createElement('div');d.className='price-tag';
+    d.style.cssText='background:#e0f7fa;border-color:#0097a7;';
+    d.innerHTML=`${f.emoji} ${f.name} <span class="pt-price" style="color:#00695c">🪙${f.sell}</span>`;
+    pl.appendChild(d);
+  });
+
   const bi=$('basket-items');bi.innerHTML='';
   const total=basketTotal();const count=basketCount();
   if(count===0){
-    bi.innerHTML='<div id="basket-empty-msg">Your basket is empty!<br>Head to the Farm, pick ripe crops (🧺 Pick tool), then come back to sell.</div>';
+    bi.innerHTML='<div id="basket-empty-msg">Your basket is empty!<br>Farm crops or go fishing, then come back to sell.</div>';
   } else {
+    // Crops
     ALL_SEEDS().forEach(s=>{
       if(basket[s.id]<=0) return;
       const d=document.createElement('div');d.className='basket-card';
-      d.innerHTML=`
-        <span class="bc-emoji">${s.emoji}</span>
-        <div class="bc-name">${s.name}</div>
-        <div class="bc-qty">Qty: ${basket[s.id]}</div>
-        <div class="bc-earn">Sell all: 🪙${basket[s.id]*s.sell}</div>
-        <button class="sell-one-btn" onclick="sellOne('${s.id}',event)">Sell 1 → +🪙${s.sell}</button>`;
+      d.innerHTML=`<span class="bc-emoji">${s.emoji}</span><div class="bc-name">${s.name}</div><div class="bc-qty">Qty: ${basket[s.id]}</div><div class="bc-earn">Sell all: 🪙${basket[s.id]*s.sell}</div><button class="sell-one-btn" onclick="sellOne('${s.id}','crop',event)">Sell 1 → +🪙${s.sell}</button>`;
+      bi.appendChild(d);
+    });
+    // Fish
+    FISH.forEach(f=>{
+      if(fishBasket[f.id]<=0) return;
+      const d=document.createElement('div');d.className='basket-card';
+      d.style.borderColor='#0097a7';
+      d.innerHTML=`<span class="bc-emoji">${f.emoji}</span><div class="bc-name">${f.name}</div><div class="bc-qty">Qty: ${fishBasket[f.id]}</div><div class="bc-earn">Sell all: 🪙${fishBasket[f.id]*f.sell}</div><button class="sell-one-btn" style="background:#0097a7" onclick="sellOne('${f.id}','fish',event)">Sell 1 → +🪙${f.sell}</button>`;
       bi.appendChild(d);
     });
   }
@@ -1412,13 +1878,20 @@ function renderMarket(){
   $('sell-all-main').disabled=count===0;
   updateNavCoins();
 }
-
-function sellOne(id,evt){
-  if(basket[id]<=0) return;
-  const s=ALL_SEEDS().find(x=>x.id===id);
-  basket[id]--;coins+=s.sell;totalEarn+=s.sell;
-  if(evt) flashCoin(s.sell,evt.clientX-20,evt.clientY-30);
-  setMktLog(`Sold 1 ${s.emoji} ${s.name} for 🪙${s.sell}!`,'💸');
+function sellOne(id,type,evt){
+  if(type==='fish'){
+    if(fishBasket[id]<=0) return;
+    const f=FISH.find(x=>x.id===id);
+    fishBasket[id]--;coins+=f.sell;totalEarn+=f.sell;
+    if(evt) flashCoin(f.sell,evt.clientX-20,evt.clientY-30);
+    setMktLog(`Sold 1 ${f.emoji} ${f.name} for 🪙${f.sell}!`,'🎣');
+  } else {
+    if(basket[id]<=0) return;
+    const s=ALL_SEEDS().find(x=>x.id===id);
+    basket[id]--;coins+=s.sell;totalEarn+=s.sell;
+    if(evt) flashCoin(s.sell,evt.clientX-20,evt.clientY-30);
+    setMktLog(`Sold 1 ${s.emoji} ${s.name} for 🪙${s.sell}!`,'💸');
+  }
   renderMarket();updateStats();
 }
 
@@ -1426,10 +1899,344 @@ function sellAll(){
   const total=basketTotal();if(total===0) return;
   const rect=$('sell-all-main').getBoundingClientRect();
   ALL_SEEDS().forEach(s=>{totalEarn+=basket[s.id]*s.sell;basket[s.id]=0;});
+  FISH.forEach(f=>{totalEarn+=fishBasket[f.id]*f.sell;fishBasket[f.id]=0;});
   coins+=total;
   flashCoin(total,rect.left+40,rect.top-10);
   setMktLog(`Sold everything for 🪙${total}! Great market day! 🎉`,'🎉');
   renderMarket();updateStats();
+}
+
+// ── TRADING POST ──
+function goTrading(){
+  if(level<3){ goLevel(); return; }
+  ensureTradePrices();
+  renderTrading();
+  showScreen('screen-trading');
+}
+
+// Seeded RNG so prices are stable within a day
+function seededRand(seed){
+  let s=seed>>>0;
+  return function(){
+    s+=0x6D2B79F5;
+    let t=Math.imul(s^(s>>>15),1|s);
+    t^=t+Math.imul(t^(t>>>7),61|t);
+    return((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+
+function ensureTradePrices(){
+  if(tradeDay===day && tradePrices.length>0) return;
+  generateTradePrices();
+}
+
+function generateTradePrices(){
+  tradeDay=day;
+  const rng=seededRand(day*9137+42);
+  // Combine all sellable items (crops + garden seeds + fish)
+  const items=[...ALL_SEEDS(),...FISH];
+  tradePrices=items.map(item=>{
+    const base=item.sell;
+    const swing=0.7+rng()*1.2;        // 0.7x – 1.9x
+    const price=Math.round(base*swing);
+    const qty=3+Math.floor(rng()*8);  // 3–10 buyers
+    return{id:item.id, price, qty, basePrice:base};
+  });
+}
+
+function refreshTradePrices(){
+  // Re-roll with time-based extra seed
+  const rng=seededRand(day*9137+Date.now()%1000);
+  const items=[...ALL_SEEDS(),...FISH];
+  tradePrices=items.map(item=>{
+    const base=item.sell;
+    const swing=0.7+rng()*1.2;
+    const price=Math.round(base*swing);
+    const qty=3+Math.floor(rng()*8);
+    return{id:item.id, price, qty, basePrice:base};
+  });
+  renderTrading();
+  setTlog('Prices refreshed! Keep an eye out for 🔥 hot deals.','🔄');
+}
+
+function renderTrading(){
+  $('trade-day-num').textContent=day;
+  $('ti-coins').textContent=coins;
+  $('ti-basket').textContent=basketCount()-FISH.reduce((s,f)=>s+fishBasket[f.id],0);
+  $('ti-fish').textContent=FISH.reduce((s,f)=>s+fishBasket[f.id],0);
+
+  // Show/hide locked vs UI
+  const locked=level<3;
+  $('trade-locked').style.display=locked?'block':'none';
+  $('trade-ui').style.display=locked?'none':'block';
+  if(locked) return;
+
+  const grid=$('trade-grid');
+  grid.innerHTML='';
+
+  const allItems=[...ALL_SEEDS(),...FISH];
+
+  tradePrices.forEach(t=>{
+    const item=allItems.find(x=>x.id===t.id);
+    if(!item) return;
+
+    // How many in basket (crop or fish)
+    const inBasket= FISH.find(f=>f.id===t.id)
+      ? fishBasket[t.id]||0
+      : basket[t.id]||0;
+
+    const diff=t.price-t.basePrice;
+    const diffPct=Math.round((diff/t.basePrice)*100);
+    const soldOut=t.qty<=0;
+
+    let mood='normal';
+    if(t.price>t.basePrice) mood='hot';
+    if(t.price<t.basePrice) mood='cold';
+    if(soldOut) mood='sold';
+
+    const badgeText={hot:'🔥 Hot',normal:'📊 Normal',cold:'❄️ Low',sold:'✅ Sold Out'}[mood];
+    const priceClass=mood==='hot'?'hot-text':mood==='cold'?'cold-text':'';
+
+    let diffHtml='';
+    if(diff>0) diffHtml=`<div class="tc-diff up">▲ +${diffPct}% above normal</div>`;
+    else if(diff<0) diffHtml=`<div class="tc-diff down">▼ ${Math.abs(diffPct)}% below normal</div>`;
+    else diffHtml=`<div class="tc-diff" style="color:#6b7280">= Normal price</div>`;
+
+    const canSell=inBasket>0&&!soldOut;
+
+    const card=document.createElement('div');
+    card.className=`trade-card ${mood}`;
+    card.innerHTML=`
+      <div class="tc-badge ${mood}">${badgeText}</div>
+      <span class="tc-emoji">${item.emoji}</span>
+      <div class="tc-name">${item.name}</div>
+      <div class="tc-price-base">Normal: 🪙${t.basePrice}</div>
+      <div class="tc-price-today ${priceClass}">🪙${t.price} <span style="font-size:12px;font-weight:400">/ each</span></div>
+      ${diffHtml}
+      <div class="tc-qty">${soldOut?'No buyers left today':`${t.qty} buyer(s) left · You have: ${inBasket}`}</div>
+      <div class="tc-btns">
+        <button class="trade-sell-btn tsb-1"   ${canSell?'':'disabled'} onclick="tradeSell1('${t.id}',event)">Sell 1 → +🪙${t.price}</button>
+        <button class="trade-sell-btn tsb-all" ${canSell?'':'disabled'} onclick="tradeSellAll('${t.id}',event)">Sell All (${inBasket}) → +🪙${inBasket*t.price}</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function tradeSell1(id,evt){
+  const t=tradePrices.find(x=>x.id===id);
+  if(!t||t.qty<=0) return;
+  const allItems=[...ALL_SEEDS(),...FISH];
+  const item=allItems.find(x=>x.id===id);
+  const isFish=!!FISH.find(f=>f.id===id);
+  const pool=isFish?fishBasket:basket;
+  if((pool[id]||0)<=0) return;
+
+  pool[id]--;
+  t.qty--;
+  coins+=t.price;
+  totalEarn+=t.price;
+  if(evt) flashCoin(t.price,evt.clientX-20,evt.clientY-30);
+  const bonus=t.price>t.basePrice?` (+🪙${t.price-t.basePrice} vs Market!)`:'';
+  setTlog(`Sold 1 ${item.emoji} ${item.name} for 🪙${t.price}${bonus}`,t.price>t.basePrice?'🔥':'💸');
+  renderTrading();
+  updateNavCoins();
+}
+
+function tradeSellAll(id,evt){
+  const t=tradePrices.find(x=>x.id===id);
+  if(!t||t.qty<=0) return;
+  const allItems=[...ALL_SEEDS(),...FISH];
+  const item=allItems.find(x=>x.id===id);
+  const isFish=!!FISH.find(f=>f.id===id);
+  const pool=isFish?fishBasket:basket;
+  const canSell=Math.min(pool[id]||0,t.qty);
+  if(canSell<=0) return;
+
+  const earned=canSell*t.price;
+  const normal=canSell*t.basePrice;
+  const bonus=earned-normal;
+  pool[id]-=canSell;
+  t.qty-=canSell;
+  coins+=earned;
+  totalEarn+=earned;
+  if(evt) flashCoin(earned,evt.clientX-30,evt.clientY-30);
+  let msg=`Sold ${canSell}× ${item.emoji} ${item.name} for 🪙${earned}!`;
+  let icon='💸';
+  if(bonus>0){msg+=` 🔥 +🪙${bonus} bonus!`;icon='🎉';}
+  setTlog(msg,icon);
+  renderTrading();
+  updateNavCoins();
+}
+
+function setTlog(msg,icon='📋'){
+  $('tlog-icon').textContent=icon;
+  $('tlog-text').textContent=msg;
+}
+
+// ── FISHING ──
+function goFishing(){
+  updateFishingUI();
+  showScreen('screen-fishing');
+}
+
+function updateFishingUI(){
+  $('fs-today').textContent = todayCaught;
+  $('fs-total').textContent = totalCaught;
+  $('fs-coins').textContent = coins;
+  renderCatchBasket();
+}
+
+function fishingAction(){
+  if(fishingState==='idle')    startCast();
+  else if(fishingState==='bite') reel();
+}
+
+function startCast(){
+  fishingState='casting';
+  $('cast-btn').disabled=true;
+  setFishStatus('🎣 Casting...');
+  // Animate line extending
+  const line=$('fish-line');
+  const bobber=$('fish-bobber');
+  line.style.height='0px'; bobber.style.display='none';
+  line.style.height='130px';
+  setTimeout(()=>{
+    bobber.style.display='block';
+    bobber.style.top='calc(35% + 130px)';
+    // Ripple
+    addRipple();
+    fishingState='waiting';
+    setFishStatus('⏳ Waiting for a bite...');
+    $('cast-btn').disabled=false;
+    $('cast-btn').textContent='❌ Reel In (no catch)';
+    // Random wait before bite: 2–6 seconds
+    const wait=2000+Math.random()*4000;
+    fishingTimer=setTimeout(triggerBite, wait);
+  },600);
+}
+
+function triggerBite(){
+  fishingState='bite';
+  const bobber=$('fish-bobber');
+  bobber.classList.add('bite');
+  setFishStatus('🐟 A bite! Press CAST when the bar hits the green zone!');
+  $('cast-btn').textContent='🎣 CATCH IT!';
+  $('cast-btn').style.background='linear-gradient(135deg,#e74c3c,#c0392b)';
+  $('cast-btn').style.boxShadow='0 4px 0 #922b21';
+  // Show timing bar
+  $('timing-wrap').style.display='block';
+  // Randomise zone position (harder = smaller zone)
+  timingZoneW = 18 + Math.random()*22; // 18–40% wide
+  timingZoneL = 10 + Math.random()*(70-timingZoneW);
+  $('timing-zone').style.left=timingZoneL+'%';
+  $('timing-zone').style.width=timingZoneW+'%';
+  timingPos=0; timingDir=1;
+  startTimingBar();
+  // If player doesn't react in 3s, fish escapes
+  fishingTimer=setTimeout(()=>{ if(fishingState==='bite') fishEscape(); }, 3000);
+}
+
+function startTimingBar(){
+  if(timingRaf) cancelAnimationFrame(timingRaf);
+  const speed=0.7 + Math.random()*0.6; // 0.7–1.3% per frame
+  function tick(){
+    if(fishingState!=='bite') return;
+    timingPos+=timingDir*speed;
+    if(timingPos>=100){timingPos=100;timingDir=-1;}
+    if(timingPos<=0) {timingPos=0; timingDir=1;}
+    $('timing-indicator').style.left=timingPos+'%';
+    timingRaf=requestAnimationFrame(tick);
+  }
+  timingRaf=requestAnimationFrame(tick);
+}
+
+function reel(){
+  if(fishingState!=='bite') return;
+  clearTimeout(fishingTimer);
+  if(timingRaf){cancelAnimationFrame(timingRaf);timingRaf=null;}
+  // Check if indicator is in the green zone
+  const inZone = timingPos>=timingZoneL && timingPos<=(timingZoneL+timingZoneW);
+  $('timing-wrap').style.display='none';
+  $('fish-bobber').classList.remove('bite');
+  if(inZone){
+    catchFish();
+  } else {
+    fishEscape();
+  }
+}
+
+function catchFish(){
+  fishingState='idle';
+  // Pick a random fish by rarity
+  const roll=Math.random();
+  let cumul=0, caught=FISH[0];
+  for(const f of FISH){
+    cumul+=f.rarity;
+    if(roll<cumul){caught=f;break;}
+  }
+  fishBasket[caught.id]++;
+  todayCaught++; totalCaught++;
+  // Animate
+  const disp=$('caught-fish-display');
+  disp.textContent=caught.emoji;
+  disp.style.display='block';
+  addRipple();
+  setTimeout(()=>{ disp.style.display='none'; },1800);
+  // Reset line
+  $('fish-line').style.height='0px';
+  $('fish-bobber').style.display='none';
+  resetCastBtn();
+  const rarity=caught.rarity<=0.05?'✨ RARE! ':'';
+  setFishStatus(`${rarity}Caught a ${caught.emoji} ${caught.name}! (+🪙${caught.sell} if sold)`);
+  updateFishingUI();
+}
+
+function fishEscape(){
+  fishingState='idle';
+  $('fish-line').style.height='0px';
+  $('fish-bobber').style.display='none';
+  $('fish-bobber').classList.remove('bite');
+  $('timing-wrap').style.display='none';
+  if(timingRaf){cancelAnimationFrame(timingRaf);timingRaf=null;}
+  resetCastBtn();
+  const msgs=['The fish got away!','Too slow — it escaped!','Almost! Try again.','It snapped the line!'];
+  setFishStatus('💨 '+msgs[Math.floor(Math.random()*msgs.length)]);
+}
+
+function resetCastBtn(){
+  const btn=$('cast-btn');
+  btn.textContent='🎣 Cast Line';
+  btn.style.background='linear-gradient(135deg,#2196f3,#1565c0)';
+  btn.style.boxShadow='0 4px 0 #0d47a1';
+  btn.disabled=false;
+  fishingState='idle';
+}
+
+function setFishStatus(msg){ $('fishing-status').textContent=msg; }
+
+function addRipple(){
+  const scene=$('fishing-scene');
+  const el=document.createElement('div');
+  el.className='ripple';
+  el.style.cssText=`left:calc(50% - 30px);top:calc(35% + 110px);width:60px;height:60px;`;
+  scene.appendChild(el);
+  setTimeout(()=>el.remove(),800);
+}
+
+function renderCatchBasket(){
+  const list=$('catch-list');
+  const result=$('catch-result');
+  list.innerHTML='';
+  const hasAny=FISH.some(f=>fishBasket[f.id]>0);
+  if(!hasAny){ result.style.display='none'; return; }
+  result.style.display='block';
+  FISH.forEach(f=>{
+    if(!fishBasket[f.id]) return;
+    const d=document.createElement('div');
+    d.className='catch-item';
+    d.innerHTML=`${f.emoji} ${f.name} <span class="ci-count">×${fishBasket[f.id]}</span> <span style="opacity:.6;font-size:11px">🪙${f.sell} ea.</span>`;
+    list.appendChild(d);
+  });
 }
 
 // ── FENCE ──
