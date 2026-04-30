@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌾 Little Farmer · Country Life</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;1,400&family=Lora:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
   --soil-dark:#3d2b1f; --soil-mid:#5c3d2a; --soil-light:#7a5230;
@@ -268,8 +268,197 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   #nav-bar{flex-wrap:wrap;padding:6px 10px;}
 }
 /* ══════════════════════════════════
-   FISHING SCREEN
+   TUTORIAL SYSTEM (Gus)
 ══════════════════════════════════ */
+
+/* Darkened backdrop */
+#tutorial-backdrop{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0);
+  pointer-events:none;
+  transition:background .4s ease;
+}
+#tutorial-backdrop.active{
+  background:rgba(0,0,0,.55);
+  pointer-events:auto;
+}
+
+/* Gus speech bubble */
+#tutorial-bubble{
+  position:fixed;z-index:310;
+  bottom:0;left:0;right:0;
+  display:flex;align-items:flex-end;gap:0;
+  padding:0 0 38px 0;
+  transform:translateY(100%);
+  transition:transform .45s cubic-bezier(.34,1.28,.64,1);
+}
+#tutorial-bubble.show{transform:translateY(0);}
+
+/* Gus portrait */
+#gus-portrait{
+  flex-shrink:0;
+  width:100px;height:100px;
+  background:linear-gradient(145deg,#fef3c7,#fde68a);
+  border:3px solid var(--bark);
+  border-radius:50%;
+  margin-left:20px;margin-bottom:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;
+  box-shadow:3px 4px 0 rgba(0,0,0,.25);
+  flex-shrink:0;
+  animation:gusBob 2.5s ease-in-out infinite;
+}
+@keyframes gusBob{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+
+/* Speech box */
+#gus-box{
+  flex:1;
+  background:var(--cream);
+  border:3px solid var(--bark);
+  border-radius:16px 16px 16px 4px;
+  padding:16px 20px 14px;
+  margin:0 16px 0 12px;
+  box-shadow:4px 5px 0 var(--bark);
+  position:relative;
+  max-width:600px;
+}
+/* Arrow pointing left to Gus */
+#gus-box::before{
+  content:'';
+  position:absolute;left:-14px;bottom:24px;
+  width:0;height:0;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-right:14px solid var(--bark);
+}
+#gus-box::after{
+  content:'';
+  position:absolute;left:-10px;bottom:26px;
+  width:0;height:0;
+  border-top:8px solid transparent;
+  border-bottom:8px solid transparent;
+  border-right:11px solid var(--cream);
+}
+
+#gus-name{
+  font-family:'Fredoka One',cursive;
+  font-size:14px;color:var(--amber);
+  letter-spacing:1px;margin-bottom:5px;
+}
+#gus-text{
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:17px;line-height:1.6;color:var(--soil-dark);
+  min-height:52px;
+}
+#gus-actions{
+  display:flex;align-items:center;gap:8px;
+  margin-top:12px;
+}
+#gus-next{
+  padding:8px 22px;
+  background:var(--green-mid);border:2px solid var(--green-deep);
+  border-radius:24px;font-family:'Fredoka One',cursive;
+  font-size:15px;color:#fff;cursor:pointer;
+  box-shadow:2px 3px 0 var(--green-deep);transition:all .15s;
+}
+#gus-next:hover{transform:translateY(-2px);box-shadow:2px 5px 0 var(--green-deep);}
+#gus-step-label{
+  font-family:'Lora',serif;font-size:11px;
+  color:var(--soil-mid);letter-spacing:1px;
+  margin-left:auto;
+}
+
+/* Skip button (top right) */
+#tutorial-skip{
+  position:fixed;top:60px;right:16px;z-index:320;
+  padding:6px 16px;
+  background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.35);
+  border-radius:20px;
+  font-family:'Nunito',sans-serif;font-size:12px;
+  font-weight:600;color:rgba(255,255,255,.8);
+  cursor:pointer;backdrop-filter:blur(4px);
+  transition:all .2s;display:none;letter-spacing:1px;
+}
+#tutorial-skip:hover{background:rgba(255,255,255,.28);color:#fff;}
+
+/* Highlight ring around map locations */
+.tutorial-highlight{
+  animation:tutRing 1.2s ease-in-out infinite!important;
+}
+@keyframes tutRing{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.6),4px 5px 0 rgba(0,0,0,.28);}
+  50%{box-shadow:0 0 0 10px rgba(245,200,66,.2),4px 5px 0 rgba(0,0,0,.28);}
+}
+
+/* Arrow pointer to highlight specific areas */
+#tutorial-arrow{
+  position:fixed;z-index:311;
+  font-size:32px;
+  pointer-events:none;
+  animation:arrowBounce .8s ease-in-out infinite;
+  display:none;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));
+}
+@keyframes arrowBounce{
+  0%,100%{transform:translateY(0) rotate(0deg);}
+  50%{transform:translateY(-8px) rotate(0deg);}
+}
+
+/* Season banner strip (shows under nav) */
+#season-banner{
+  position:fixed;top:49px;left:0;right:0;z-index:19;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  padding:5px 16px;font-family:'Fredoka One',cursive;font-size:13px;
+  letter-spacing:.5px;transition:background .8s,color .8s;
+  border-bottom:2px solid rgba(255,255,255,.2);
+}
+/* Season colour themes */
+#season-banner.spring{background:linear-gradient(90deg,#f9a8d4,#fbcfe8,#f9a8d4);color:#831843;}
+#season-banner.summer{background:linear-gradient(90deg,#fde68a,#fef9c3,#fde68a);color:#78350f;}
+#season-banner.autumn{background:linear-gradient(90deg,#fed7aa,#fde68a,#fed7aa);color:#7c2d12;}
+#season-banner.winter{background:linear-gradient(90deg,#bae6fd,#e0f2fe,#bae6fd);color:#0c4a6e;}
+
+.season-day-count{
+  background:rgba(0,0,0,.15);border-radius:20px;
+  padding:2px 10px;font-size:11px;
+}
+.season-buff{
+  background:rgba(255,255,255,.35);border-radius:20px;
+  padding:2px 10px;font-size:11px;
+}
+
+/* Screen top offset when season banner is showing */
+.screen{padding-top:92px!important;}
+#screen-home{padding-top:0!important;}
+
+/* Winter overlay on farm grid */
+#farm-wrapper.winter-locked::after{
+  content:'❄️ Farm is frozen in winter — use the Back Garden instead';
+  position:absolute;inset:0;
+  background:rgba(180,220,255,.82);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:15px;color:#0c4a6e;
+  border-radius:13px;letter-spacing:.5px;
+  text-align:center;padding:20px;
+}
+
+/* Season transition flash */
+@keyframes seasonFlash{
+  0%{opacity:0;}30%{opacity:1;}70%{opacity:1;}100%{opacity:0;}
+}
+#season-transition{
+  position:fixed;inset:0;z-index:200;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;opacity:0;
+}
+#season-transition.show{animation:seasonFlash 2.2s ease forwards;}
+#season-transition .st-icon{font-size:80px;margin-bottom:12px;}
+#season-transition .st-name{font-family:'Fredoka One',cursive;font-size:48px;letter-spacing:4px;}
+#season-transition .st-sub {font-family:'Lora',serif;font-style:italic;font-size:16px;margin-top:8px;opacity:.8;}
 #screen-fishing{padding-top:68px;}
 
 #fishing-scene{
@@ -552,6 +741,105 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 .mloc-garden{background:linear-gradient(145deg,#ecfdf5,#a7f3d0);border-color:var(--lv6);box-shadow:4px 5px 0 #065f46;}
 .mloc-trade{background:linear-gradient(145deg,#f0fdf4,#d1fae5);border-color:#059669;box-shadow:4px 5px 0 #065f46;}
 .mloc-trade.locked-loc{filter:grayscale(.7);opacity:.6;cursor:not-allowed;pointer-events:none;}
+.mloc-warehouse{background:linear-gradient(145deg,#fefce8,#fef08a);border-color:#ca8a04;box-shadow:4px 5px 0 #92400e;}
+
+/* ══════════════════════════════════
+   WAREHOUSE SCREEN
+══════════════════════════════════ */
+#screen-warehouse{padding-top:68px;}
+
+#wh-header{
+  background:linear-gradient(145deg,#fefce8,#fef9c3);
+  border:3px solid #ca8a04;border-radius:16px;
+  padding:16px 22px;margin-bottom:18px;
+  box-shadow:4px 5px 0 #92400e;
+  display:flex;align-items:center;gap:14px;
+}
+#wh-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:#78350f;}
+#wh-header p{font-size:12px;color:#92400e;margin-top:2px;}
+
+/* Summary cards */
+#wh-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.wh-sum{
+  flex:1;min-width:100px;
+  background:var(--cream);border:2px solid var(--bark);
+  border-radius:40px;padding:9px 13px;
+  display:flex;align-items:center;gap:7px;
+  box-shadow:2px 3px 0 var(--bark);
+}
+.wh-sum .ws-icon{font-size:18px;}
+.wh-sum .ws-label{font-size:9px;color:var(--soil-mid);letter-spacing:.5px;}
+.wh-sum .ws-val{font-size:17px;font-weight:700;color:var(--soil-dark);line-height:1;}
+
+/* Sections */
+.wh-section{
+  background:var(--cream);border:2px solid var(--bark);
+  border-radius:14px;padding:14px 18px;
+  margin-bottom:14px;box-shadow:3px 4px 0 var(--bark);
+}
+.wh-section-title{
+  font-family:'Fredoka One',cursive;font-size:17px;
+  color:var(--soil-dark);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.wh-section-title span{
+  font-size:11px;font-weight:400;
+  font-family:'Nunito',sans-serif;
+  color:var(--soil-mid);margin-left:auto;
+}
+
+/* Item grid */
+.wh-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+  gap:10px;
+}
+.wh-item{
+  border-radius:12px;border:2px solid;
+  padding:12px 10px;text-align:center;
+  position:relative;transition:transform .12s;
+}
+.wh-item:hover{transform:translateY(-2px);}
+.wh-item.wh-seed  {background:#fff8e8;border-color:var(--shop-border);}
+.wh-item.wh-crop  {background:#f0fdf4;border-color:var(--green-mid);}
+.wh-item.wh-garden{background:#ecfdf5;border-color:#059669;}
+.wh-item.wh-fish  {background:#e0f7fa;border-color:#0097a7;}
+.wh-item.wh-empty {background:#f9fafb;border-color:#e5e7eb;opacity:.5;}
+
+.wh-item .wi-emoji{font-size:36px;display:block;margin-bottom:5px;}
+.wh-item .wi-name{font-family:'Fredoka One',cursive;font-size:13px;color:var(--soil-dark);margin-bottom:3px;}
+.wh-item .wi-qty{
+  font-size:11px;font-weight:700;
+  padding:2px 8px;border-radius:10px;
+  display:inline-block;
+}
+.wh-item.wh-seed   .wi-qty{background:var(--shop-border);color:#fff;}
+.wh-item.wh-crop   .wi-qty{background:var(--green-mid);color:#fff;}
+.wh-item.wh-garden .wi-qty{background:#059669;color:#fff;}
+.wh-item.wh-fish   .wi-qty{background:#0097a7;color:#fff;}
+.wh-item.wh-empty  .wi-qty{background:#d1d5db;color:#6b7280;}
+
+.wh-item .wi-val{font-size:10px;color:var(--soil-mid);margin-top:4px;}
+
+/* Quick action buttons */
+.wh-item .wi-action{
+  margin-top:7px;width:100%;
+  padding:4px;font-size:11px;
+  border:1.5px solid;border-radius:8px;
+  font-family:'Nunito',sans-serif;font-weight:600;
+  cursor:pointer;transition:all .12s;
+}
+.wh-item.wh-crop   .wi-action{background:#dcfce7;border-color:var(--green-mid);color:#166534;}
+.wh-item.wh-garden .wi-action{background:#d1fae5;border-color:#059669;color:#065f46;}
+.wh-item.wh-fish   .wi-action{background:#cffafe;border-color:#0097a7;color:#164e63;}
+.wh-item .wi-action:hover{filter:brightness(.92);}
+.wh-item .wi-action:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Empty state */
+.wh-empty-msg{
+  text-align:center;padding:20px;
+  font-size:13px;color:var(--soil-mid);font-style:italic;
+}
 
 /* ══════════════════════════════════
    TRADING POST SCREEN
@@ -766,14 +1054,47 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   </div>
 </div>
 
+<!-- Season Banner -->
+<div id="season-banner" class="spring">
+  <span id="sb-icon">🌸</span>
+  <span id="sb-name">Spring</span>
+  <span class="season-day-count">Day <span id="sb-day">1</span> / 25</span>
+  <span class="season-buff" id="sb-buff">🌱 Normal growth</span>
+</div>
+
+<!-- Tutorial System -->
+<div id="tutorial-backdrop"></div>
+<button id="tutorial-skip" onclick="Tutorial.skip()">Skip Tutorial ✕</button>
+<div id="tutorial-arrow">👇</div>
+
+<div id="tutorial-bubble">
+  <div id="gus-portrait">👴</div>
+  <div id="gus-box">
+    <div id="gus-name">Gus · Fernhollow's Oldest Farmer</div>
+    <div id="gus-text"></div>
+    <div id="gus-actions">
+      <button id="gus-next" onclick="Tutorial.next()">Got it! →</button>
+      <span id="gus-step-label"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Season Transition Overlay -->
+<div id="season-transition">
+  <div class="st-icon" id="st-icon">🌸</div>
+  <div class="st-name" id="st-name">Spring</div>
+  <div class="st-sub"  id="st-sub">The fields are waking up</div>
+</div>
+
 <!-- Nav Bar -->
 <div id="nav-bar">
   <div id="nav-title">🌾 Little Farmer</div>
-  <button class="nav-btn" id="nav-home"   onclick="goHome()">🗺 Map</button>
-  <button class="nav-btn" id="nav-shop"   onclick="goShop()">🏪 Shop</button>
-  <button class="nav-btn" id="nav-farm"   onclick="goFarm()">🚜 Farm</button>
-  <button class="nav-btn" id="nav-market" onclick="goMarket()">🛒 Market</button>
-  <button class="nav-btn" id="nav-level"  onclick="goLevel()">⭐ Level</button>
+  <button class="nav-btn" id="nav-home"      onclick="goHome()">🗺 Map</button>
+  <button class="nav-btn" id="nav-shop"      onclick="goShop()">🏪 Shop</button>
+  <button class="nav-btn" id="nav-farm"      onclick="goFarm()">🚜 Farm</button>
+  <button class="nav-btn" id="nav-market"    onclick="goMarket()">🛒 Market</button>
+  <button class="nav-btn" id="nav-warehouse" onclick="goWarehouse()">📦 Warehouse</button>
+  <button class="nav-btn" id="nav-level"     onclick="goLevel()">⭐ Level</button>
   <div id="nav-right">
     <div id="nav-coins">🪙 <span id="nav-coin-val">50</span></div>
     <div id="nav-basket" onclick="goMarket()" title="Go to Market">🧺 <span id="nav-basket-val">0</span></div>
@@ -857,6 +1178,17 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
         <span class="map-loc-icon">🛒</span>
         <span class="map-loc-name">Market</span>
         <span class="map-loc-hint">Sell crops</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Warehouse -->
+    <div class="map-loc" style="left:120px;top:390px" onclick="goWarehouse()">
+      <div class="map-tooltip">Check all your seeds,<br>crops &amp; fish!</div>
+      <div class="map-loc-box mloc-warehouse">
+        <span class="map-loc-icon">🏚️</span>
+        <span class="map-loc-name">Warehouse</span>
+        <span class="map-loc-hint">Your inventory</span>
       </div>
       <div class="map-loc-stem"></div>
     </div>
@@ -953,6 +1285,67 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <span id="tlog-icon">📋</span>
       <span id="tlog-text">Sell crops &amp; fish here at today's prices. Prices change every day!</span>
     </div>
+  </div>
+
+</div>
+
+<!-- ═══ WAREHOUSE ═══ -->
+<div id="screen-warehouse" class="screen">
+
+  <div id="wh-header">
+    <span style="font-size:36px">🏚️</span>
+    <div>
+      <h2>Warehouse</h2>
+      <p>Everything you own, all in one place.</p>
+    </div>
+  </div>
+
+  <!-- Summary pills -->
+  <div id="wh-summary">
+    <div class="wh-sum"><div class="ws-icon">🪙</div><div><div class="ws-label">COINS</div><div class="ws-val" id="wh-coins">—</div></div></div>
+    <div class="wh-sum"><div class="ws-icon">🌱</div><div><div class="ws-label">SEED TYPES</div><div class="ws-val" id="wh-seed-types">—</div></div></div>
+    <div class="wh-sum"><div class="ws-icon">🧺</div><div><div class="ws-label">CROP BASKET</div><div class="ws-val" id="wh-crop-count">—</div></div></div>
+    <div class="wh-sum"><div class="ws-icon">🐟</div><div><div class="ws-label">FISH BASKET</div><div class="ws-val" id="wh-fish-count">—</div></div></div>
+  </div>
+
+  <!-- Farm status strip -->
+  <div id="wh-farm-strip" style="background:#f0fdf4;border:2px solid var(--green-mid);border-radius:12px;padding:10px 16px;margin-bottom:16px;box-shadow:2px 3px 0 var(--green-deep);display:flex;align-items:center;gap:10px;">
+    <span style="font-size:20px">🚜</span>
+    <div>
+      <div style="font-size:10px;color:var(--soil-mid);letter-spacing:.5px">FARM STATUS</div>
+      <div id="wh-farm-status" style="font-family:'Fredoka One',cursive;font-size:15px;color:var(--green-deep)">—</div>
+    </div>
+    <div style="margin-left:auto;">
+      <div style="font-size:10px;color:var(--soil-mid);letter-spacing:.5px">TOTAL EARNED</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:15px;color:var(--soil-dark)">🪙<span id="wh-total-earn">0</span></div>
+    </div>
+  </div>
+
+  <!-- Seeds section -->
+  <div class="wh-section">
+    <div class="wh-section-title">
+      🌱 Seeds
+      <span id="wh-seed-total-label"></span>
+    </div>
+    <div class="wh-grid" id="wh-seed-grid"></div>
+  </div>
+
+  <!-- Crop basket section -->
+  <div class="wh-section">
+    <div class="wh-section-title">
+      🧺 Crop Basket
+      <span>Ready to sell at Market or Trading Post</span>
+    </div>
+    <div class="wh-grid" id="wh-crop-grid"></div>
+  </div>
+
+  <!-- Fish basket section -->
+  <div class="wh-section">
+    <div class="wh-section-title">
+      🐟 Fish Basket
+      <span>Ready to sell at Market or Trading Post</span>
+    </div>
+    <div class="wh-grid" id="wh-fish-grid"></div>
   </div>
 
 </div>
@@ -1301,6 +1694,86 @@ let coins=50, day=1, totalEarn=0;
 let selectedSeed=null, tool='till';
 let level=1;
 let activeFarm='main'; // 'main' | 'garden'
+
+// ── SEASON SYSTEM ──
+const SEASONS={
+  spring:{name:'Spring', icon:'🌸', days:[1,25],  speedMult:1, canFarm:true,
+    buff:'🌱 Normal growth', bg:'spring',
+    bgColor:'linear-gradient(165deg,#5a9e28 0%,#4a8c20 30%,#3d7a18 65%,#306010 100%)',
+    sub:'The fields are waking up'},
+  summer:{name:'Summer', icon:'🌻', days:[26,50], speedMult:1, canFarm:true,
+    buff:'☀️ Normal growth', bg:'summer',
+    bgColor:'linear-gradient(165deg,#4a9e18 0%,#3a8c10 30%,#2d7a08 65%,#206010 100%)',
+    sub:'Long warm days'},
+  autumn:{name:'Autumn', icon:'🍂', days:[51,75], speedMult:2, canFarm:true,
+    buff:'⚡ x2 growth speed!', bg:'autumn',
+    bgColor:'linear-gradient(165deg,#8a6a18 0%,#7a5a10 30%,#6a4a08 65%,#5a3a04 100%)',
+    sub:'Harvest before winter comes'},
+  winter:{name:'Winter', icon:'❄️', days:[76,100],speedMult:1, canFarm:false,
+    buff:'🚫 Farm frozen — Garden & Fishing only', bg:'winter',
+    bgColor:'linear-gradient(165deg,#4a6a8a 0%,#3a5a7a 30%,#2a4a6a 65%,#1a3a5a 100%)',
+    sub:'The land rests under snow'},
+};
+
+function getSeason(){
+  const d=((day-1)%100)+1; // cycle every 100 days
+  if(d<=25)  return SEASONS.spring;
+  if(d<=50)  return SEASONS.summer;
+  if(d<=75)  return SEASONS.autumn;
+  return SEASONS.winter;
+}
+
+function getDayInSeason(){
+  const d=((day-1)%100)+1;
+  if(d<=25)  return d;
+  if(d<=50)  return d-25;
+  if(d<=75)  return d-50;
+  return d-75;
+}
+
+function isWinter(){ return getSeason()===SEASONS.winter; }
+function getSpeedMult(){ return getSeason().speedMult; }
+
+function updateSeasonUI(){
+  const s=getSeason();
+  const dayInSzn=getDayInSeason();
+  // Banner
+  const banner=$('season-banner');
+  banner.className='';banner.classList.add('season-banner',s.bg);
+  $('sb-icon').textContent=s.icon;
+  $('sb-name').textContent=s.name;
+  $('sb-day').textContent=dayInSzn;
+  $('sb-buff').textContent=s.buff;
+  // Map canvas background
+  const canvas=$('map-canvas');
+  if(canvas) canvas.style.background=s.bgColor+', radial-gradient(ellipse 70% 50% at 50% 60%,rgba(180,150,60,.1) 0%,transparent 70%)';
+  // Farm frozen in winter
+  const fw=$('farm-wrapper');
+  if(fw) fw.classList.toggle('winter-locked',isWinter());
+  // Update HUD day
+  updateMapHUD();
+}
+
+function showSeasonTransition(season){
+  const el=$('season-transition');
+  $('st-icon').textContent=season.icon;
+  $('st-name').textContent=season.name;
+  $('st-sub').textContent=season.sub;
+  // Colour the overlay
+  const colours={
+    spring:{bg:'rgba(251,207,232,.92)',color:'#831843'},
+    summer:{bg:'rgba(254,249,195,.92)',color:'#78350f'},
+    autumn:{bg:'rgba(254,215,170,.92)',color:'#7c2d12'},
+    winter:{bg:'rgba(224,242,254,.92)',color:'#0c4a6e'},
+  };
+  const c=colours[season.bg];
+  el.style.background=c.bg;
+  el.style.color=c.color;
+  el.classList.remove('show');
+  void el.offsetWidth; // reflow to restart animation
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
+}
 // Trading Post state
 let tradeDay=0, tradePrices=[];
 // Fishing state
@@ -1440,7 +1913,7 @@ function showLvlModal(lv){
 function closeLvlModal(){$('lvl-modal-backdrop').classList.remove('open');}
 
 // ── ROUTING ──
-const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm','screen-fishing':'nav-home','screen-trading':'nav-home'};
+const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm','screen-fishing':'nav-home','screen-trading':'nav-home','screen-warehouse':'nav-warehouse'};
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');
@@ -1640,6 +2113,11 @@ function renderGrid(){
 }
 
 function handlePlot(i){
+  // Winter: main farm is frozen
+  if(isWinter()){
+    setLog('❄️ The farm is frozen in winter. Try the Back Garden or go fishing!','warn');
+    return;
+  }
   const c=cells[i];
   if(tool==='till'){
     if(c.state==='empty'){c.state='tilled';setLog('Plot tilled! Pick a seed and plant it.','ok');}
@@ -1714,30 +2192,69 @@ function buildSeedRow(){
 }
 
 function nextDay(){
+  const prevSeason=getSeason();
   day++;
+  const newSeason=getSeason();
+
+  // Show season transition animation if season changed
+  if(newSeason!==prevSeason){
+    showSeasonTransition(newSeason);
+  }
+
+  const speed=getSpeedMult(); // 1 normally, 2 in autumn
   let readyCnt=0;
-  // advance main farm
+
+  // Advance main farm (blocked in winter — crops wither)
   cells.forEach(c=>{
     if(['planted','growing'].includes(c.state)){
-      c.daysPlanted=Math.min(c.seed.days,c.daysPlanted+(c.watered?2:1));
-      c.watered=false;
-      if(c.daysPlanted>=c.seed.days){c.state='ready';readyCnt++;}
-      else c.state='growing';
+      if(isWinter()){
+        // Crops wither in winter — return to empty
+        c.state='empty'; c.seed=null; c.daysPlanted=0; c.watered=false;
+      } else {
+        const bonus=c.watered?2:1;
+        c.daysPlanted=Math.min(c.seed.days,c.daysPlanted+(bonus*speed));
+        c.watered=false;
+        if(c.daysPlanted>=c.seed.days){c.state='ready';readyCnt++;}
+        else c.state='growing';
+      }
     }
   });
-  // advance garden
+
+  // Garden always grows (even in winter — it's sheltered)
   gardenCells.forEach(c=>{
     if(['planted','growing'].includes(c.state)){
-      c.daysPlanted=Math.min(c.seed.days,c.daysPlanted+(c.watered?2:1));
+      const bonus=c.watered?2:1;
+      c.daysPlanted=Math.min(c.seed.days,c.daysPlanted+(bonus*speed));
       c.watered=false;
       if(c.daysPlanted>=c.seed.days){c.state='ready';readyCnt++;}
       else c.state='growing';
     }
   });
-  if(readyCnt>0) setLog(`Day ${day} — ${readyCnt} plot(s) ready to pick! 🎉`,'day');
-  else setLog(`Day ${day} — sunshine and good vibes. Keep farming!`,'day');
-  todayCaught=0; // reset daily fish count
-  tradeDay=0;    // reset trade prices so they regenerate tomorrow
+
+  // Build status message
+  const s=getSeason();
+  const dayInSzn=getDayInSeason();
+  let msg='';
+  if(newSeason!==prevSeason){
+    msg=`${s.icon} ${s.name} has arrived! ${s.buff}`;
+  } else if(isWinter()&&readyCnt===0){
+    msg=`Day ${day} ❄️ — Farm is frozen. Fish or tend the Garden!`;
+  } else if(readyCnt>0){
+    msg=`Day ${day} — ${readyCnt} plot(s) ready to pick! 🎉`;
+  } else {
+    const speedStr=speed>1?` (x${speed} growth — harvest time!)`:'';
+    msg=`Day ${day} ${s.icon} — Day ${dayInSzn}/25 of ${s.name}${speedStr}`;
+  }
+  setLog(msg,'day');
+
+  // Winter: warn if crops just withered
+  if(isWinter()&&prevSeason!==newSeason){
+    setTimeout(()=>setLog('❄️ Winter: your farm crops have withered. The Garden and Pond are still open!','warn'),2400);
+  }
+
+  todayCaught=0;
+  tradeDay=0;
+  updateSeasonUI();
   renderGrid();
 }
 
@@ -2242,6 +2759,237 @@ function renderCatchBasket(){
   });
 }
 
+// ── WAREHOUSE ──
+function goWarehouse(){
+  renderWarehouse();
+  showScreen('screen-warehouse');
+}
+
+function renderWarehouse(){
+  // Summary pills
+  $('wh-coins').textContent     = coins;
+  $('wh-seed-types').textContent= ALL_SEEDS().filter(s=>inventory[s.id]>0).length;
+  $('wh-crop-count').textContent= ALL_SEEDS().reduce((n,s)=>n+basket[s.id],0);
+  $('wh-fish-count').textContent= FISH.reduce((n,f)=>n+fishBasket[f.id],0);
+  const earnEl=$('wh-total-earn'); if(earnEl) earnEl.textContent=totalEarn;
+
+  // ── Seeds ──
+  const seedTotal = ALL_SEEDS().reduce((n,s)=>n+inventory[s.id],0);
+  $('wh-seed-total-label').textContent = seedTotal > 0 ? `${seedTotal} total` : '';
+  const sg = $('wh-seed-grid'); sg.innerHTML = '';
+  ALL_SEEDS().forEach(s=>{
+    const qty = inventory[s.id];
+    const d = document.createElement('div');
+    d.className = `wh-item ${GARDEN_SEEDS.find(g=>g.id===s.id)?'wh-garden':'wh-seed'}${qty===0?' wh-empty':''}`;
+    d.innerHTML = `
+      <span class="wi-emoji">${s.emoji}</span>
+      <div class="wi-name">${s.name}</div>
+      <span class="wi-qty">${qty > 0 ? '×'+qty : 'Empty'}</span>
+      <div class="wi-val">${qty > 0 ? `Worth ~🪙${qty*s.sell} if grown` : 'Buy at Shop'}</div>`;
+    sg.appendChild(d);
+  });
+
+  // ── Crop basket ──
+  const cg = $('wh-crop-grid'); cg.innerHTML = '';
+  const hasCrops = ALL_SEEDS().some(s=>basket[s.id]>0);
+  if(!hasCrops){
+    cg.innerHTML = '<div class="wh-empty-msg">No crops in basket yet — harvest from the Farm!</div>';
+  } else {
+    ALL_SEEDS().forEach(s=>{
+      const qty = basket[s.id];
+      if(qty === 0) return;
+      const d = document.createElement('div');
+      d.className = `wh-item ${GARDEN_SEEDS.find(g=>g.id===s.id)?'wh-garden':'wh-crop'}`;
+      d.innerHTML = `
+        <span class="wi-emoji">${s.emoji}</span>
+        <div class="wi-name">${s.name}</div>
+        <span class="wi-qty">×${qty}</span>
+        <div class="wi-val">🪙${s.sell} ea · Total 🪙${qty*s.sell}</div>`;
+      cg.appendChild(d);
+    });
+  }
+
+  // ── Fish basket ──
+  const fg = $('wh-fish-grid'); fg.innerHTML = '';
+  const hasFish = FISH.some(f=>fishBasket[f.id]>0);
+  if(!hasFish){
+    fg.innerHTML = '<div class="wh-empty-msg">No fish yet — go to the Fishing Pond!</div>';
+  } else {
+    FISH.forEach(f=>{
+      const qty = fishBasket[f.id];
+      if(qty === 0) return;
+      const d = document.createElement('div');
+      d.className = 'wh-item wh-fish';
+      d.innerHTML = `
+        <span class="wi-emoji">${f.emoji}</span>
+        <div class="wi-name">${f.name}</div>
+        <span class="wi-qty">×${qty}</span>
+        <div class="wi-val">🪙${f.sell} ea · Total 🪙${qty*f.sell}</div>`;
+      fg.appendChild(d);
+    });
+  }
+
+  // ── Farm status ──
+  const growing = cells.filter(c=>['planted','growing'].includes(c.state)).length;
+  const ready   = cells.filter(c=>c.state==='ready').length;
+  const ggrowing= gardenCells.filter(c=>['planted','growing'].includes(c.state)).length;
+  const gready  = gardenCells.filter(c=>c.state==='ready').length;
+  const farmEl  = $('wh-farm-status');
+  if(farmEl){
+    farmEl.textContent = growing+ggrowing > 0
+      ? `🌱 ${growing+ggrowing} growing · ${ready+gready} ready to pick`
+      : ready+gready > 0 ? `✨ ${ready+gready} plot(s) ready to harvest!` : 'All plots empty';
+  }
+}
+
+// ── TUTORIAL SYSTEM ──
+const Tutorial = (() => {
+
+  const STEPS = [
+    {
+      text: "Hoho! A new face! Welcome to Fernhollow, young one. I'm Gus — been farming this valley for sixty years. Longer than most of these trees!\n\nLet old Gus show you around. Won't take long. ...Probably.",
+      btn:  'Let\'s go, Gus! →',
+      highlight: null,
+      arrow: null,
+    },
+    {
+      text: "This here is the <strong>Town Map</strong>. Everything in Fernhollow is on it. You get around by clicking the little buildings — see them bobbing there? That's how you know they're friendly.\n\nGo ahead and explore whenever you like. But first — let me walk you through the important spots.",
+      btn:  'Show me! →',
+      highlight: null,
+      arrow: null,
+    },
+    {
+      text: "First stop — the <strong>🏪 Seed Shop</strong>! That's Bruno's place. He talks too much, but he's got good seeds.\n\nBuy a packet, you get 5 seeds. Lettuce and carrots to start — they grow fast and they sell. Don't bother with tomatoes until you've got some coins saved up.",
+      btn:  'Noted →',
+      highlight: 'mloc-shop',
+      arrow: { top:'135px', left:'430px', rotate:'0deg' },
+    },
+    {
+      text: "Next — your <strong>🚜 Farm</strong>! That's the whole point of being here, isn't it.\n\nThree tools: <strong>Till</strong> wakes the soil up. <strong>Plant</strong> puts seeds in. <strong>Water</strong> makes them grow twice as fast. Do all three, click <em>Next Day</em>, and come back tomorrow.\n\nSimple as that. Took me forty years to learn, but you'll pick it up faster, I'm sure.",
+      btn:  'Sounds good →',
+      highlight: 'mloc-farm',
+      arrow: { top:'225px', left:'160px', rotate:'0deg' },
+    },
+    {
+      text: "When your crops are glowing green — that means they're ripe! Switch to the <strong>🧺 Pick</strong> tool and click them.\n\nThey go into your basket. Then you take the basket to the <strong>🛒 Market</strong> and sell them for coins.\n\nCoins buy more seeds. More seeds means more crops. More crops means more coins. That's farming, in a nutshell!",
+      btn:  'Makes sense! →',
+      highlight: 'mloc-market',
+      arrow: { top:'315px', left:'490px', rotate:'0deg' },
+    },
+    {
+      text: "Now — see that banner up top? That's the <strong>season</strong>. We get four of them, 25 days each.\n\n🌸 Spring and 🌻 Summer — normal growing. 🍂 Autumn — crops grow <strong>twice as fast</strong>, so plant everything you've got! ❄️ Winter — the farm freezes. Not a joke. Plan ahead, or you'll be sitting on your hands.\n\nThe pond's always open though. I go fishing in winter. Good for the soul.",
+      btn:  'Good to know →',
+      highlight: null,
+      arrow: { top:'58px', left:'50%', rotate:'0deg', center:true },
+    },
+    {
+      text: "The <strong>📈 Trading Post</strong> unlocks at Level 3 — prices there change every day. Sometimes they're higher than the Market, sometimes lower. Worth checking before you sell.\n\nAnd the <strong>🎣 Fishing Pond</strong>! Click the little lake on the map. Cast your line, watch the bobber, press the button when the fish bites. I've pulled a Golden Fish out of there once. Once, in sixty years. But it counts!",
+      btn:  'Wow, really? →',
+      highlight: null,
+      arrow: null,
+    },
+    {
+      text: "Last thing — the <strong>⭐ Level Up</strong> system. Spend your coins to unlock big upgrades: one-click tilling, planting, watering, harvesting... all the things I had to do by hand my whole life.\n\nLevel 6 opens the <strong>Back Garden</strong> — lavender, roses, herbs. Fancy stuff. Worth saving up for.\n\nRight! That's the lot. Go on then. The soil won't till itself.",
+      btn:  "Off I go! 🌱",
+      highlight: 'mloc-level',
+      arrow: { top:'435px', left:'290px', rotate:'0deg' },
+      last: true,
+    },
+  ];
+
+  let _step = 0;
+  let _active = false;
+  let _highlighted = null;
+
+  function start(){
+    if(localStorage.getItem('fh_tutorial_done')) return;
+    // Small delay so the map renders first
+    setTimeout(()=>{
+      _step  = 0;
+      _active = true;
+      $('tutorial-backdrop').classList.add('active');
+      $('tutorial-skip').style.display = 'block';
+      showStep();
+    }, 600);
+  }
+
+  function showStep(){
+    const s = STEPS[_step];
+
+    // Text with typewriter feel (just set instantly, keep it simple)
+    $('gus-text').innerHTML = s.text.replace(/\n/g,'<br>');
+    $('gus-next').textContent = s.btn;
+    $('gus-step-label').textContent = `${_step+1} / ${STEPS.length}`;
+
+    // Show bubble
+    $('tutorial-bubble').classList.add('show');
+
+    // Highlight map location
+    clearHighlight();
+    if(s.highlight){
+      // We need to be on home screen to show map highlights
+      if($('screen-home').classList.contains('active')){
+        const boxes = document.querySelectorAll('.'+s.highlight);
+        boxes.forEach(b=>{ b.classList.add('tutorial-highlight'); _highlighted=b; });
+      }
+    }
+
+    // Arrow pointer
+    const arrow = $('tutorial-arrow');
+    if(s.arrow){
+      arrow.style.display = 'block';
+      arrow.style.top     = s.arrow.top;
+      if(s.arrow.center){
+        arrow.style.left      = '50%';
+        arrow.style.transform = 'translateX(-50%)';
+        arrow.textContent     = '👆';
+      } else {
+        arrow.style.left      = s.arrow.left;
+        arrow.style.transform = 'none';
+        arrow.textContent     = '👇';
+      }
+    } else {
+      arrow.style.display = 'none';
+    }
+  }
+
+  function next(){
+    _step++;
+    if(_step >= STEPS.length){
+      finish();
+    } else {
+      showStep();
+    }
+  }
+
+  function skip(){
+    finish();
+  }
+
+  function finish(){
+    _active = false;
+    $('tutorial-backdrop').classList.remove('active');
+    $('tutorial-bubble').classList.remove('show');
+    $('tutorial-skip').style.display = 'none';
+    $('tutorial-arrow').style.display = 'none';
+    clearHighlight();
+    localStorage.setItem('fh_tutorial_done','1');
+  }
+
+  function clearHighlight(){
+    document.querySelectorAll('.tutorial-highlight')
+      .forEach(el=>el.classList.remove('tutorial-highlight'));
+    _highlighted = null;
+  }
+
+  function reset(){
+    localStorage.removeItem('fh_tutorial_done');
+  }
+
+  return { start, next, skip, reset };
+
+})();
+
 // ── FENCE ──
 function buildFence(){
   $('fence').innerHTML=Array(Math.ceil(window.innerWidth/30)).fill('<div class="fence-post"></div>').join('');
@@ -2253,6 +3001,8 @@ buildFence();
 updateNavCoins();
 updateMapHUD();
 updateFarmTabs();
+updateSeasonUI();
+Tutorial.start();
 window.addEventListener('resize',buildFence);
 </script>
 </body>
