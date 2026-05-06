@@ -268,8 +268,275 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   #nav-bar{flex-wrap:wrap;padding:6px 10px;}
 }
 /* ══════════════════════════════════
-   TUTORIAL SYSTEM (Gus)
+   FARM UPGRADE SYSTEM
 ══════════════════════════════════ */
+#screen-upgrade{padding-top:92px;}
+
+#upgrade-header{
+  background:linear-gradient(145deg,#fef9ee,#fdedc8);
+  border:3px solid var(--bark);border-radius:16px;
+  padding:16px 22px;margin-bottom:18px;
+  box-shadow:4px 5px 0 var(--bark);
+  display:flex;align-items:center;gap:14px;
+}
+#upgrade-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--soil-dark);}
+#upgrade-header p{font-size:12px;color:var(--soil-mid);}
+
+/* Farm preview on map — decorations layer */
+#farm-deco-layer{
+  position:absolute;
+  left:88px;top:178px;
+  pointer-events:none;
+  display:flex;flex-wrap:wrap;gap:2px;
+  width:160px;
+}
+.farm-deco-emoji{
+  font-size:18px;
+  animation:decoFloat 3s ease-in-out infinite;
+  filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));
+}
+.farm-deco-emoji:nth-child(2){animation-delay:.5s;}
+.farm-deco-emoji:nth-child(3){animation-delay:1s;}
+.farm-deco-emoji:nth-child(4){animation-delay:1.5s;}
+.farm-deco-emoji:nth-child(5){animation-delay:2s;}
+@keyframes decoFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-3px);}
+}
+
+/* Upgrade sections */
+.upg-section{margin-bottom:22px;}
+.upg-section-title{
+  font-family:'Fredoka One',cursive;font-size:17px;
+  color:var(--soil-dark);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+
+/* Farmhouse upgrade cards (vertical progression) */
+#house-track{
+  display:flex;flex-direction:column;gap:0;
+  background:var(--cream);border:2px solid var(--bark);
+  border-radius:14px;overflow:hidden;
+  box-shadow:3px 4px 0 var(--bark);
+}
+.house-tier{
+  display:flex;align-items:center;gap:16px;
+  padding:14px 18px;border-bottom:1px solid rgba(139,94,60,.15);
+  transition:background .2s;
+}
+.house-tier:last-child{border-bottom:none;}
+.house-tier.current{background:linear-gradient(145deg,#f0fdf4,#dcfce7);}
+.house-tier.owned{background:#fafaf8;opacity:.7;}
+.house-tier.locked{opacity:.5;}
+.ht-emoji{font-size:40px;flex-shrink:0;width:52px;text-align:center;}
+.ht-body{flex:1;}
+.ht-name{font-family:'Fredoka One',cursive;font-size:16px;color:var(--soil-dark);}
+.ht-desc{font-size:12px;color:var(--soil-mid);line-height:1.5;margin-top:2px;}
+.ht-badge{
+  font-size:11px;font-weight:700;padding:3px 10px;
+  border-radius:20px;margin-top:4px;display:inline-block;
+}
+.ht-badge.current-badge{background:#dcfce7;color:#166534;}
+.ht-badge.owned-badge  {background:#f3f4f6;color:#6b7280;}
+.ht-btn{
+  flex-shrink:0;padding:8px 16px;
+  border:2px solid var(--bark);border-radius:20px;
+  font-family:'Fredoka One',cursive;font-size:14px;
+  cursor:pointer;transition:all .15s;
+  background:var(--sun);color:var(--soil-dark);
+  box-shadow:2px 2px 0 var(--bark);white-space:nowrap;
+}
+.ht-btn:hover{transform:translateY(-2px);box-shadow:2px 4px 0 var(--bark);}
+.ht-btn:disabled{background:#e5e7eb;border-color:#d1d5db;color:#9ca3af;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* Decoration shop grid */
+#deco-shop-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:12px;
+}
+.deco-card{
+  background:var(--cream);border:2px solid var(--bark);
+  border-radius:12px;padding:14px 12px;text-align:center;
+  box-shadow:2px 3px 0 var(--bark);transition:transform .15s;
+  position:relative;
+}
+.deco-card:hover{transform:translateY(-3px);}
+.deco-card.owned-deco{
+  background:linear-gradient(145deg,#f0fdf4,#dcfce7);
+  border-color:var(--green-mid);
+}
+.dc-emoji{font-size:40px;margin-bottom:6px;}
+.dc-name{font-family:'Fredoka One',cursive;font-size:14px;color:var(--soil-dark);margin-bottom:3px;}
+.dc-desc{font-size:11px;color:var(--soil-mid);margin-bottom:10px;line-height:1.4;}
+.dc-buy-btn{
+  width:100%;padding:7px;
+  background:var(--sun);border:2px solid var(--accent);
+  border-radius:16px;font-family:'Fredoka One',cursive;
+  font-size:13px;cursor:pointer;color:var(--soil-dark);
+  box-shadow:2px 2px 0 var(--accent);transition:all .12s;
+}
+.dc-buy-btn:hover{background:#f7d327;transform:translateY(-1px);}
+.dc-buy-btn:disabled{background:#e5e7eb;border-color:#d1d5db;color:#9ca3af;cursor:not-allowed;transform:none;box-shadow:none;}
+.dc-owned-badge{
+  background:#dcfce7;color:#166534;font-family:'Fredoka One',cursive;
+  font-size:13px;padding:6px;border-radius:12px;width:100%;
+  display:block;text-align:center;
+}
+
+/* Toast notification — bottom right */
+#achievement-toast{
+  position:fixed;bottom:80px;right:16px;z-index:400;
+  display:flex;align-items:center;gap:12px;
+  background:rgba(20,12,5,.94);
+  border:2px solid #f59e0b;
+  border-radius:14px;padding:12px 18px;
+  box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 1px rgba(245,158,11,.2);
+  max-width:320px;
+  transform:translateX(120%);
+  transition:transform .45s cubic-bezier(.34,1.28,.64,1);
+  pointer-events:none;
+}
+#achievement-toast.show{transform:translateX(0);}
+#ach-toast-icon{font-size:36px;flex-shrink:0;}
+#ach-toast-body{}
+#ach-toast-label{
+  font-family:'Lora',serif;font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:#f59e0b;margin-bottom:3px;
+}
+#ach-toast-name{
+  font-family:'Fredoka One',cursive;font-size:17px;color:#fff;margin-bottom:1px;
+}
+#ach-toast-desc{font-family:'Crimson Pro',serif;font-size:13px;color:rgba(255,255,255,.65);}
+
+/* Achievement list in warehouse */
+.ach-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;margin-bottom:16px;
+}
+.ach-card{
+  background:var(--cream);border:2px solid var(--bark);
+  border-radius:12px;padding:14px 12px;text-align:center;
+  transition:transform .15s;
+}
+.ach-card.unlocked{
+  background:linear-gradient(145deg,#fefce8,#fef3c7);
+  border-color:#f59e0b;box-shadow:2px 3px 0 #b45309;
+}
+.ach-card.unlocked:hover{transform:translateY(-3px);}
+.ach-card.locked{opacity:.45;filter:grayscale(.6);}
+.ach-icon{font-size:32px;margin-bottom:6px;}
+.ach-name{font-family:'Fredoka One',cursive;font-size:13px;color:var(--soil-dark);margin-bottom:3px;}
+.ach-desc{font-size:11px;color:var(--soil-mid);line-height:1.4;}
+.ach-badge{
+  display:inline-block;margin-top:6px;
+  background:#f59e0b;color:#fff;
+  font-size:10px;font-weight:700;
+  padding:1px 8px;border-radius:10px;
+}
+
+/* ══════════════════════════════════
+   QUEST SYSTEM
+══════════════════════════════════ */
+
+/* Quest board screen */
+#screen-quests{padding-top:92px;}
+
+#quest-board-header{
+  background:linear-gradient(145deg,#fef9ee,#fde68a);
+  border:3px solid var(--bark);border-radius:16px;
+  padding:16px 20px;margin-bottom:18px;
+  box-shadow:4px 5px 0 var(--bark);
+  display:flex;align-items:center;gap:14px;
+  position:relative;
+}
+#quest-board-header::before,#quest-board-header::after{
+  content:'';position:absolute;top:-14px;
+  width:16px;height:16px;background:var(--bark);border-radius:50%;
+}
+#quest-board-header::before{left:24px;}
+#quest-board-header::after{right:24px;}
+#quest-board-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--soil-dark);}
+#quest-board-header p{font-size:12px;color:var(--soil-mid);}
+
+/* Daily quests section */
+.quest-section-title{
+  font-family:'Fredoka One',cursive;font-size:17px;color:var(--soil-dark);
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.quest-section-title span{
+  font-size:11px;font-family:'Nunito',sans-serif;font-weight:600;
+  color:var(--soil-mid);background:var(--cream);
+  border:1.5px solid var(--bark);border-radius:20px;
+  padding:2px 9px;
+}
+
+.quest-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+
+.quest-card{
+  background:var(--cream);border:2px solid var(--bark);
+  border-radius:12px;padding:14px 16px;
+  box-shadow:2px 3px 0 var(--bark);
+  display:flex;align-items:center;gap:14px;
+  transition:all .15s;
+}
+.quest-card.done{
+  background:linear-gradient(145deg,#f0fdf4,#dcfce7);
+  border-color:var(--green-mid);box-shadow:2px 3px 0 var(--green-deep);
+  opacity:.8;
+}
+.quest-card.season-quest{
+  background:linear-gradient(145deg,#fff7ed,#fed7aa);
+  border-color:#f97316;box-shadow:2px 3px 0 #c2410c;
+}
+.quest-card.season-quest.done{
+  background:linear-gradient(145deg,#f0fdf4,#dcfce7);
+  border-color:var(--green-mid);box-shadow:2px 3px 0 var(--green-deep);
+}
+.quest-icon{font-size:32px;flex-shrink:0;}
+.quest-body{flex:1;}
+.quest-name{
+  font-family:'Fredoka One',cursive;font-size:15px;
+  color:var(--soil-dark);margin-bottom:3px;
+}
+.quest-desc{font-size:12px;color:var(--soil-mid);margin-bottom:6px;}
+.quest-progress-wrap{
+  height:8px;background:#e5e7eb;border-radius:4px;
+  overflow:hidden;margin-bottom:4px;
+}
+.quest-progress-bar{
+  height:100%;border-radius:4px;
+  background:linear-gradient(90deg,var(--green-bright),var(--green-mid));
+  transition:width .5s ease;
+}
+.quest-progress-label{font-size:10px;color:var(--soil-mid);}
+.quest-reward{
+  flex-shrink:0;text-align:center;
+  background:var(--sun-glow);border:1.5px solid var(--accent);
+  border-radius:10px;padding:5px 10px;
+}
+.quest-reward .qr-coins{
+  font-family:'Fredoka One',cursive;font-size:16px;color:var(--soil-dark);
+}
+.quest-reward .qr-label{font-size:9px;color:var(--soil-mid);letter-spacing:.5px;}
+.quest-done-badge{
+  flex-shrink:0;
+  font-family:'Fredoka One',cursive;font-size:14px;
+  background:#dcfce7;color:#166534;
+  border:2px solid var(--green-mid);
+  border-radius:20px;padding:5px 12px;
+}
+.quest-empty{
+  font-size:13px;color:var(--soil-mid);font-style:italic;
+  text-align:center;padding:16px 0;
+}
+
+/* Map bulletin board pin */
+.mloc-board{
+  background:linear-gradient(145deg,#fef9ee,#fde68a);
+  border-color:#d97706;box-shadow:4px 5px 0 #92400e;
+}
 
 /* Darkened backdrop */
 #tutorial-backdrop{
@@ -1062,6 +1329,16 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   <span class="season-buff" id="sb-buff">🌱 Normal growth</span>
 </div>
 
+<!-- Achievement Toast -->
+<div id="achievement-toast">
+  <div id="ach-toast-icon">🏆</div>
+  <div id="ach-toast-body">
+    <div id="ach-toast-label">Achievement Unlocked!</div>
+    <div id="ach-toast-name"></div>
+    <div id="ach-toast-desc"></div>
+  </div>
+</div>
+
 <!-- Tutorial System -->
 <div id="tutorial-backdrop"></div>
 <button id="tutorial-skip" onclick="Tutorial.skip()">Skip Tutorial ✕</button>
@@ -1094,6 +1371,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   <button class="nav-btn" id="nav-farm"      onclick="goFarm()">🚜 Farm</button>
   <button class="nav-btn" id="nav-market"    onclick="goMarket()">🛒 Market</button>
   <button class="nav-btn" id="nav-warehouse" onclick="goWarehouse()">📦 Warehouse</button>
+  <button class="nav-btn" id="nav-quests"    onclick="goQuests()">📋 Quests <span id="nav-quest-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:3px;font-family:'Nunito',sans-serif;font-weight:700;"></span></button>
   <button class="nav-btn" id="nav-level"     onclick="goLevel()">⭐ Level</button>
   <div id="nav-right">
     <div id="nav-coins">🪙 <span id="nav-coin-val">50</span></div>
@@ -1149,13 +1427,27 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 
     <!-- ── LOCATION PINS ── -->
 
+    <!-- Farm decoration layer (dynamically updated) -->
+    <div id="farm-deco-layer"></div>
+
     <!-- Farm -->
     <div class="map-loc" style="left:120px;top:210px" onclick="goFarm()">
       <div class="map-tooltip">Till soil, plant seeds,<br>water &amp; harvest!</div>
-      <div class="map-loc-box mloc-farm">
-        <span class="map-loc-icon">🚜</span>
+      <div class="map-loc-box mloc-farm" id="map-farm-box">
+        <span class="map-loc-icon" id="map-farm-icon">🚜</span>
         <span class="map-loc-name">Farm</span>
-        <span class="map-loc-hint">Your fields</span>
+        <span class="map-loc-hint" id="map-farm-hint">Your fields</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Farm Upgrade Shop -->
+    <div class="map-loc" style="left:30px;top:350px" onclick="goUpgrade()">
+      <div class="map-tooltip">Spend coins to upgrade<br>your farm's appearance!</div>
+      <div class="map-loc-box" style="background:linear-gradient(145deg,#fef9ee,#fdedc8);border-color:var(--bark);box-shadow:4px 5px 0 var(--soil-mid);min-width:90px;">
+        <span class="map-loc-icon">🏗️</span>
+        <span class="map-loc-name">Upgrade</span>
+        <span class="map-loc-hint">Farm shop</span>
       </div>
       <div class="map-loc-stem"></div>
     </div>
@@ -1216,6 +1508,17 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <div class="map-loc-stem"></div>
     </div>
 
+    <!-- Bulletin Board -->
+    <div class="map-loc" style="left:380px;top:440px" onclick="goQuests()">
+      <div class="map-tooltip">Daily &amp; seasonal quests<br>from Gus — earn bonus coins!</div>
+      <div class="map-loc-box mloc-board">
+        <span class="map-loc-icon">📋</span>
+        <span class="map-loc-name">Notice Board</span>
+        <span class="map-loc-hint" id="map-quest-hint">Quests available</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
     <!-- Back Garden (Lv6) -->
     <div class="map-loc mloc-garden-loc" id="map-garden-pin" style="left:650px;top:250px" onclick="goGarden()">
       <div class="map-tooltip">Grow lavender, roses<br>&amp; herbs — unlock at Lv 6!</div>
@@ -1238,6 +1541,45 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 
   <!-- Compass -->
   <div id="map-compass">🧭</div>
+
+</div>
+
+<!-- ═══ FARM UPGRADE ═══ -->
+<div id="screen-upgrade" class="screen">
+
+  <div id="upgrade-header">
+    <span style="font-size:36px">🏗️</span>
+    <div>
+      <h2>Farm Upgrade Shop</h2>
+      <p>Spend coins to upgrade your farmhouse and add decorations — visible on the map!</p>
+    </div>
+    <div style="margin-left:auto;text-align:right;">
+      <div style="font-size:10px;color:var(--soil-mid);letter-spacing:.5px">YOUR COINS</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:22px;color:var(--soil-dark)">🪙<span id="upg-coins">—</span></div>
+    </div>
+  </div>
+
+  <!-- Farm preview -->
+  <div style="background:linear-gradient(145deg,#e8f5e9,#c8eda0);border:2px solid var(--green-mid);border-radius:14px;padding:14px 18px;margin-bottom:20px;box-shadow:3px 4px 0 var(--green-deep);display:flex;align-items:center;gap:16px;">
+    <div id="upg-preview" style="font-size:52px;line-height:1;"></div>
+    <div>
+      <div style="font-family:'Fredoka One',cursive;font-size:16px;color:var(--green-deep);">Current Farm</div>
+      <div id="upg-preview-name" style="font-size:13px;color:var(--soil-mid);margin-top:2px;"></div>
+      <div id="upg-preview-decos" style="font-size:20px;margin-top:6px;letter-spacing:4px;"></div>
+    </div>
+  </div>
+
+  <!-- Farmhouse upgrade track -->
+  <div class="upg-section">
+    <div class="upg-section-title">🏠 Farmhouse</div>
+    <div id="house-track"></div>
+  </div>
+
+  <!-- Decorations -->
+  <div class="upg-section">
+    <div class="upg-section-title">🌸 Decorations <span style="font-size:12px;font-family:'Nunito',sans-serif;font-weight:400;color:var(--soil-mid)">Appear around your farm on the map</span></div>
+    <div id="deco-shop-grid"></div>
+  </div>
 
 </div>
 
@@ -1347,6 +1689,42 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
     </div>
     <div class="wh-grid" id="wh-fish-grid"></div>
   </div>
+
+  <!-- Achievements section -->
+  <div class="wh-section">
+    <div class="wh-section-title">
+      🏆 Achievements
+      <span id="wh-ach-count">0 / 0 unlocked</span>
+    </div>
+    <div class="ach-grid" id="wh-ach-grid"></div>
+  </div>
+
+</div>
+
+<!-- ═══ QUESTS ═══ -->
+<div id="screen-quests" class="screen">
+
+  <div id="quest-board-header">
+    <span style="font-size:36px">📋</span>
+    <div>
+      <h2>Notice Board</h2>
+      <p>Gus posts new tasks every day. Complete them for bonus coins!</p>
+    </div>
+  </div>
+
+  <!-- Daily quests -->
+  <div class="quest-section-title">
+    📅 Today's Tasks
+    <span id="daily-refresh-label">Day <span id="quest-day-num">1</span></span>
+  </div>
+  <div class="quest-list" id="daily-quest-list"></div>
+
+  <!-- Season quest -->
+  <div class="quest-section-title">
+    🌸 Season Challenge
+    <span id="season-quest-label"></span>
+  </div>
+  <div class="quest-list" id="season-quest-list"></div>
 
 </div>
 
@@ -1913,7 +2291,7 @@ function showLvlModal(lv){
 function closeLvlModal(){$('lvl-modal-backdrop').classList.remove('open');}
 
 // ── ROUTING ──
-const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm','screen-fishing':'nav-home','screen-trading':'nav-home','screen-warehouse':'nav-warehouse'};
+const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm','screen-fishing':'nav-home','screen-trading':'nav-home','screen-warehouse':'nav-warehouse','screen-quests':'nav-quests','screen-upgrade':'nav-home'};
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');
@@ -1921,7 +2299,7 @@ function showScreen(id){
   if(SCREEN_NAV[id]) $(SCREEN_NAV[id]).classList.add('active');
   $('nav-bar').classList.toggle('visible',id!=='screen-home');
 }
-function goHome()  {updateMapHUD();showScreen('screen-home');}
+function goHome(){updateMapHUD();updateFarmMapVisual();showScreen('screen-home');}
 function goShop()  {renderShop();showScreen('screen-shop');}
 function goFarm()  {activeFarm='main';renderGrid();showScreen('screen-farm');}
 function goGarden(){
@@ -2120,17 +2498,18 @@ function handlePlot(i){
   }
   const c=cells[i];
   if(tool==='till'){
-    if(c.state==='empty'){c.state='tilled';setLog('Plot tilled! Pick a seed and plant it.','ok');}
+    if(c.state==='empty'){c.state='tilled';setLog('Plot tilled! Pick a seed and plant it.','ok');trackTill();}
     else setLog('Already tilled or occupied.','warn');
   } else if(tool==='water'){
     if(['planted','growing'].includes(c.state)){
       if(c.watered) setLog('Already watered today!','warn');
-      else{c.watered=true;setLog('Watered! Crop grows twice as fast tomorrow.','ok');}
+      else{c.watered=true;setLog('Watered! Crop grows twice as fast tomorrow.','ok');trackWater();}
     } else setLog('Nothing here to water.','warn');
   } else if(tool==='harvest'){
     if(c.state==='ready'){
       basket[c.seed.id]++;
       setLog(`Picked ${c.seed.emoji} ${c.seed.name}! Added to basket. Sell at the Market 🛒`,'harvest');
+      trackHarvest(false);
       c.state='tilled';c.seed=null;c.daysPlanted=0;c.watered=false;
     } else if(['planted','growing'].includes(c.state)){
       setLog(`Not ready — ${c.seed.days-c.daysPlanted} more day(s). Water to speed up!`,'warn');
@@ -2142,6 +2521,7 @@ function handlePlot(i){
       inventory[selectedSeed.id]--;
       c.state='planted';c.seed=selectedSeed;c.daysPlanted=0;c.watered=false;
       setLog(`Planted ${selectedSeed.emoji} ${selectedSeed.name}! Ready in ${selectedSeed.days} day(s).`,'ok');
+      trackPlant(false);
     } else if(c.state==='empty') setLog('Till this plot first!','warn');
     else setLog('There is already a crop here.','warn');
   }
@@ -2199,6 +2579,7 @@ function nextDay(){
   // Show season transition animation if season changed
   if(newSeason!==prevSeason){
     showSeasonTransition(newSeason);
+    trackSeasonChange();
   }
 
   const speed=getSpeedMult(); // 1 normally, 2 in autumn
@@ -2254,6 +2635,9 @@ function nextDay(){
 
   todayCaught=0;
   tradeDay=0;
+  ensureDailyQuests(); // refresh daily quests on new day
+  updateQuestBadge();
+  checkAchievements();
   updateSeasonUI();
   renderGrid();
 }
@@ -2301,17 +2685,18 @@ function renderGarden(){
 function handleGardenPlot(i){
   const c=gardenCells[i];
   if(tool==='till'){
-    if(c.state==='empty'){c.state='tilled';setLog('Garden plot tilled!','ok');}
+    if(c.state==='empty'){c.state='tilled';setLog('Garden plot tilled!','ok');trackTill();}
     else setLog('Already tilled or occupied.','warn');
   } else if(tool==='water'){
     if(['planted','growing'].includes(c.state)){
       if(c.watered) setLog('Already watered today!','warn');
-      else{c.watered=true;setLog('Watered! Grows twice as fast tomorrow.','ok');}
+      else{c.watered=true;setLog('Watered! Grows twice as fast tomorrow.','ok');trackWater();}
     } else setLog('Nothing here to water.','warn');
   } else if(tool==='harvest'){
     if(c.state==='ready'){
       basket[c.seed.id]++;
       setLog(`Picked ${c.seed.emoji} ${c.seed.name}! Head to Market 🛒`,'harvest');
+      trackHarvest(true);
       c.state='tilled';c.seed=null;c.daysPlanted=0;c.watered=false;
     } else setLog('Not ready yet.','warn');
   } else if(tool==='plant'){
@@ -2323,6 +2708,7 @@ function handleGardenPlot(i){
       inventory[selectedSeed.id]--;
       c.state='planted';c.seed=selectedSeed;c.daysPlanted=0;c.watered=false;
       setLog(`Planted ${selectedSeed.emoji} ${selectedSeed.name}!`,'ok');
+      trackPlant(true);
     } else if(c.state==='empty') setLog('Till this plot first!','warn');
     else setLog('Already occupied.','warn');
   }
@@ -2405,12 +2791,14 @@ function sellOne(id,type,evt){
     fishBasket[id]--;coins+=f.sell;totalEarn+=f.sell;
     if(evt) flashCoin(f.sell,evt.clientX-20,evt.clientY-30);
     setMktLog(`Sold 1 ${f.emoji} ${f.name} for 🪙${f.sell}!`,'🎣');
+    trackSell(f.sell);
   } else {
     if(basket[id]<=0) return;
     const s=ALL_SEEDS().find(x=>x.id===id);
     basket[id]--;coins+=s.sell;totalEarn+=s.sell;
     if(evt) flashCoin(s.sell,evt.clientX-20,evt.clientY-30);
     setMktLog(`Sold 1 ${s.emoji} ${s.name} for 🪙${s.sell}!`,'💸');
+    trackSell(s.sell);
   }
   renderMarket();updateStats();
 }
@@ -2418,9 +2806,27 @@ function sellOne(id,type,evt){
 function sellAll(){
   const total=basketTotal();if(total===0) return;
   const rect=$('sell-all-main').getBoundingClientRect();
-  ALL_SEEDS().forEach(s=>{totalEarn+=basket[s.id]*s.sell;basket[s.id]=0;});
-  FISH.forEach(f=>{totalEarn+=fishBasket[f.id]*f.sell;fishBasket[f.id]=0;});
+  let soldCount=0;
+  ALL_SEEDS().forEach(s=>{
+    if(basket[s.id]>0){
+      totalEarn+=basket[s.id]*s.sell;
+      soldCount+=basket[s.id];
+      basket[s.id]=0;
+    }
+  });
+  FISH.forEach(f=>{
+    if(fishBasket[f.id]>0){
+      totalEarn+=fishBasket[f.id]*f.sell;
+      soldCount+=fishBasket[f.id];
+      fishBasket[f.id]=0;
+    }
+  });
   coins+=total;
+  // Track for quests
+  QP.cropsSoldToday+=soldCount;
+  QP.earnedToday+=total;
+  QP.earnedThisSeason+=total;
+  checkQuestProgress();
   flashCoin(total,rect.left+40,rect.top-10);
   setMktLog(`Sold everything for 🪙${total}! Great market day! 🎉`,'🎉');
   renderMarket();updateStats();
@@ -2555,6 +2961,7 @@ function tradeSell1(id,evt){
   t.qty--;
   coins+=t.price;
   totalEarn+=t.price;
+  trackSell(t.price);
   if(evt) flashCoin(t.price,evt.clientX-20,evt.clientY-30);
   const bonus=t.price>t.basePrice?` (+🪙${t.price-t.basePrice} vs Market!)`:'';
   setTlog(`Sold 1 ${item.emoji} ${item.name} for 🪙${t.price}${bonus}`,t.price>t.basePrice?'🔥':'💸');
@@ -2579,6 +2986,7 @@ function tradeSellAll(id,evt){
   t.qty-=canSell;
   coins+=earned;
   totalEarn+=earned;
+  trackSell(earned);
   if(evt) flashCoin(earned,evt.clientX-30,evt.clientY-30);
   let msg=`Sold ${canSell}× ${item.emoji} ${item.name} for 🪙${earned}!`;
   let icon='💸';
@@ -2696,6 +3104,7 @@ function catchFish(){
   }
   fishBasket[caught.id]++;
   todayCaught++; totalCaught++;
+  trackFish(caught.id);
   // Animate
   const disp=$('caught-fish-display');
   disp.textContent=caught.emoji;
@@ -2772,6 +3181,7 @@ function renderWarehouse(){
   $('wh-crop-count').textContent= ALL_SEEDS().reduce((n,s)=>n+basket[s.id],0);
   $('wh-fish-count').textContent= FISH.reduce((n,f)=>n+fishBasket[f.id],0);
   const earnEl=$('wh-total-earn'); if(earnEl) earnEl.textContent=totalEarn;
+  renderAchievements();
 
   // ── Seeds ──
   const seedTotal = ALL_SEEDS().reduce((n,s)=>n+inventory[s.id],0);
@@ -2842,6 +3252,512 @@ function renderWarehouse(){
   }
 }
 
+// ══════════════════════════════════════════
+// ACHIEVEMENT SYSTEM
+// ══════════════════════════════════════════
+
+const ACHIEVEMENTS = [
+  // Farming
+  { id:'first_till',    icon:'🪱', name:'First Furrow',      desc:'Till your first plot',               check:()=>State.tillCount>=1 },
+  { id:'first_plant',   icon:'🌱', name:'Planting Day',      desc:'Plant your first seed',              check:()=>State.plantCount>=1 },
+  { id:'first_harvest', icon:'🧺', name:'First Harvest',     desc:'Pick your first crop',               check:()=>State.harvestCount>=1 },
+  { id:'harvest_10',    icon:'🌾', name:'Busy Farmer',       desc:'Harvest 10 crops',                   check:()=>State.harvestCount>=10 },
+  { id:'harvest_50',    icon:'🚜', name:'Serious Farmer',    desc:'Harvest 50 crops',                   check:()=>State.harvestCount>=50 },
+  { id:'harvest_100',   icon:'🏆', name:'Master Farmer',     desc:'Harvest 100 crops',                  check:()=>State.harvestCount>=100 },
+  { id:'earn_500',      icon:'🪙', name:'First Fortune',     desc:'Earn 500 coins total',               check:()=>totalEarn>=500 },
+  { id:'earn_5000',     icon:'💰', name:'Wealthy Farmer',    desc:'Earn 5,000 coins total',             check:()=>totalEarn>=5000 },
+  { id:'earn_20000',    icon:'🤑', name:'Fernhollow Rich',   desc:'Earn 20,000 coins total',            check:()=>totalEarn>=20000 },
+  // Seasons
+  { id:'first_autumn',  icon:'🍂', name:'Autumn Harvest',    desc:'Survive your first Autumn',          check:()=>State.seasonsLived.autumn>=1 },
+  { id:'first_winter',  icon:'❄️', name:'Cold Survivor',     desc:'Survive your first Winter',          check:()=>State.seasonsLived.winter>=1 },
+  { id:'three_cycles',  icon:'🌍', name:'Year-Round Farmer', desc:'Complete 3 full seasonal cycles',    check:()=>State.cyclesComplete>=3 },
+  // Fishing
+  { id:'first_fish',    icon:'🎣', name:'Gone Fishin\'',     desc:'Catch your first fish',              check:()=>totalCaught>=1 },
+  { id:'fish_10',       icon:'🐟', name:'Fisher Friend',     desc:'Catch 10 fish total',                check:()=>totalCaught>=10 },
+  { id:'fish_50',       icon:'🐠', name:'Avid Angler',       desc:'Catch 50 fish total',                check:()=>totalCaught>=50 },
+  { id:'golden_fish',   icon:'🌟', name:'Legend of the Pond',desc:'Catch a Golden Fish',                check:()=>State.goldenFishCaught },
+  // Levels
+  { id:'reach_lv2',     icon:'🚜', name:'Skilled Farmer',    desc:'Reach Level 2',                      check:()=>level>=2 },
+  { id:'reach_lv3',     icon:'🌾', name:'Master Farmer',     desc:'Reach Level 3',                      check:()=>level>=3 },
+  { id:'reach_lv6',     icon:'🌿', name:'Garden Master',     desc:'Unlock the Back Garden (Level 6)',   check:()=>level>=6 },
+  // Garden
+  { id:'first_garden',  icon:'💜', name:'Garden Tender',     desc:'Plant your first garden crop',       check:()=>State.gardenPlantCount>=1 },
+  { id:'garden_10',     icon:'🌹', name:'Blooming Garden',   desc:'Harvest 10 garden crops',            check:()=>State.gardenHarvestCount>=10 },
+  // Quests
+  { id:'quest_1',       icon:'📋', name:'Notice Taker',      desc:'Complete your first quest',          check:()=>State.questsDone>=1 },
+  { id:'quest_10',      icon:'📜', name:'Quest Champion',    desc:'Complete 10 quests',                 check:()=>State.questsDone>=10 },
+  // Days
+  { id:'day_10',        icon:'📅', name:'Ten Days In',       desc:'Reach Day 10',                       check:()=>day>=10 },
+  { id:'day_50',        icon:'🗓️', name:'Dedicated Farmer',  desc:'Reach Day 50',                       check:()=>day>=50 },
+  { id:'day_100',       icon:'🎊', name:'Full Year',         desc:'Complete a full 100-day cycle',           check:()=>day>=100 },
+  { id:'first_upg',    icon:'🏠', name:'Home Improvement',  desc:'Upgrade your farmhouse for the first time', check:()=>FarmUpgrade&&FarmUpgrade.houseTier>=1 },
+  { id:'max_house',    icon:'🏰', name:'Grand Manor',       desc:'Reach the highest farmhouse tier',          check:()=>FarmUpgrade&&FarmUpgrade.houseTier>=4 },
+  { id:'deco_3',       icon:'🌸', name:'Garden Proud',      desc:'Place 3 decorations on your farm',          check:()=>FarmUpgrade&&FarmUpgrade.decos.size>=3 },
+  { id:'deco_all',     icon:'✨', name:'Fully Decorated',   desc:'Buy every single decoration',               check:()=>FarmUpgrade&&DECORATIONS&&FarmUpgrade.decos.size>=DECORATIONS.length },
+];
+
+// Stat counters tracked for achievements
+const State = {
+  tillCount:0, plantCount:0, harvestCount:0,
+  gardenPlantCount:0, gardenHarvestCount:0,
+  goldenFishCaught:false,
+  questsDone:0, cyclesComplete:0,
+  seasonsLived:{ spring:0, summer:0, autumn:0, winter:0 },
+  unlockedAch: new Set(),
+};
+
+let _achToastTimer = null;
+let _toastTimer    = null;
+
+// General toast (top center, green)
+function showToast(msg, dur=2800){
+  let el = document.getElementById('general-toast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'general-toast';
+    el.style.cssText = `
+      position:fixed;top:100px;left:50%;transform:translateX(-50%);
+      background:rgba(20,12,5,.92);border:2px solid #7ab648;
+      border-radius:24px;padding:9px 22px;
+      font-family:'Fredoka One',cursive;font-size:15px;color:#d4f7a0;
+      white-space:nowrap;z-index:500;pointer-events:none;
+      transition:opacity .3s;box-shadow:0 4px 16px rgba(0,0,0,.35);
+    `;
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = '1';
+  if(_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>{ el.style.opacity='0'; }, dur);
+}
+
+function checkAchievements(){
+  ACHIEVEMENTS.forEach(a=>{
+    if(!State.unlockedAch.has(a.id) && a.check()){
+      State.unlockedAch.add(a.id);
+      showAchToast(a);
+    }
+  });
+}
+
+function showAchToast(ach){
+  const toast = $('achievement-toast');
+  $('ach-toast-icon').textContent = ach.icon;
+  $('ach-toast-name').textContent = ach.name;
+  $('ach-toast-desc').textContent = ach.desc;
+  toast.classList.add('show');
+  if(_achToastTimer) clearTimeout(_achToastTimer);
+  _achToastTimer = setTimeout(()=>toast.classList.remove('show'), 3500);
+}
+
+function renderAchievements(){
+  const grid = $('wh-ach-grid'); if(!grid) return;
+  grid.innerHTML = '';
+  const total   = ACHIEVEMENTS.length;
+  const unlocked= ACHIEVEMENTS.filter(a=>State.unlockedAch.has(a.id)).length;
+  const countEl = $('wh-ach-count');
+  if(countEl) countEl.textContent = `${unlocked} / ${total} unlocked`;
+
+  ACHIEVEMENTS.forEach(a=>{
+    const done = State.unlockedAch.has(a.id);
+    const d = document.createElement('div');
+    d.className = `ach-card ${done?'unlocked':'locked'}`;
+    d.innerHTML = `
+      <div class="ach-icon">${done ? a.icon : '🔒'}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${done ? a.desc : '???'}</div>
+      ${done ? '<div class="ach-badge">✓ Unlocked</div>' : ''}`;
+    grid.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════
+// QUEST SYSTEM
+// ══════════════════════════════════════════
+
+const DAILY_QUEST_POOL = [
+  { id:'sell_5_crops',   icon:'🛒', name:'Market Run',        desc:'Sell 5 crops at the Market or Trading Post', target:5,  stat:'cropsSoldToday',  reward:30 },
+  { id:'water_5',        icon:'💧', name:'Watering Round',    desc:'Water 5 plots today',                        target:5,  stat:'wateredToday',    reward:20 },
+  { id:'harvest_3',      icon:'🧺', name:'Picking Time',      desc:'Harvest 3 crops today',                      target:3,  stat:'harvestedToday',  reward:25 },
+  { id:'till_4',         icon:'🪱', name:'Prep the Fields',   desc:'Till 4 plots today',                         target:4,  stat:'tilledToday',     reward:20 },
+  { id:'plant_3',        icon:'🌱', name:'Planting Day',      desc:'Plant 3 seeds today',                        target:3,  stat:'plantedToday',    reward:25 },
+  { id:'catch_2_fish',   icon:'🎣', name:'Morning Fishing',   desc:'Catch 2 fish today',                         target:2,  stat:'caughtToday',     reward:30 },
+  { id:'earn_100',       icon:'🪙', name:'Good Business',     desc:'Earn 100 coins today',                       target:100,stat:'earnedToday',     reward:40 },
+  { id:'catch_rare',     icon:'🐡', name:'Something Special', desc:'Catch a Perch, Trout, Bass, or Golden Fish', target:1,  stat:'rareFishToday',   reward:50 },
+];
+
+const SEASON_QUESTS = {
+  spring:{ icon:'🌸', name:'Spring Planting',     desc:'Plant 10 seeds this Spring',      target:10, stat:'plantedThisSeason', reward:150 },
+  summer:{ icon:'🌻', name:'Summer Harvest',      desc:'Harvest 20 crops this Summer',    target:20, stat:'harvestedThisSeason',reward:200 },
+  autumn:{ icon:'🍂', name:'Autumn Rush',         desc:'Sell 300 coins worth this Autumn',target:300,stat:'earnedThisSeason',  reward:300 },
+  winter:{ icon:'❄️', name:'Winter Fishing',      desc:'Catch 10 fish this Winter',       target:10, stat:'caughtThisSeason',  reward:200 },
+};
+
+// Quest progress tracking (resets daily / seasonally)
+const QP = {
+  // Daily
+  cropsSoldToday:0, wateredToday:0, harvestedToday:0,
+  tilledToday:0, plantedToday:0, caughtToday:0,
+  earnedToday:0, rareFishToday:0,
+  // Season
+  plantedThisSeason:0, harvestedThisSeason:0,
+  earnedThisSeason:0, caughtThisSeason:0,
+  // Which daily quests are active today and done
+  dailyQuests:[], // array of quest ids
+  dailyDone:new Set(),
+  seasonDone:false,
+  lastQuestDay:-1,
+  lastQuestSeason:'',
+};
+
+function seededRandQ(seed){
+  let s=seed>>>0;
+  return function(){
+    s+=0x6D2B79F5;
+    let t=Math.imul(s^(s>>>15),1|s);
+    t^=t+Math.imul(t^(t>>>7),61|t);
+    return((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+
+function ensureDailyQuests(){
+  if(QP.lastQuestDay===day) return;
+  QP.lastQuestDay=day;
+  // Reset daily counters
+  QP.cropsSoldToday=0; QP.wateredToday=0; QP.harvestedToday=0;
+  QP.tilledToday=0; QP.plantedToday=0; QP.caughtToday=0;
+  QP.earnedToday=0; QP.rareFishToday=0;
+  QP.dailyDone=new Set();
+  // Pick 3 random quests for today (seeded by day)
+  const rng=seededRandQ(day*3571+17);
+  const pool=[...DAILY_QUEST_POOL];
+  const picked=[];
+  while(picked.length<3 && pool.length>0){
+    const idx=Math.floor(rng()*pool.length);
+    picked.push(pool.splice(idx,1)[0]);
+  }
+  QP.dailyQuests=picked;
+}
+
+function ensureSeasonQuest(){
+  const s=getSeason().bg;
+  if(QP.lastQuestSeason===s) return;
+  QP.lastQuestSeason=s;
+  QP.plantedThisSeason=0; QP.harvestedThisSeason=0;
+  QP.earnedThisSeason=0;  QP.caughtThisSeason=0;
+  QP.seasonDone=false;
+}
+
+function checkQuestProgress(){
+  ensureDailyQuests();
+  ensureSeasonQuest();
+
+  // Check daily
+  QP.dailyQuests.forEach(q=>{
+    if(QP.dailyDone.has(q.id)) return;
+    const progress=QP[q.stat]||0;
+    if(progress>=q.target){
+      QP.dailyDone.add(q.id);
+      coins+=q.reward;
+      totalEarn+=q.reward;
+      State.questsDone++;
+      updateNavCoins();
+      showToast(`✅ Quest done: ${q.name}! +🪙${q.reward}`);
+      checkAchievements();
+    }
+  });
+
+  // Check season
+  if(!QP.seasonDone){
+    const sq=SEASON_QUESTS[getSeason().bg];
+    if(sq && (QP[sq.stat]||0)>=sq.target){
+      QP.seasonDone=true;
+      coins+=sq.reward;
+      totalEarn+=sq.reward;
+      State.questsDone++;
+      updateNavCoins();
+      showToast(`🌟 Season quest done: ${sq.name}! +🪙${sq.reward}`);
+      checkAchievements();
+    }
+  }
+  updateQuestBadge();
+}
+
+function updateQuestBadge(){
+  ensureDailyQuests();
+  const remaining=QP.dailyQuests.filter(q=>!QP.dailyDone.has(q.id)).length;
+  const badge=$('nav-quest-badge');
+  const mapHint=$('map-quest-hint');
+  if(badge){
+    if(remaining>0){ badge.style.display=''; badge.textContent=remaining; }
+    else badge.style.display='none';
+  }
+  if(mapHint) mapHint.textContent=remaining>0?`${remaining} quest(s) available`:'All done today!';
+}
+
+function goQuests(){
+  ensureDailyQuests();
+  ensureSeasonQuest();
+  renderQuests();
+  showScreen('screen-quests');
+}
+
+function renderQuests(){
+  $('quest-day-num').textContent=day;
+  const s=getSeason();
+  $('season-quest-label').textContent=`${s.icon} ${s.name}`;
+
+  // Daily quests
+  const dl=$('daily-quest-list'); dl.innerHTML='';
+  QP.dailyQuests.forEach(q=>{
+    const done=QP.dailyDone.has(q.id);
+    const prog=Math.min(QP[q.stat]||0, q.target);
+    const pct=Math.round((prog/q.target)*100);
+    const d=document.createElement('div');
+    d.className=`quest-card${done?' done':''}`;
+    d.innerHTML=`
+      <div class="quest-icon">${q.icon}</div>
+      <div class="quest-body">
+        <div class="quest-name">${q.name}</div>
+        <div class="quest-desc">${q.desc}</div>
+        ${!done?`
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-bar" style="width:${pct}%"></div>
+        </div>
+        <div class="quest-progress-label">${prog} / ${q.target}</div>`:''}
+      </div>
+      ${done
+        ? '<div class="quest-done-badge">✅ Done!</div>'
+        : `<div class="quest-reward"><div class="qr-coins">+🪙${q.reward}</div><div class="qr-label">REWARD</div></div>`
+      }`;
+    dl.appendChild(d);
+  });
+
+  // Season quest
+  const sl=$('season-quest-list'); sl.innerHTML='';
+  const sq=SEASON_QUESTS[s.bg];
+  if(sq){
+    const done=QP.seasonDone;
+    const prog=Math.min(QP[sq.stat]||0, sq.target);
+    const pct=Math.round((prog/sq.target)*100);
+    const d=document.createElement('div');
+    d.className=`quest-card season-quest${done?' done':''}`;
+    d.innerHTML=`
+      <div class="quest-icon">${sq.icon}</div>
+      <div class="quest-body">
+        <div class="quest-name">${sq.name}</div>
+        <div class="quest-desc">${sq.desc}</div>
+        ${!done?`
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-bar" style="width:${pct}%;background:linear-gradient(90deg,#fb923c,#f97316)"></div>
+        </div>
+        <div class="quest-progress-label">${prog} / ${sq.target}</div>`:''}
+      </div>
+      ${done
+        ? '<div class="quest-done-badge">✅ Done!</div>'
+        : `<div class="quest-reward"><div class="qr-coins">+🪙${sq.reward}</div><div class="qr-label">SEASON</div></div>`
+      }`;
+    sl.appendChild(d);
+  }
+}
+
+// Hook quest/achievement tracking into existing actions
+function trackTill(){
+  State.tillCount++;
+  QP.tilledToday++;
+  checkQuestProgress();
+  checkAchievements();
+}
+function trackPlant(isGarden=false){
+  State.plantCount++;
+  QP.plantedToday++;
+  QP.plantedThisSeason++;
+  if(isGarden){ State.gardenPlantCount++; }
+  checkQuestProgress();
+  checkAchievements();
+}
+function trackHarvest(isGarden=false){
+  State.harvestCount++;
+  QP.harvestedToday++;
+  QP.harvestedThisSeason++;
+  if(isGarden){ State.gardenHarvestCount++; }
+  checkQuestProgress();
+  checkAchievements();
+}
+function trackWater(){
+  QP.wateredToday++;
+  checkQuestProgress();
+}
+function trackSell(amount){
+  QP.cropsSoldToday++;
+  QP.earnedToday+=amount;
+  QP.earnedThisSeason+=amount;
+  checkQuestProgress();
+  checkAchievements();
+}
+function trackFish(fishId){
+  const rareIds=['perch','trout','bass','golden'];
+  if(rareIds.includes(fishId)) QP.rareFishToday++;
+  QP.caughtToday++;
+  QP.caughtThisSeason++;
+  if(fishId==='golden') State.goldenFishCaught=true;
+  checkQuestProgress();
+  checkAchievements();
+}
+function trackSeasonChange(){
+  const s=getSeason().bg;
+  State.seasonsLived[s]=(State.seasonsLived[s]||0)+1;
+  if(s==='spring') State.cyclesComplete++;
+  checkAchievements();
+}
+
+// ══════════════════════════════════════════
+// FARM UPGRADE SYSTEM
+// ══════════════════════════════════════════
+
+const HOUSE_TIERS = [
+  { id:0, emoji:'🏚️', name:'Ramshackle Shed',  desc:'A leaning old shed. The roof is held on by hope.',                 cost:0    },
+  { id:1, emoji:'🏠', name:'Modest Farmhouse',  desc:'Patched up, livable. Gus says it\'s an improvement.',             cost:300  },
+  { id:2, emoji:'🏡', name:'Cosy Cottage',      desc:'Whitewashed walls, a proper door, and a weathervane.',            cost:1000 },
+  { id:3, emoji:'🏘️', name:'Country Estate',   desc:'A proper farmhouse. Fernhollow\'s finest.',                       cost:3000 },
+  { id:4, emoji:'🏰', name:'Grand Manor Farm',  desc:'People come from the next valley just to look at it.',            cost:8000 },
+];
+
+const DECORATIONS = [
+  { id:'flowerpot',   emoji:'🪴', name:'Flower Pots',    desc:'A splash of colour by the door.',            cost:80  },
+  { id:'windmill',    emoji:'🌀', name:'Windmill',        desc:'Spins lazily in the Fernhollow breeze.',     cost:200 },
+  { id:'scarecrow',   emoji:'🧶', name:'Scarecrow',       desc:'Keeps the crows away. Mostly.',              cost:150 },
+  { id:'lantern',     emoji:'🏮', name:'Garden Lantern',  desc:'Glows warmly at dusk.',                      cost:120 },
+  { id:'well',        emoji:'🪣', name:'Stone Well',      desc:'A classic Fernhollow feature.',              cost:300 },
+  { id:'beehive',     emoji:'🐝', name:'Beehive',         desc:'Bees! They make the flowers happier.',       cost:250 },
+  { id:'bench',       emoji:'🪑', name:'Garden Bench',    desc:'Somewhere to sit and watch the seasons.',    cost:180 },
+  { id:'flag',        emoji:'🚩', name:'Farm Flag',       desc:'Your flag, flying over your land.',          cost:100 },
+];
+
+// Upgrade state
+const FarmUpgrade = {
+  houseTier: 0,
+  decos: new Set(),
+};
+
+function goUpgrade(){
+  renderUpgradeShop();
+  showScreen('screen-upgrade');
+}
+
+function renderUpgradeShop(){
+  $('upg-coins').textContent = coins;
+  updateFarmMapVisual();
+
+  // Preview
+  const tier = HOUSE_TIERS[FarmUpgrade.houseTier];
+  $('upg-preview').textContent = tier.emoji;
+  $('upg-preview-name').textContent = tier.name;
+  $('upg-preview-decos').textContent =
+    [...FarmUpgrade.decos].map(id=>DECORATIONS.find(d=>d.id===id)?.emoji||'').join(' ');
+
+  // House track
+  const track = $('house-track'); track.innerHTML='';
+  HOUSE_TIERS.forEach((t,i)=>{
+    const isCurrent = i===FarmUpgrade.houseTier;
+    const isOwned   = i<FarmUpgrade.houseTier;
+    const isNext    = i===FarmUpgrade.houseTier+1;
+    const canAfford = coins>=t.cost;
+
+    const row = document.createElement('div');
+    row.className = `house-tier ${isCurrent?'current':isOwned?'owned':'locked'}`;
+    row.innerHTML = `
+      <div class="ht-emoji">${t.emoji}</div>
+      <div class="ht-body">
+        <div class="ht-name">${t.name}</div>
+        <div class="ht-desc">${t.desc}</div>
+        ${isCurrent?'<span class="ht-badge current-badge">✅ Current</span>':
+          isOwned  ?'<span class="ht-badge owned-badge">✓ Owned</span>':''}
+      </div>
+      ${i===0 ? '' :
+        isOwned||isCurrent ? '' :
+        isNext ? `<button class="ht-btn" ${canAfford?'':'disabled'} onclick="buyHouseTier(${i})">
+          Upgrade<br><small>🪙${t.cost.toLocaleString()}</small>
+        </button>` :
+        `<div style="font-size:12px;color:var(--soil-mid);text-align:center;padding:4px 8px;">🔒<br><small>🪙${t.cost.toLocaleString()}</small></div>`
+      }`;
+    track.appendChild(row);
+  });
+
+  // Deco grid
+  const grid = $('deco-shop-grid'); grid.innerHTML='';
+  DECORATIONS.forEach(d=>{
+    const owned = FarmUpgrade.decos.has(d.id);
+    const canAfford = coins>=d.cost;
+    const card = document.createElement('div');
+    card.className = `deco-card ${owned?'owned-deco':''}`;
+    card.innerHTML = `
+      <div class="dc-emoji">${d.emoji}</div>
+      <div class="dc-name">${d.name}</div>
+      <div class="dc-desc">${d.desc}</div>
+      ${owned
+        ? `<span class="dc-owned-badge">✅ Placed!</span>`
+        : `<button class="dc-buy-btn" ${canAfford?'':'disabled'} onclick="buyDeco('${d.id}')">
+            Buy — 🪙${d.cost}
+           </button>`
+      }`;
+    grid.appendChild(card);
+  });
+}
+
+function buyHouseTier(tier){
+  const t = HOUSE_TIERS[tier];
+  if(coins<t.cost || tier!==FarmUpgrade.houseTier+1) return;
+  coins -= t.cost;
+  FarmUpgrade.houseTier = tier;
+  updateNavCoins();
+  updateFarmMapVisual();
+  renderUpgradeShop();
+  showToast(`🏠 Farmhouse upgraded to ${t.name}!`);
+  checkAchievements();
+}
+
+function buyDeco(id){
+  const d = DECORATIONS.find(x=>x.id===id);
+  if(!d||coins<d.cost||FarmUpgrade.decos.has(id)) return;
+  coins -= d.cost;
+  FarmUpgrade.decos.add(id);
+  updateNavCoins();
+  updateFarmMapVisual();
+  renderUpgradeShop();
+  showToast(`${d.emoji} ${d.name} placed on your farm!`);
+  checkAchievements();
+}
+
+function updateFarmMapVisual(){
+  // Update farm map pin icon based on house tier
+  const icon = $('map-farm-icon');
+  const box  = $('map-farm-box');
+  const hint = $('map-farm-hint');
+  if(icon) icon.textContent = HOUSE_TIERS[FarmUpgrade.houseTier].emoji==='🏚️' ? '🚜' : HOUSE_TIERS[FarmUpgrade.houseTier].emoji;
+
+  // Update decoration layer on map
+  const layer = $('farm-deco-layer');
+  if(!layer) return;
+  layer.innerHTML = '';
+  FarmUpgrade.decos.forEach(id=>{
+    const d = DECORATIONS.find(x=>x.id===id);
+    if(!d) return;
+    const el = document.createElement('div');
+    el.className = 'farm-deco-emoji';
+    el.textContent = d.emoji;
+    layer.appendChild(el);
+  });
+
+  // Update hint text
+  if(hint){
+    const count = FarmUpgrade.decos.size;
+    hint.textContent = count>0
+      ? `Tier ${FarmUpgrade.houseTier+1} · ${count} deco${count>1?'s':''}`
+      : HOUSE_TIERS[FarmUpgrade.houseTier].name;
+  }
+}
+
 // ── TUTORIAL SYSTEM ──
 const Tutorial = (() => {
 
@@ -2902,7 +3818,7 @@ const Tutorial = (() => {
   let _highlighted = null;
 
   function start(){
-    if(localStorage.getItem('fh_tutorial_done')) return;
+    if(sessionStorage.getItem('fh_tutorial_done')) return;
     // Small delay so the map renders first
     setTimeout(()=>{
       _step  = 0;
@@ -2973,7 +3889,7 @@ const Tutorial = (() => {
     $('tutorial-skip').style.display = 'none';
     $('tutorial-arrow').style.display = 'none';
     clearHighlight();
-    localStorage.setItem('fh_tutorial_done','1');
+    sessionStorage.setItem('fh_tutorial_done','1');
   }
 
   function clearHighlight(){
@@ -2983,7 +3899,7 @@ const Tutorial = (() => {
   }
 
   function reset(){
-    localStorage.removeItem('fh_tutorial_done');
+    sessionStorage.removeItem('fh_tutorial_done');
   }
 
   return { start, next, skip, reset };
@@ -3002,6 +3918,11 @@ updateNavCoins();
 updateMapHUD();
 updateFarmTabs();
 updateSeasonUI();
+updateFarmMapVisual();
+ensureDailyQuests();
+ensureSeasonQuest();
+updateQuestBadge();
+checkAchievements();
 Tutorial.start();
 window.addEventListener('resize',buildFence);
 </script>
