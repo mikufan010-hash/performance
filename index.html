@@ -268,8 +268,154 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   #nav-bar{flex-wrap:wrap;padding:6px 10px;}
 }
 /* ══════════════════════════════════
-   FARM UPGRADE SYSTEM
+   GUS CHAT PANEL
 ══════════════════════════════════ */
+#gus-chat-backdrop{
+  position:fixed;inset:0;z-index:290;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);
+  display:none;align-items:flex-end;justify-content:center;
+  padding-bottom:20px;
+}
+#gus-chat-backdrop.open{display:flex;}
+
+#gus-chat-panel{
+  background:var(--cream);
+  border:3px solid var(--bark);
+  border-radius:20px 20px 16px 16px;
+  box-shadow:0 -4px 30px rgba(0,0,0,.3), 4px 6px 0 var(--bark);
+  width:min(520px,95vw);
+  max-height:85vh;
+  overflow-y:auto;
+  animation:chatSlideUp .35s cubic-bezier(.34,1.28,.64,1) both;
+}
+@keyframes chatSlideUp{
+  from{opacity:0;transform:translateY(40px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* Header */
+#gus-chat-header{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+  background:linear-gradient(145deg,#fef3c7,#fdedc8);
+  border-bottom:2px solid var(--bark);
+  border-radius:17px 17px 0 0;
+  position:sticky;top:0;z-index:2;
+}
+#gus-chat-avatar{
+  font-size:44px;width:56px;height:56px;
+  background:linear-gradient(145deg,#fef9ee,#fde68a);
+  border:2.5px solid var(--bark);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:2px 3px 0 var(--bark);
+}
+#gus-chat-info h3{
+  font-family:'Fredoka One',cursive;
+  font-size:20px;color:var(--soil-dark);
+}
+#gus-chat-info p{
+  font-size:12px;color:var(--soil-mid);margin-top:2px;
+}
+#gus-chat-affinity{
+  margin-left:auto;text-align:center;
+}
+#gus-aff-bar-wrap{
+  width:80px;height:8px;background:#e5e7eb;
+  border-radius:4px;overflow:hidden;margin-bottom:3px;
+}
+#gus-aff-bar{
+  height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#f59e0b,#d97706);
+  transition:width .6s ease;
+}
+#gus-aff-label{font-size:10px;color:var(--soil-mid);letter-spacing:.5px;}
+#gus-chat-close{
+  position:absolute;top:12px;right:14px;
+  font-size:18px;color:var(--soil-mid);cursor:pointer;
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+#gus-chat-close:hover{background:rgba(0,0,0,.1);}
+
+/* Gus speech bubble inside panel */
+#gus-chat-speech{
+  padding:16px 20px;
+  border-bottom:1px solid rgba(139,94,60,.12);
+}
+#gus-chat-speech p{
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:17px;line-height:1.65;color:var(--soil-dark);
+}
+#gus-chat-speech .speech-name{
+  font-family:'Fredoka One',cursive;
+  font-size:13px;color:var(--amber);
+  margin-bottom:5px;letter-spacing:.5px;
+}
+
+/* Option buttons */
+#gus-chat-options{padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.gus-option{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;
+  background:#fff;border:2px solid var(--bark);
+  border-radius:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;
+  color:var(--soil-dark);text-align:left;
+  box-shadow:2px 2px 0 var(--bark);
+  transition:all .15s;
+}
+.gus-option:hover{background:var(--cream);transform:translateY(-2px);box-shadow:2px 4px 0 var(--bark);}
+.gus-option .go-icon{font-size:24px;flex-shrink:0;}
+.gus-option .go-body{}
+.gus-option .go-title{font-size:14px;font-weight:700;color:var(--soil-dark);}
+.gus-option .go-desc{font-size:11px;color:var(--soil-mid);margin-top:1px;}
+
+/* Gift section */
+#gus-gift-section{
+  padding:14px 16px;
+  border-top:1px solid rgba(139,94,60,.12);
+}
+#gus-gift-section h4{
+  font-family:'Fredoka One',cursive;
+  font-size:15px;color:var(--soil-dark);margin-bottom:10px;
+}
+#gus-gift-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.gift-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:#fff;border:2px solid var(--bark);border-radius:10px;
+  padding:8px 10px;cursor:pointer;min-width:64px;
+  box-shadow:2px 2px 0 var(--bark);transition:all .15s;
+  font-family:'Nunito',sans-serif;
+}
+.gift-item:hover{background:var(--cream);transform:translateY(-2px);}
+.gift-item .gi-emoji{font-size:26px;}
+.gift-item .gi-name{font-size:10px;color:var(--soil-mid);}
+.gift-item .gi-qty{font-size:11px;font-weight:700;color:var(--green-deep);}
+.gift-item.no-stock{opacity:.4;cursor:not-allowed;transform:none!important;}
+.gift-empty{font-size:13px;color:var(--soil-mid);font-style:italic;padding:8px 0;}
+
+/* Response bubble (after gift/action) */
+#gus-response{
+  padding:14px 20px 16px;
+  background:linear-gradient(145deg,#fef9ee,#fef3c7);
+  border-top:1px solid rgba(139,94,60,.12);
+  display:none;
+}
+#gus-response p{
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:16px;line-height:1.6;color:var(--soil-dark);
+  font-style:italic;
+}
+#gus-response-close{
+  margin-top:10px;padding:7px 18px;
+  background:var(--green-mid);border:2px solid var(--green-deep);
+  border-radius:20px;font-family:'Fredoka One',cursive;
+  font-size:14px;color:#fff;cursor:pointer;
+  box-shadow:2px 2px 0 var(--green-deep);transition:all .15s;
+}
+#gus-response-close:hover{transform:translateY(-1px);}
 #screen-upgrade{padding-top:92px;}
 
 #upgrade-header{
@@ -1339,6 +1485,60 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   </div>
 </div>
 
+<!-- Gus Chat Panel -->
+<div id="gus-chat-backdrop" onclick="if(event.target===this)GusChat.close()">
+  <div id="gus-chat-panel">
+
+    <!-- Header -->
+    <div id="gus-chat-header">
+      <div id="gus-chat-avatar">👴</div>
+      <div id="gus-chat-info">
+        <h3>Gus</h3>
+        <p>Fernhollow's Oldest Farmer</p>
+      </div>
+      <div id="gus-chat-affinity">
+        <div id="gus-aff-bar-wrap"><div id="gus-aff-bar" style="width:0%"></div></div>
+        <div id="gus-aff-label">Friendship 0</div>
+      </div>
+      <div id="gus-chat-close" onclick="GusChat.close()">✕</div>
+    </div>
+
+    <!-- Gus says -->
+    <div id="gus-chat-speech">
+      <div class="speech-name">Gus says —</div>
+      <p id="gus-chat-line"></p>
+    </div>
+
+    <!-- Options -->
+    <div id="gus-chat-options"></div>
+
+    <!-- Gift section -->
+    <div id="gus-gift-section" style="display:none">
+      <h4>🎁 Give a gift</h4>
+      <div id="gus-gift-grid"></div>
+    </div>
+
+    <!-- Response after gift/action -->
+    <div id="gus-response">
+      <p id="gus-response-text"></p>
+      <button id="gus-response-close" onclick="GusChat.backToOptions()">← Back</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Gus floating button (all screens) -->
+<div id="gus-float-btn" onclick="GusChat.open()" title="Talk to Gus" style="
+  position:fixed;bottom:54px;right:16px;z-index:200;
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(145deg,#fef3c7,#fde68a);
+  border:2.5px solid var(--bark);
+  font-size:24px;cursor:pointer;
+  box-shadow:3px 4px 0 var(--bark);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s;
+" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">👴</div>
+
 <!-- Tutorial System -->
 <div id="tutorial-backdrop"></div>
 <button id="tutorial-skip" onclick="Tutorial.skip()">Skip Tutorial ✕</button>
@@ -1390,6 +1590,15 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
     <div class="map-hud-pill">🧺 <span id="map-basket-val">0</span></div>
     <div class="map-hud-pill">📅 Day <span id="map-day-val">1</span></div>
     <div id="map-hud-level" class="lv1-badge">🌱 Lv 1</div>
+    <button id="gus-hud-btn" onclick="GusChat.open()" title="Talk to Gus" style="
+      width:38px;height:38px;border-radius:50%;
+      background:linear-gradient(145deg,#fef3c7,#fde68a);
+      border:2px solid var(--bark);
+      font-size:20px;cursor:pointer;
+      box-shadow:2px 3px 0 var(--bark);
+      transition:all .15s;display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+    " onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">👴</button>
   </div>
 
   <!-- The map itself -->
@@ -3294,6 +3503,8 @@ const ACHIEVEMENTS = [
   { id:'max_house',    icon:'🏰', name:'Grand Manor',       desc:'Reach the highest farmhouse tier',          check:()=>FarmUpgrade&&FarmUpgrade.houseTier>=4 },
   { id:'deco_3',       icon:'🌸', name:'Garden Proud',      desc:'Place 3 decorations on your farm',          check:()=>FarmUpgrade&&FarmUpgrade.decos.size>=3 },
   { id:'deco_all',     icon:'✨', name:'Fully Decorated',   desc:'Buy every single decoration',               check:()=>FarmUpgrade&&DECORATIONS&&FarmUpgrade.decos.size>=DECORATIONS.length },
+  { id:'gus_friend',  icon:'🤝', name:'Old Friends',        desc:'Reach 50 friendship with Gus',               check:()=>GusChat&&GusChat.affinity>=50 },
+  { id:'gus_best',    icon:'💛', name:'Fernhollow Family',  desc:'Reach 100 friendship with Gus',              check:()=>GusChat&&GusChat.affinity>=100 },
 ];
 
 // Stat counters tracked for achievements
@@ -3758,6 +3969,278 @@ function updateFarmMapVisual(){
   }
 }
 
+// ══════════════════════════════════════════
+// GUS CHAT SYSTEM
+// ══════════════════════════════════════════
+
+const GusChat = (() => {
+
+  // Gus affinity (0–100)
+  let affinity = 0;
+  let giftedToday = false;
+  let lastGiftDay = -1;
+
+  // Gus's daily greeting — changes based on season, day, affinity
+  function getGreeting(){
+    const s = getSeason();
+    const aff = affinity;
+    if(aff === 0){
+      return "Ah, you're the one who took over the old farmhouse! Good. Place was getting lonely. I'm Gus. Been here longer than the oldest tree on that hill.";
+    }
+    if(aff < 20){
+      const lines = [
+        "Good to see you settling in. The soil here is patient — it'll wait for you to figure things out.",
+        "You know, your grandmother used to bring me carrots every spring. Fine woman. Fine carrots.",
+        `${s.name} in Fernhollow. Nothing quite like it. Well, except the other three seasons. Those are good too.`,
+        "The pond's calm today. Good fishing weather, if you ask me. Which you didn't. But I'm telling you anyway.",
+      ];
+      return lines[day % lines.length];
+    }
+    if(aff < 50){
+      const lines = [
+        "You're getting the hang of it. I can tell. Your rows are straighter than last week.",
+        "Saw you at the market the other day. Good prices, wasn't it? Or terrible. Hard to remember.",
+        `${s.icon} ${s.name}'s treating the valley well this year. Touch your soil in the morning — you'll feel it.`,
+        "I've been farming sixty years and I still get excited when a seed sprouts. Don't tell anyone.",
+      ];
+      return lines[day % lines.length];
+    }
+    if(aff < 80){
+      const lines = [
+        "You've got good instincts. Better than I did at your age. Though I was also tending thirty goats, so.",
+        "I look out my window in the morning now and I think — good, the farm's in good hands.",
+        "There's a fishing spot on the far side of the pond nobody knows about. Maybe I'll show you sometime.",
+        "Your grandmother would be pleased. I know that for certain.",
+      ];
+      return lines[day % lines.length];
+    }
+    return [
+      "You know, I don't say this to many people — you belong here. Fernhollow chose you right.",
+      "Sixty years of mornings, and this one's still good. Partly the weather. Mostly the company.",
+      "If I were sixty years younger I'd compete with you at market. Lucky for both of us, I'm not.",
+    ][day % 3];
+  }
+
+  // Gift responses per item
+  const GIFT_RESPONSES = {
+    lettuce: [
+      "Lettuce! My wife used to make a salad with this every Sunday. Thank you.",
+      "Fresh lettuce. Nothing fancy, but there's dignity in a simple crop grown well.",
+    ],
+    carrot: [
+      "A carrot! Your grandmother grew carrots just like this. I can tell by the colour.",
+      "Good carrot. Firm. You're watering on time — I can tell.",
+    ],
+    potato: [
+      "Potatoes! Now we're talking. I can do something with these.",
+      "A fine potato. The potato is an underrated vegetable and I will die on this hill.",
+    ],
+    corn: [
+      "Corn! Summer's been good to you. This is a proper harvest.",
+      "Beautiful corn. I haven't grown corn in ten years — my knees won't let me bend that low anymore.",
+    ],
+    tomato: [
+      "A tomato! These take patience to grow. You've learned well.",
+      "Tomatoes. Your grandmother grew the best tomatoes in the valley. Yours are close.",
+    ],
+    lavender: [
+      "Lavender! From the back garden, yes? Smells like my wife's dressing table. Thank you.",
+      "Oh, lavender. I didn't know you'd unlocked the garden. Lovely. Truly lovely.",
+    ],
+    rose: [
+      "A rose! I haven't been given a flower since 1987. I'm going to put it in a jar.",
+      "You grew this? In that back garden? Extraordinary. Thank you, really.",
+    ],
+    herb: [
+      "Fresh herbs! I'll put these in my soup tonight. You've made an old man's evening.",
+      "Herbs from the garden. Wonderful. Calla at the clinic would love these too, you know.",
+    ],
+    minnow: [
+      "A minnow! Caught it yourself? Good. The pond rewards patience.",
+      "I used to catch these by the bucketful as a boy. Good times.",
+    ],
+    carp: [
+      "Carp! A decent catch. The pond's been generous to you.",
+      "Nice carp. Solid fish. I'll fry it tonight with the herbs if you happen to have any.",
+    ],
+    perch: [
+      "A perch! Now that's a proper fish. You're getting good at this.",
+      "Perch. My favourite. Thank you — genuinely.",
+    ],
+    trout: [
+      "A trout! That's not easy to catch. You've got the touch.",
+      "Trout! I haven't had trout in years. This is a real gift.",
+    ],
+    bass: [
+      "Bass! You caught a bass?! The pond doesn't give those up easily. Well done.",
+      "A bass. Remarkable. You're a better angler than me now and I won't pretend otherwise.",
+    ],
+    golden: [
+      "...Is that a Golden Fish? I've fished that pond for sixty years. SIXTY YEARS. How did you — you know what, I don't want to know. I'm just glad it exists. Thank you.",
+    ],
+  };
+
+  function getAffinityLabel(){
+    if(affinity<20) return 'Acquaintance';
+    if(affinity<40) return 'Neighbour';
+    if(affinity<60) return 'Friend';
+    if(affinity<80) return 'Good Friend';
+    return 'Old Friend';
+  }
+
+  function updateAffinityUI(){
+    const pct = Math.min(100, affinity);
+    $('gus-aff-bar').style.width = pct + '%';
+    $('gus-aff-label').textContent = `${getAffinityLabel()} · ${affinity}`;
+  }
+
+  function open(){
+    // Reset daily gift flag
+    if(lastGiftDay !== day){ giftedToday = false; lastGiftDay = day; }
+
+    $('gus-chat-line').textContent = getGreeting();
+    updateAffinityUI();
+    showOptions();
+    $('gus-gift-section').style.display = 'none';
+    $('gus-response').style.display = 'none';
+    $('gus-chat-backdrop').classList.add('open');
+  }
+
+  function close(){
+    $('gus-chat-backdrop').classList.remove('open');
+  }
+
+  function showOptions(){
+    $('gus-gift-section').style.display = 'none';
+    $('gus-response').style.display = 'none';
+    const opts = $('gus-chat-options');
+    opts.innerHTML = '';
+    opts.style.display = 'flex';
+
+    // Option 1: Give a gift
+    const hasItems = [...ALL_SEEDS(),...FISH].some(i=>(basket[i.id]||fishBasket[i.id]||0)>0);
+    addOption(opts, '🎁', 'Give a Gift',
+      giftedToday ? 'Already gave one today — come back tomorrow!' : hasItems ? 'Share a crop or fish from your basket' : 'Nothing in your basket yet',
+      ()=>{ if(!giftedToday && hasItems) showGifts(); },
+      giftedToday || !hasItems
+    );
+
+    // Option 2: Chat
+    addOption(opts, '💬', 'Ask for Advice', 'Gus always has something to say',
+      ()=>showAdvice()
+    );
+
+    // Option 3: Tutorial
+    addOption(opts, '📖', 'Show me around again', 'Replay the newcomer\'s guide',
+      ()=>{ close(); Tutorial.reset(); Tutorial.start(); goHome(); }
+    );
+
+    // Option 4: Close
+    addOption(opts, '👋', 'See you around, Gus', 'Until next time',
+      ()=>close()
+    );
+  }
+
+  function addOption(container, icon, title, desc, onClick, disabled=false){
+    const btn = document.createElement('button');
+    btn.className = 'gus-option';
+    btn.disabled = disabled;
+    if(disabled) btn.style.opacity = '.45';
+    btn.innerHTML = `<span class="go-icon">${icon}</span><div class="go-body"><div class="go-title">${title}</div><div class="go-desc">${desc}</div></div>`;
+    btn.onclick = onClick;
+    container.appendChild(btn);
+  }
+
+  function showGifts(){
+    $('gus-chat-options').style.display = 'none';
+    const section = $('gus-gift-section');
+    section.style.display = 'block';
+    const grid = $('gus-gift-grid');
+    grid.innerHTML = '';
+
+    const allItems = [...ALL_SEEDS(),...FISH];
+    let hasAny = false;
+
+    allItems.forEach(item=>{
+      const pool = FISH.find(f=>f.id===item.id) ? fishBasket : basket;
+      const qty = pool[item.id] || 0;
+      if(qty === 0) return;
+      hasAny = true;
+      const el = document.createElement('div');
+      el.className = 'gift-item';
+      el.innerHTML = `<div class="gi-emoji">${item.emoji}</div><div class="gi-name">${item.name}</div><div class="gi-qty">×${qty}</div>`;
+      el.onclick = ()=> giveGift(item, pool);
+      grid.appendChild(el);
+    });
+
+    if(!hasAny){
+      grid.innerHTML = '<div class="gift-empty">Nothing in your basket — harvest some crops or go fishing first!</div>';
+    }
+
+    // Back button
+    const back = document.createElement('button');
+    back.style.cssText='width:100%;margin-top:10px;padding:8px;background:var(--cream);border:2px solid var(--bark);border-radius:10px;font-family:\'Nunito\',sans-serif;font-size:13px;cursor:pointer;color:var(--soil-mid);';
+    back.textContent='← Back';
+    back.onclick = ()=>{ section.style.display='none'; $('gus-chat-options').style.display='flex'; };
+    grid.appendChild(back);
+  }
+
+  function giveGift(item, pool){
+    pool[item.id]--;
+    giftedToday = true;
+
+    // Affinity gain — rarer items give more
+    const gains = {
+      lettuce:4, carrot:5, potato:6, corn:7, tomato:9,
+      lavender:10, rose:12, herb:8,
+      minnow:5, carp:7, perch:10, trout:13, bass:16, golden:30,
+    };
+    const gain = gains[item.id] || 5;
+    affinity = Math.min(100, affinity + gain);
+    updateAffinityUI();
+    updateNavCoins(); // refresh basket count in nav
+    checkAchievements();
+
+    // Pick response
+    const responses = GIFT_RESPONSES[item.id] || [`Thank you for the ${item.name}!`];
+    const line = responses[Math.floor(Math.random()*responses.length)];
+
+    // Show response
+    $('gus-gift-section').style.display = 'none';
+    $('gus-chat-options').style.display = 'none';
+    $('gus-response-text').textContent = line;
+    $('gus-response').style.display = 'block';
+
+    showToast(`+${gain} friendship with Gus 💛`);
+  }
+
+  function showAdvice(){
+    $('gus-chat-options').style.display = 'none';
+    const s = getSeason();
+    const tips = [
+      `In ${s.name}, remember: ${s.speedMult>1 ? 'crops grow twice as fast — plant everything you can!' : s.bg==='winter'?'the farm is frozen, but the garden and pond are always open.':'water every day for the fastest growth.'}`,
+      "The Trading Post opens at Level 3. Prices change daily — sometimes they're better than the Market. Worth checking before you sell.",
+      "Autumn crops grow twice as fast. Save your best seeds for autumn and you'll make a fortune.",
+      "The Golden Fish is real. I caught one sixty years ago. It changed my life. I don't know how, but it did.",
+      "Your grandmother told me the back garden grows lavender that smells like the valley in spring. She wasn't wrong.",
+      "Don't neglect the Notice Board. Small tasks, but the coins add up over time.",
+      "Level up when you can. One-click tilling changed my life. Or it would have, if it existed when I was young.",
+      "Fish in the morning. I don't know if it makes a difference. But it feels right.",
+    ];
+    const tip = tips[Math.floor(Math.random()*tips.length)];
+    $('gus-response-text').textContent = tip;
+    $('gus-response').style.display = 'block';
+  }
+
+  function backToOptions(){
+    $('gus-response').style.display = 'none';
+    showOptions();
+  }
+
+  return { open, close, backToOptions, get affinity(){ return affinity; } };
+
+})();
+
 // ── TUTORIAL SYSTEM ──
 const Tutorial = (() => {
 
@@ -3778,19 +4261,19 @@ const Tutorial = (() => {
       text: "First stop — the <strong>🏪 Seed Shop</strong>! That's Bruno's place. He talks too much, but he's got good seeds.\n\nBuy a packet, you get 5 seeds. Lettuce and carrots to start — they grow fast and they sell. Don't bother with tomatoes until you've got some coins saved up.",
       btn:  'Noted →',
       highlight: 'mloc-shop',
-      arrow: { top:'135px', left:'430px', rotate:'0deg' },
+      arrow: null,
     },
     {
       text: "Next — your <strong>🚜 Farm</strong>! That's the whole point of being here, isn't it.\n\nThree tools: <strong>Till</strong> wakes the soil up. <strong>Plant</strong> puts seeds in. <strong>Water</strong> makes them grow twice as fast. Do all three, click <em>Next Day</em>, and come back tomorrow.\n\nSimple as that. Took me forty years to learn, but you'll pick it up faster, I'm sure.",
       btn:  'Sounds good →',
       highlight: 'mloc-farm',
-      arrow: { top:'225px', left:'160px', rotate:'0deg' },
+      arrow: null,
     },
     {
       text: "When your crops are glowing green — that means they're ripe! Switch to the <strong>🧺 Pick</strong> tool and click them.\n\nThey go into your basket. Then you take the basket to the <strong>🛒 Market</strong> and sell them for coins.\n\nCoins buy more seeds. More seeds means more crops. More crops means more coins. That's farming, in a nutshell!",
       btn:  'Makes sense! →',
       highlight: 'mloc-market',
-      arrow: { top:'315px', left:'490px', rotate:'0deg' },
+      arrow: null,
     },
     {
       text: "Now — see that banner up top? That's the <strong>season</strong>. We get four of them, 25 days each.\n\n🌸 Spring and 🌻 Summer — normal growing. 🍂 Autumn — crops grow <strong>twice as fast</strong>, so plant everything you've got! ❄️ Winter — the farm freezes. Not a joke. Plan ahead, or you'll be sitting on your hands.\n\nThe pond's always open though. I go fishing in winter. Good for the soul.",
@@ -3808,7 +4291,7 @@ const Tutorial = (() => {
       text: "Last thing — the <strong>⭐ Level Up</strong> system. Spend your coins to unlock big upgrades: one-click tilling, planting, watering, harvesting... all the things I had to do by hand my whole life.\n\nLevel 6 opens the <strong>Back Garden</strong> — lavender, roses, herbs. Fancy stuff. Worth saving up for.\n\nRight! That's the lot. Go on then. The soil won't till itself.",
       btn:  "Off I go! 🌱",
       highlight: 'mloc-level',
-      arrow: { top:'435px', left:'290px', rotate:'0deg' },
+      arrow: null,
       last: true,
     },
   ];
@@ -3850,9 +4333,19 @@ const Tutorial = (() => {
       }
     }
 
-    // Arrow pointer
+    // Arrow pointer — follows the highlighted element's real position
     const arrow = $('tutorial-arrow');
-    if(s.arrow){
+    if(s.highlight && _highlighted){
+      // Point at the actual element on screen
+      const rect = _highlighted.getBoundingClientRect();
+      const arrowSize = 36;
+      arrow.style.display   = 'block';
+      arrow.style.left      = (rect.left + rect.width/2 - arrowSize/2) + 'px';
+      arrow.style.top       = (rect.top  - arrowSize - 6) + 'px';
+      arrow.style.transform = 'none';
+      arrow.textContent     = '👇';
+    } else if(s.arrow){
+      // Fallback for non-highlight steps (e.g. season banner)
       arrow.style.display = 'block';
       arrow.style.top     = s.arrow.top;
       if(s.arrow.center){
