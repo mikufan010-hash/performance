@@ -431,7 +431,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 /* Farm preview on map — decorations layer */
 #farm-deco-layer{
   position:absolute;
-  left:88px;top:178px;
+  left:60px;top:330px;
   pointer-events:none;
   display:flex;flex-wrap:wrap;gap:2px;
   width:160px;
@@ -1072,12 +1072,11 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 /* Scrollable map canvas */
 #map-canvas{
   position:relative;
-  width:1000px;height:720px;
+  width:1400px;height:900px;
   margin:60px auto 0;
-  /* Rich grass-field background */
   background:
     radial-gradient(ellipse 70% 50% at 50% 60%,rgba(180,150,60,.15) 0%,transparent 70%),
-    linear-gradient(165deg,#5a9e28 0%,#4a8c20 30%,#3d7a18 65%,#306010 100%);
+    linear-gradient(165deg,#5a9e28 0%,#4a8c20 35%,#3d7a18 65%,#306010 100%);
 }
 
 /* Terrain decorations */
@@ -1092,8 +1091,160 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   position:absolute;background:#c4a35a;border:1.5px solid #a0883a;
   pointer-events:none;opacity:.65;border-radius:4px;
 }
+
+/* ── Player character on map ── */
+#map-player{
+  position:absolute;
+  width:32px;height:52px;
+  z-index:20;pointer-events:none;
+  left:80px;top:260px;
+}
+
+/* CSS character parts */
+#map-player .p-head{
+  width:18px;height:18px;border-radius:50%;
+  background:#f5c49a;border:2px solid #c4843a;
+  margin:0 auto 1px;position:relative;
+}
+/* Hair */
+#map-player .p-head::before{
+  content:'';position:absolute;
+  top:-5px;left:-1px;right:-1px;height:10px;
+  background:#5c3318;border-radius:8px 8px 0 0;
+}
+/* Hat */
+#map-player .p-hat{
+  width:22px;height:9px;
+  background:#4a7c28;border-radius:3px 3px 0 0;
+  border:2px solid #2d5016;
+  margin:0 auto -8px;position:relative;z-index:1;
+}
+#map-player .p-hat::after{
+  content:'';position:absolute;
+  bottom:-4px;left:-4px;right:-4px;height:4px;
+  background:#4a7c28;border-radius:2px;
+  border:2px solid #2d5016;
+}
+/* Body */
+#map-player .p-body{
+  width:20px;height:16px;
+  background:#5c8fd4;border-radius:4px 4px 2px 2px;
+  border:2px solid #3a6ab0;
+  margin:0 auto;position:relative;
+}
+/* Apron stripe */
+#map-player .p-body::after{
+  content:'';position:absolute;
+  top:2px;left:50%;transform:translateX(-50%);
+  width:6px;bottom:2px;
+  background:rgba(255,255,255,.3);border-radius:2px;
+}
+/* Arms */
+#map-player .p-arms{
+  position:absolute;top:22px;left:50%;
+  transform:translateX(-50%);
+  width:28px;height:10px;
+  pointer-events:none;
+}
+#map-player .p-arm-l,
+#map-player .p-arm-r{
+  position:absolute;
+  width:7px;height:12px;
+  background:#5c8fd4;border:2px solid #3a6ab0;
+  border-radius:3px;top:0;
+}
+#map-player .p-arm-l{left:0;transform-origin:top center;}
+#map-player .p-arm-r{right:0;transform-origin:top center;}
+/* Legs */
+#map-player .p-legs{
+  display:flex;justify-content:center;gap:3px;
+  margin-top:1px;
+}
+#map-player .p-leg-l,
+#map-player .p-leg-r{
+  width:7px;height:13px;
+  background:#3d2b1f;border-radius:2px 2px 3px 3px;
+  border:1.5px solid #2a1a10;
+  transform-origin:top center;
+}
+/* Shoes */
+#map-player .p-leg-l::after,
+#map-player .p-leg-r::after{
+  content:'';position:absolute;
+  bottom:-3px;left:-2px;right:-2px;height:5px;
+  background:#2a1a10;border-radius:2px 3px 3px 2px;
+}
+#map-player .p-leg-l,
+#map-player .p-leg-r{position:relative;}
+
+/* Shadow under player */
+#map-player::after{
+  content:'';position:absolute;
+  bottom:-4px;left:50%;transform:translateX(-50%);
+  width:20px;height:5px;
+  background:rgba(0,0,0,.25);border-radius:50%;
+}
+
+/* ── IDLE animation ── */
+#map-player.idle .p-leg-l{ animation:idleBob 2s ease-in-out infinite; }
+#map-player.idle .p-leg-r{ animation:idleBob 2s ease-in-out infinite .1s; }
+#map-player.idle .p-arm-l{ animation:idleArm 2s ease-in-out infinite; }
+#map-player.idle .p-arm-r{ animation:idleArm 2s ease-in-out infinite .2s; }
+@keyframes idleBob{
+  0%,100%{transform:scaleY(1);}
+  50%{transform:scaleY(.92);}
+}
+@keyframes idleArm{
+  0%,100%{transform:rotate(0deg);}
+  50%{transform:rotate(6deg);}
+}
+
+/* ── WALK animation ── */
+#map-player.walking .p-leg-l{ animation:walkLeg  .5s ease-in-out infinite; }
+#map-player.walking .p-leg-r{ animation:walkLeg  .5s ease-in-out infinite .25s; }
+#map-player.walking .p-arm-l{ animation:walkArm  .5s ease-in-out infinite .25s; }
+#map-player.walking .p-arm-r{ animation:walkArm  .5s ease-in-out infinite; }
+#map-player.walking .p-head { animation:walkHead .5s ease-in-out infinite; }
+@keyframes walkLeg{
+  0%,100%{transform:rotate(-22deg);}
+  50%    {transform:rotate(22deg);}
+}
+@keyframes walkArm{
+  0%,100%{transform:rotate(-18deg);}
+  50%    {transform:rotate(18deg);}
+}
+@keyframes walkHead{
+  0%,100%{transform:translateY(0);}
+  50%    {transform:translateY(-2px);}
+}
+
+/* Flip when walking left */
+#map-player.face-left{ transform:scaleX(-1); }
+
+.map-dust{
+  position:absolute;font-size:11px;pointer-events:none;z-index:15;
+  animation:dustFade .7s ease forwards;color:rgba(200,170,100,.8);
+}
+@keyframes dustFade{
+  from{opacity:.9;transform:translateY(0) scale(1);}
+  to  {opacity:0; transform:translateY(-14px) scale(1.5);}
+}
+@keyframes locPing{
+  0%  {box-shadow:0 0 0 0 rgba(245,200,66,.8),4px 5px 0 rgba(0,0,0,.28);}
+  70% {box-shadow:0 0 0 18px rgba(245,200,66,0),4px 5px 0 rgba(0,0,0,.28);}
+  100%{box-shadow:4px 5px 0 rgba(0,0,0,.28);}
+}
+.loc-ping{ animation:locPing .6s ease-out both; }
+#map-walking-label{
+  position:absolute;z-index:25;pointer-events:none;
+  background:rgba(20,12,5,.85);color:#d4f7a0;
+  font-family:'Fredoka One',cursive;font-size:12px;
+  padding:3px 10px;border-radius:16px;
+  white-space:nowrap;opacity:0;transition:opacity .25s;
+  border:1px solid rgba(122,182,72,.4);
+}
 #map-pond{
-  position:absolute;left:700px;top:60px;width:160px;height:95px;
+  position:absolute;left:1150px;top:70px;width:210px;height:130px;
   background:radial-gradient(ellipse,#5bc8f5 30%,#2196f3 100%);
   border-radius:50%;border:3px solid #1565c0;
   box-shadow:0 4px 18px rgba(0,0,0,.25);
@@ -1602,45 +1753,115 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   </div>
 
   <!-- The map itself -->
-  <div id="map-canvas">
+  <div id="map-canvas" onclick="MapPlayer.walkToClick(event)">
 
-    <!-- Dirt paths -->
-    <div class="map-path" style="left:170px;top:270px;width:200px;height:16px;transform:rotate(-3deg)"></div>
-    <div class="map-path" style="left:350px;top:278px;width:160px;height:16px;transform:rotate(2deg)"></div>
-    <div class="map-path" style="left:260px;top:260px;width:16px;height:180px;transform:rotate(1deg)"></div>
-    <div class="map-path" style="left:260px;top:420px;width:260px;height:16px;transform:rotate(-1deg)"></div>
-    <div class="map-path" style="left:500px;top:280px;width:16px;height:160px;transform:rotate(0deg)"></div>
-
-    <!-- Pond — clickable! -->
-    <div id="map-pond" onclick="goFishing()">🌊
-      <div style="position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:rgba(21,101,192,.9);color:#fff;font-family:'Fredoka One',cursive;font-size:13px;padding:4px 12px;border-radius:20px;white-space:nowrap;border:1.5px solid #0d47a1;box-shadow:0 2px 8px rgba(0,0,0,.3);">🎣 Fishing Pond</div>
-    </div>
-
-    <!-- Trees -->
-    <div class="map-tree" style="left:18px;top:50px">🌲</div>
-    <div class="map-tree" style="left:58px;top:32px">🌳</div>
-    <div class="map-tree" style="left:102px;top:52px">🌲</div>
-    <div class="map-tree" style="left:18px;top:102px">🌳</div>
-    <div class="map-tree" style="left:65px;top:112px">🌲</div>
-    <div class="map-tree" style="left:840px;top:460px">🌲</div>
-    <div class="map-tree" style="left:888px;top:440px">🌳</div>
-    <div class="map-tree" style="left:936px;top:465px">🌲</div>
-    <div class="map-tree" style="left:870px;top:505px">🌳</div>
-
-    <!-- Flowers -->
-    <div class="map-flower" style="left:600px;top:500px">🌻</div>
-    <div class="map-flower" style="left:636px;top:520px">🌼</div>
-    <div class="map-flower" style="left:160px;top:540px">🌸</div>
-    <div class="map-flower" style="left:760px;top:390px">🍄</div>
-    <div class="map-flower" style="left:420px;top:560px">🌺</div>
-
-    <!-- ── LOCATION PINS ── -->
-
-    <!-- Farm decoration layer (dynamically updated) -->
+    <!-- Farm deco layer -->
     <div id="farm-deco-layer"></div>
 
+    <!-- Player character -->
+    <div id="map-player" class="idle">
+      <div class="p-hat"></div>
+      <div class="p-head"></div>
+      <div class="p-arms">
+        <div class="p-arm-l"></div>
+        <div class="p-arm-r"></div>
+      </div>
+      <div class="p-body"></div>
+      <div class="p-legs">
+        <div class="p-leg-l"></div>
+        <div class="p-leg-r"></div>
+      </div>
+    </div>
+    <!-- Walking destination label -->
+    <div id="map-walking-label"></div>
+
+    <!-- PATHS -->
+    <!-- Left spine vertical -->
+    <div class="map-path" style="left:220px;top:160px;width:16px;height:580px"></div>
+    <!-- Left horizontal top -->
+    <div class="map-path" style="left:100px;top:300px;width:140px;height:14px;transform:rotate(-1deg)"></div>
+    <!-- Left horizontal bottom -->
+    <div class="map-path" style="left:100px;top:500px;width:140px;height:14px;transform:rotate(1deg)"></div>
+    <!-- Center spine vertical -->
+    <div class="map-path" style="left:590px;top:80px;width:18px;height:760px"></div>
+    <!-- Center-left horizontal -->
+    <div class="map-path" style="left:220px;top:390px;width:390px;height:14px;transform:rotate(-0.5deg)"></div>
+    <!-- Right spine vertical -->
+    <div class="map-path" style="left:950px;top:120px;width:16px;height:560px"></div>
+    <!-- Right horizontal top -->
+    <div class="map-path" style="left:590px;top:200px;width:380px;height:14px;transform:rotate(1deg)"></div>
+    <!-- Right horizontal bottom -->
+    <div class="map-path" style="left:590px;top:570px;width:380px;height:14px;transform:rotate(-1deg)"></div>
+    <!-- Far right to pond -->
+    <div class="map-path" style="left:950px;top:155px;width:200px;height:14px;transform:rotate(-2deg)"></div>
+
+    <!-- POND -->
+    <div id="map-pond" onclick="event.stopPropagation();MapPlayer.walkTo('fishing', goFishing)">🌊
+      <div style="position:absolute;top:-38px;left:50%;transform:translateX(-50%);background:rgba(21,101,192,.9);color:#fff;font-family:'Fredoka One',cursive;font-size:13px;padding:4px 12px;border-radius:20px;white-space:nowrap;border:1.5px solid #0d47a1;box-shadow:0 2px 8px rgba(0,0,0,.3);">🎣 Fishing Pond</div>
+    </div>
+
+    <!-- TREES: top-left forest -->
+    <div class="map-tree" style="left:14px;top:40px">🌲</div>
+    <div class="map-tree" style="left:54px;top:20px">🌳</div>
+    <div class="map-tree" style="left:100px;top:45px">🌲</div>
+    <div class="map-tree" style="left:14px;top:100px">🌳</div>
+    <div class="map-tree" style="left:64px;top:112px">🌲</div>
+    <div class="map-tree" style="left:114px;top:98px">🌳</div>
+    <div class="map-tree" style="left:34px;top:165px">🌲</div>
+
+    <!-- TREES: bottom-left -->
+    <div class="map-tree" style="left:14px;top:700px">🌲</div>
+    <div class="map-tree" style="left:58px;top:720px">🌳</div>
+    <div class="map-tree" style="left:104px;top:698px">🌲</div>
+    <div class="map-tree" style="left:24px;top:768px">🌳</div>
+
+    <!-- TREES: top-right -->
+    <div class="map-tree" style="left:1280px;top:30px">🌲</div>
+    <div class="map-tree" style="left:1322px;top:10px">🌳</div>
+    <div class="map-tree" style="left:1364px;top:38px">🌲</div>
+    <div class="map-tree" style="left:1300px;top:88px">🌳</div>
+    <div class="map-tree" style="left:1348px;top:82px">🌲</div>
+
+    <!-- TREES: bottom-right forest -->
+    <div class="map-tree" style="left:1150px;top:640px">🌲</div>
+    <div class="map-tree" style="left:1198px;top:618px">🌳</div>
+    <div class="map-tree" style="left:1250px;top:648px">🌲</div>
+    <div class="map-tree" style="left:1178px;top:700px">🌳</div>
+    <div class="map-tree" style="left:1310px;top:660px">🌲</div>
+    <div class="map-tree" style="left:1355px;top:630px">🌳</div>
+    <div class="map-tree" style="left:1220px;top:758px">🌲</div>
+
+    <!-- TREES: center bottom grove -->
+    <div class="map-tree" style="left:500px;top:730px">🌲</div>
+    <div class="map-tree" style="left:548px;top:752px">🌳</div>
+    <div class="map-tree" style="left:600px;top:738px">🌲</div>
+    <div class="map-tree" style="left:650px;top:760px">🌳</div>
+
+    <!-- FLOWERS & DECOR -->
+    <div class="map-flower" style="left:340px;top:680px">🌻</div>
+    <div class="map-flower" style="left:378px;top:702px">🌼</div>
+    <div class="map-flower" style="left:420px;top:686px">🌸</div>
+    <div class="map-flower" style="left:730px;top:660px">🌺</div>
+    <div class="map-flower" style="left:768px;top:680px">🌼</div>
+    <div class="map-flower" style="left:1020px;top:420px">🍄</div>
+    <div class="map-flower" style="left:168px;top:640px">🌸</div>
+    <div class="map-flower" style="left:850px;top:760px">🌻</div>
+    <div class="map-flower" style="left:460px;top:620px">🍄</div>
+    <div class="map-flower" style="left:1060px;top:640px">🌼</div>
+    <div class="map-flower" style="left:1100px;top:530px">🌸</div>
+
+    <!-- ═══════════════════════════════
+         LOCATION PINS
+         LEFT  : Farm, Upgrade, Warehouse, Level Up
+         CENTER: Shop, Market, Notice Board
+         RIGHT : Trading Post, Back Garden
+         FAR   : Fishing Pond (the pond itself)
+    ════════════════════════════════ -->
+
+    <!-- ── LEFT ZONE ── -->
+
     <!-- Farm -->
-    <div class="map-loc" style="left:120px;top:210px" onclick="goFarm()">
+    <div class="map-loc" style="left:60px;top:200px" onclick="event.stopPropagation();MapPlayer.walkTo('farm', goFarm)">
       <div class="map-tooltip">Till soil, plant seeds,<br>water &amp; harvest!</div>
       <div class="map-loc-box mloc-farm" id="map-farm-box">
         <span class="map-loc-icon" id="map-farm-icon">🚜</span>
@@ -1650,9 +1871,9 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <div class="map-loc-stem"></div>
     </div>
 
-    <!-- Farm Upgrade Shop -->
-    <div class="map-loc" style="left:30px;top:350px" onclick="goUpgrade()">
-      <div class="map-tooltip">Spend coins to upgrade<br>your farm's appearance!</div>
+    <!-- Upgrade Shop -->
+    <div class="map-loc" style="left:60px;top:430px" onclick="event.stopPropagation();MapPlayer.walkTo('upgrade', goUpgrade)">
+      <div class="map-tooltip">Upgrade farmhouse &amp;<br>add decorations!</div>
       <div class="map-loc-box" style="background:linear-gradient(145deg,#fef9ee,#fdedc8);border-color:var(--bark);box-shadow:4px 5px 0 var(--soil-mid);min-width:90px;">
         <span class="map-loc-icon">🏗️</span>
         <span class="map-loc-name">Upgrade</span>
@@ -1661,8 +1882,32 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <div class="map-loc-stem"></div>
     </div>
 
-    <!-- Shop -->
-    <div class="map-loc" style="left:390px;top:120px" onclick="goShop()">
+    <!-- Warehouse -->
+    <div class="map-loc" style="left:260px;top:200px" onclick="event.stopPropagation();MapPlayer.walkTo('warehouse', goWarehouse)">
+      <div class="map-tooltip">Check seeds, crops,<br>fish &amp; achievements</div>
+      <div class="map-loc-box mloc-warehouse">
+        <span class="map-loc-icon">📦</span>
+        <span class="map-loc-name">Warehouse</span>
+        <span class="map-loc-hint">Your stock</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Level Up -->
+    <div class="map-loc" style="left:260px;top:500px" onclick="event.stopPropagation();MapPlayer.walkTo('level', goLevel)">
+      <div class="map-tooltip">Spend coins to unlock<br>powerful abilities</div>
+      <div class="map-loc-box mloc-level">
+        <span class="map-loc-icon">⭐</span>
+        <span class="map-loc-name">Level Up</span>
+        <span class="map-loc-hint">Upgrade farm</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- ── CENTER ZONE ── -->
+
+    <!-- Seed Shop -->
+    <div class="map-loc" style="left:640px;top:100px" onclick="event.stopPropagation();MapPlayer.walkTo('shop', goShop)">
       <div class="map-tooltip">Buy seed packets<br>to grow on your farm</div>
       <div class="map-loc-box mloc-shop">
         <span class="map-loc-icon">🏪</span>
@@ -1673,7 +1918,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
     </div>
 
     <!-- Market -->
-    <div class="map-loc" style="left:450px;top:300px" onclick="goMarket()">
+    <div class="map-loc" style="left:640px;top:370px" onclick="event.stopPropagation();MapPlayer.walkTo('market', goMarket)">
       <div class="map-tooltip">Sell your harvest<br>for coins!</div>
       <div class="map-loc-box mloc-market">
         <span class="map-loc-icon">🛒</span>
@@ -1683,30 +1928,21 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <div class="map-loc-stem"></div>
     </div>
 
-    <!-- Warehouse -->
-    <div class="map-loc" style="left:120px;top:390px" onclick="goWarehouse()">
-      <div class="map-tooltip">Check all your seeds,<br>crops &amp; fish!</div>
-      <div class="map-loc-box mloc-warehouse">
-        <span class="map-loc-icon">🏚️</span>
-        <span class="map-loc-name">Warehouse</span>
-        <span class="map-loc-hint">Your inventory</span>
+    <!-- Notice Board -->
+    <div class="map-loc" style="left:440px;top:580px" onclick="event.stopPropagation();MapPlayer.walkTo('quests', goQuests)">
+      <div class="map-tooltip">Daily &amp; seasonal quests<br>from Gus — earn bonus coins!</div>
+      <div class="map-loc-box mloc-board">
+        <span class="map-loc-icon">📋</span>
+        <span class="map-loc-name">Notice Board</span>
+        <span class="map-loc-hint" id="map-quest-hint">Quests available</span>
       </div>
       <div class="map-loc-stem"></div>
     </div>
 
-    <!-- Level Up -->
-    <div class="map-loc" style="left:250px;top:420px" onclick="goLevel()">
-      <div class="map-tooltip">Spend coins to unlock<br>powerful abilities</div>
-      <div class="map-loc-box mloc-level">
-        <span class="map-loc-icon">⭐</span>
-        <span class="map-loc-name">Level Up</span>
-        <span class="map-loc-hint">Upgrade farm</span>
-      </div>
-      <div class="map-loc-stem"></div>
-    </div>
+    <!-- ── RIGHT ZONE ── -->
 
     <!-- Trading Post (Lv3) -->
-    <div class="map-loc" id="map-trade-pin" style="left:570px;top:130px" onclick="goTrading()">
+    <div class="map-loc" id="map-trade-pin" style="left:1000px;top:100px" onclick="event.stopPropagation();MapPlayer.walkTo('trading', goTrading)">
       <div class="map-tooltip">Dynamic prices — sometimes<br>above normal! Unlock at Lv 3</div>
       <div class="map-loc-box mloc-trade locked-loc" id="map-trade-box">
         <div class="locked-tag" id="map-trade-lock">🔒 Lv3</div>
@@ -1717,19 +1953,8 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <div class="map-loc-stem"></div>
     </div>
 
-    <!-- Bulletin Board -->
-    <div class="map-loc" style="left:380px;top:440px" onclick="goQuests()">
-      <div class="map-tooltip">Daily &amp; seasonal quests<br>from Gus — earn bonus coins!</div>
-      <div class="map-loc-box mloc-board">
-        <span class="map-loc-icon">📋</span>
-        <span class="map-loc-name">Notice Board</span>
-        <span class="map-loc-hint" id="map-quest-hint">Quests available</span>
-      </div>
-      <div class="map-loc-stem"></div>
-    </div>
-
     <!-- Back Garden (Lv6) -->
-    <div class="map-loc mloc-garden-loc" id="map-garden-pin" style="left:650px;top:250px" onclick="goGarden()">
+    <div class="map-loc mloc-garden-loc" id="map-garden-pin" style="left:1000px;top:380px" onclick="event.stopPropagation();MapPlayer.walkTo('garden', goGarden)">
       <div class="map-tooltip">Grow lavender, roses<br>&amp; herbs — unlock at Lv 6!</div>
       <div class="map-loc-box mloc-garden locked-loc" id="map-garden-box">
         <div class="locked-tag" id="map-garden-lock">🔒 Lv6</div>
@@ -3970,8 +4195,191 @@ function updateFarmMapVisual(){
 }
 
 // ══════════════════════════════════════════
-// GUS CHAT SYSTEM
+// MAP PLAYER — walking character
 // ══════════════════════════════════════════
+
+const MapPlayer = (() => {
+
+  // Center offsets: where the character stands relative to each pin's top-left
+  // These put her at the base of each location box
+  const DESTINATIONS = {
+    farm:      { x: 70,  y: 340 },
+    upgrade:   { x: 70,  y: 530 },
+    warehouse: { x: 265, y: 305 },
+    level:     { x: 265, y: 600 },
+    shop:      { x: 645, y: 215 },
+    market:    { x: 645, y: 480 },
+    quests:    { x: 445, y: 685 },
+    trading:   { x: 1005,y: 215 },
+    garden:    { x: 1005,y: 490 },
+    fishing:   { x: 1165,y: 195 },
+  };
+
+  let _pos = { x: 80, y: 260 };   // current position
+  let _walking = false;
+  let _dustInterval = null;
+
+  const el      = () => document.getElementById('map-player');
+  const label   = () => document.getElementById('map-walking-label');
+
+  function _place(x, y){
+    const p = el(); if(!p) return;
+    p.style.transition = 'none';
+    p.style.left = x + 'px';
+    p.style.top  = y + 'px';
+    _pos = { x, y };
+  }
+
+  function _dist(x1,y1,x2,y2){
+    return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+  }
+
+  function walkTo(destId, callback){
+    if(_walking) return;
+    const dest = DESTINATIONS[destId];
+    if(!dest) { if(callback) callback(); return; }
+
+    const d = _dist(_pos.x, _pos.y, dest.x, dest.y);
+    if(d < 20){
+      if(callback) callback();
+      return;
+    }
+
+    _walking = true;
+    const speed = 180;
+    const duration = Math.min(Math.max(d / speed, 0.4), 2.5);
+
+    const p = el();
+    // Face direction
+    if(dest.x < _pos.x) p.classList.add('face-left');
+    else p.classList.remove('face-left');
+
+    // Switch to walk animation
+    p.classList.remove('idle');
+    p.classList.add('walking');
+
+    // Set CSS transition for position
+    p.style.transition = `left ${duration}s linear, top ${duration}s linear`;
+
+    // Walking label
+    const names = {
+      farm:'Farm', upgrade:'Upgrade Shop', warehouse:'Warehouse',
+      level:'Level Up', shop:'Seed Shop', market:'Market',
+      quests:'Notice Board', trading:'Trading Post',
+      garden:'Back Garden', fishing:'Fishing Pond',
+    };
+    const lbl = label();
+    lbl.textContent = `Going to ${names[destId] || destId}…`;
+    lbl.style.left  = (_pos.x - 20) + 'px';
+    lbl.style.top   = (_pos.y - 32) + 'px';
+    lbl.style.opacity = '1';
+
+    // Dust trail
+    _dustInterval = setInterval(() => spawnDust(), 250);
+
+    // Move
+    p.style.left = dest.x + 'px';
+    p.style.top  = dest.y + 'px';
+
+    setTimeout(() => {
+      _pos = { x: dest.x, y: dest.y };
+      _walking = false;
+      p.style.transition = 'none';
+      p.classList.remove('walking');
+      p.classList.add('idle');
+      p.classList.remove('face-left');
+      lbl.style.opacity = '0';
+      if(_dustInterval){ clearInterval(_dustInterval); _dustInterval = null; }
+
+      // Ping destination
+      const pin = document.querySelector(`[onclick*="'${destId}'"] .map-loc-box`);
+      if(pin){ pin.classList.add('loc-ping'); setTimeout(()=>pin.classList.remove('loc-ping'), 700); }
+
+      setTimeout(() => { if(callback) callback(); }, 180);
+    }, duration * 1000);
+  }
+
+  function walkToClick(e){
+    // If click was on a map-loc or its children, let that handle it
+    if(e.target.closest('.map-loc') || e.target.closest('#map-pond')) return;
+    if(_walking) return;
+
+    const canvas = document.getElementById('map-canvas');
+    const rect   = canvas.getBoundingClientRect();
+    // Account for canvas scroll offset
+    const scrollX = canvas.parentElement.scrollLeft || 0;
+    const scrollY = canvas.parentElement.scrollTop  || 0;
+    const tx = e.clientX - rect.left + scrollX - 16; // offset to center of character
+    const ty = e.clientY - rect.top  + scrollY - 52;
+
+    // Clamp to canvas bounds
+    const x = Math.max(0, Math.min(tx, 1400 - 32));
+    const y = Math.max(0, Math.min(ty, 900  - 52));
+
+    const d = _dist(_pos.x, _pos.y, x, y);
+    if(d < 10) return;
+
+    _walking = true;
+    const duration = Math.min(Math.max(d / 180, 0.2), 2.5);
+    const p = el();
+
+    // Face direction
+    if(x < _pos.x) p.classList.add('face-left');
+    else p.classList.remove('face-left');
+
+    p.classList.remove('idle');
+    p.classList.add('walking');
+    p.style.transition = `left ${duration}s linear, top ${duration}s linear`;
+
+    // Dust trail
+    _dustInterval = setInterval(() => spawnDust(), 250);
+
+    p.style.left = x + 'px';
+    p.style.top  = y + 'px';
+
+    // Footstep marker
+    const mark = document.createElement('div');
+    mark.style.cssText = `position:absolute;left:${x+8}px;top:${y+46}px;font-size:12px;pointer-events:none;z-index:15;animation:dustFade .5s ease forwards;`;
+    mark.textContent = '👣';
+    canvas.appendChild(mark);
+    setTimeout(() => mark.remove(), 500);
+
+    setTimeout(() => {
+      _pos = { x, y };
+      _walking = false;
+      p.style.transition = 'none';
+      p.classList.remove('walking', 'face-left');
+      p.classList.add('idle');
+      if(_dustInterval){ clearInterval(_dustInterval); _dustInterval = null; }
+    }, duration * 1000);
+  }
+
+  function spawnDust(){
+    const canvas = document.getElementById('map-canvas');
+    if(!canvas) return;
+    const d = document.createElement('div');
+    d.className = 'map-dust';
+    d.textContent = ['💨','·','˙'][Math.floor(Math.random()*3)];
+    d.style.left = (_pos.x + 8 + Math.random()*16) + 'px';
+    d.style.top  = (_pos.y + 36) + 'px';
+    canvas.appendChild(d);
+    setTimeout(() => d.remove(), 700);
+  }
+
+  // Place player at start
+  function init(){
+    const p = el(); if(!p) return;
+    p.style.transition = 'none';
+    p.style.left = _pos.x + 'px';
+    p.style.top  = _pos.y + 'px';
+    p.classList.add('idle');
+  }
+
+  return { walkTo, walkToClick, init };
+
+})();
+
+// ── GUS CHAT SYSTEM ──
 
 const GusChat = (() => {
 
@@ -4416,6 +4824,7 @@ ensureDailyQuests();
 ensureSeasonQuest();
 updateQuestBadge();
 checkAchievements();
+MapPlayer.init();
 Tutorial.start();
 window.addEventListener('resize',buildFence);
 </script>
