@@ -48,6 +48,114 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 #nav-level{font-size:13px;font-weight:700;border-radius:20px;padding:4px 10px;border:2px solid;cursor:pointer;transition:all .15s;}
 #nav-level:hover{transform:translateY(-1px);}
 
+/* ══════════════════════════════════
+   MENU PANEL (Directory)
+══════════════════════════════════ */
+#menu-panel-backdrop{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(4px);
+  display:none;align-items:flex-start;justify-content:flex-end;
+  padding:54px 16px 0;
+}
+#menu-panel-backdrop.open{display:flex;}
+#menu-panel{
+  background:var(--parchment,#fdf6e3);
+  border:3px solid var(--bark);border-radius:16px;
+  box-shadow:4px 6px 0 var(--bark);
+  width:260px;overflow:hidden;
+  animation:menuSlideIn .28s cubic-bezier(.34,1.28,.64,1) both;
+}
+@keyframes menuSlideIn{
+  from{opacity:0;transform:translateY(-12px) scale(.97);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+#menu-panel-header{
+  background:linear-gradient(145deg,#fef3c7,#fde68a);
+  border-bottom:2px solid var(--bark);
+  padding:14px 18px;
+  font-family:'Fredoka One',cursive;font-size:18px;color:var(--soil-dark);
+  display:flex;align-items:center;gap:8px;
+}
+.menu-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;
+  border-bottom:1px solid rgba(139,94,60,.12);
+  cursor:pointer;transition:background .15s;
+}
+.menu-item:last-child{border-bottom:none;}
+.menu-item:hover{background:rgba(139,94,60,.06);}
+.menu-item-icon{font-size:26px;flex-shrink:0;}
+.menu-item-body{}
+.menu-item-title{font-family:'Fredoka One',cursive;font-size:15px;color:var(--soil-dark);}
+.menu-item-desc{font-size:11px;color:var(--soil-mid);margin-top:1px;}
+.menu-item-soon{
+  font-size:10px;font-weight:700;padding:2px 7px;
+  background:#f3f4f6;color:#9ca3af;border-radius:8px;
+  border:1px solid #e5e7eb;margin-left:auto;flex-shrink:0;
+}
+
+/* ══════════════════════════════════
+   JOURNAL
+══════════════════════════════════ */
+/* ══════════════════════════════════
+   JOURNAL — FLIP BOOK
+══════════════════════════════════ */
+#screen-journal{padding-top:92px;}
+.book-wrap{display:flex;justify-content:center;align-items:flex-start;padding:16px 0;perspective:1200px;}
+.j-book{position:relative;width:min(600px,95vw);height:380px;transform-style:preserve-3d;}
+.j-page-left{
+  position:absolute;left:0;top:0;width:50%;height:100%;
+  background:#fdf6e8;border-radius:14px 0 0 14px;
+  border:1.5px solid #d4b896;border-right:none;
+  box-shadow:inset 6px 0 16px rgba(0,0,0,.07);overflow:hidden;position:absolute;
+}
+.j-page-left::before{
+  content:'';position:absolute;inset:0;top:50px;pointer-events:none;
+  background:repeating-linear-gradient(transparent,transparent 31px,rgba(150,120,80,.11) 31px,rgba(150,120,80,.11) 32px);
+}
+.j-page-left-spine{position:absolute;right:0;top:0;bottom:0;width:14px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.07));}
+.j-page-right-wrap{
+  position:absolute;right:0;top:0;width:50%;height:100%;
+  transform-style:preserve-3d;transform-origin:left center;
+  transition:transform .65s cubic-bezier(.645,.045,.355,1);
+}
+.j-page-front,.j-page-back{
+  position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;
+  background:#fdf6e8;border:1.5px solid #d4b896;
+}
+.j-page-front{border-radius:0 14px 14px 0;border-left:none;}
+.j-page-back{
+  border-radius:14px 0 0 14px;border-right:none;border-left:1.5px solid #d4b896;
+  transform:rotateY(180deg);background:#faf3e8;
+}
+.j-page-front::before,.j-page-back::before{
+  content:'';position:absolute;inset:0;top:50px;pointer-events:none;
+  background:repeating-linear-gradient(transparent,transparent 31px,rgba(150,120,80,.11) 31px,rgba(150,120,80,.11) 32px);
+}
+.j-page-back::after{content:'';position:absolute;left:0;top:0;bottom:0;width:14px;background:linear-gradient(90deg,rgba(0,0,0,.06),transparent);}
+.j-page-content{padding:12px 16px;position:relative;z-index:1;height:100%;overflow:hidden;}
+.j-page-header{
+  font-family:'Lora',serif;font-size:12px;color:#a0784a;
+  letter-spacing:1px;border-bottom:1.5px solid rgba(160,120,74,.22);
+  padding-bottom:7px;margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.j-page-num{font-size:11px;font-style:italic;color:#c4a06a;}
+.j-entry{display:flex;gap:9px;align-items:flex-start;margin-bottom:8px;}
+.j-entry-day{font-family:'Lora',serif;font-size:10px;color:#a0784a;flex-shrink:0;width:38px;padding-top:2px;}
+.j-entry-icon{font-size:16px;flex-shrink:0;}
+.j-entry-text{font-family:'Crimson Pro',Georgia,serif;font-size:13px;color:#3d2b1f;line-height:1.6;flex:1;}
+.j-empty{font-family:'Lora',serif;font-style:italic;font-size:13px;color:#c4a06a;text-align:center;margin-top:50px;line-height:1.8;}
+.j-tab-row{display:flex;gap:5px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.j-tab{padding:5px 13px;border-radius:20px;border:1.5px solid #c4a06a;background:#fdf6e8;font-family:'Lora',serif;font-size:12px;color:#7a5c3a;cursor:pointer;transition:all .18s;}
+.j-tab:hover{background:#f5e9d0;}
+.j-tab.active{background:#5c3d2a;color:#f5e6d0;border-color:#3d2b1f;}
+.j-flip-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:0 8px;}
+.j-flip-btn{padding:5px 16px;border-radius:18px;border:1.5px solid #c4a06a;background:#fdf6e8;font-family:'Lora',serif;font-size:12px;color:#7a5c3a;cursor:pointer;transition:all .15s;}
+.j-flip-btn:hover:not(:disabled){background:#f5e9d0;transform:translateY(-1px);}
+.j-flip-btn:disabled{opacity:.3;cursor:not-allowed;}
+.j-page-counter{font-family:'Lora',serif;font-size:11px;color:#a0784a;font-style:italic;}
+
 /* ── LEVEL BADGE COLOURS ── */
 .lv1-badge{background:#e8f5e9;border-color:var(--lv1)!important;color:#2d5016;}
 .lv2-badge{background:#dbeafe;border-color:var(--lv2)!important;color:#1d4ed8;}
@@ -267,6 +375,229 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   .home-card{min-width:120px;}
   #nav-bar{flex-wrap:wrap;padding:6px 10px;}
 }
+/* ══════════════════════════════════
+   COOKING SYSTEM
+══════════════════════════════════ */
+#screen-cooking{ padding-top:92px; }
+
+#cooking-header{
+  background:linear-gradient(145deg,#fff5eb,#ffe4c4);
+  border:3px solid #c2692a;border-radius:16px;
+  padding:16px 22px;margin-bottom:18px;
+  box-shadow:4px 5px 0 #7c3a10;
+  display:flex;align-items:center;gap:14px;
+}
+#cooking-header h2{font-family:'Fredoka One',cursive;font-size:26px;color:#7c3a10;}
+#cooking-header p{font-size:12px;color:#a0522d;}
+
+/* Active buff banner */
+#cooking-buff-banner{
+  background:linear-gradient(145deg,#f0fdf4,#dcfce7);
+  border:2px solid var(--green-mid);border-radius:12px;
+  padding:10px 16px;margin-bottom:16px;
+  box-shadow:2px 3px 0 var(--green-deep);
+  display:none;align-items:center;gap:10px;
+  font-family:'Fredoka One',cursive;font-size:14px;color:var(--green-deep);
+}
+#cooking-buff-banner.active{display:flex;}
+
+/* Recipe grid */
+#recipe-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:14px;margin-bottom:24px;
+}
+.recipe-card{
+  background:var(--cream);border:2px solid #c2692a;
+  border-radius:14px;padding:16px 14px;
+  box-shadow:3px 4px 0 #7c3a10;
+  transition:transform .15s;
+  position:relative;
+}
+.recipe-card:hover{transform:translateY(-3px);}
+.recipe-card.cant-cook{opacity:.55;filter:grayscale(.3);}
+.rc-emoji{font-size:44px;display:block;text-align:center;margin-bottom:8px;}
+.rc-name{font-family:'Fredoka One',cursive;font-size:17px;color:#7c3a10;margin-bottom:4px;}
+.rc-ingredients{font-size:11px;color:var(--soil-mid);margin-bottom:8px;line-height:1.6;}
+.rc-buff{
+  font-size:11px;font-weight:700;padding:3px 8px;
+  border-radius:10px;background:#fff3e0;color:#e65100;
+  border:1px solid #ffb74d;display:inline-block;margin-bottom:10px;
+}
+.rc-sell-hint{font-size:11px;color:var(--green-deep);margin-bottom:10px;display:block;}
+.rc-stock{font-size:11px;color:var(--soil-mid);margin-bottom:8px;}
+.rc-cook-btn{
+  width:100%;padding:9px;
+  background:linear-gradient(135deg,#e65c00,#c2692a);
+  border:2px solid #7c3a10;border-radius:10px;
+  font-family:'Fredoka One',cursive;font-size:14px;color:#fff;
+  cursor:pointer;box-shadow:2px 2px 0 #7c3a10;transition:all .12s;
+}
+.rc-cook-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:2px 4px 0 #7c3a10;}
+.rc-cook-btn:disabled{background:#aaa;border-color:#888;box-shadow:none;cursor:not-allowed;}
+
+/* Food basket section */
+#food-basket-section{margin-bottom:20px;}
+.food-basket-title{
+  font-family:'Fredoka One',cursive;font-size:17px;
+  color:var(--soil-dark);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+#food-basket-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;
+}
+.food-item{
+  background:var(--cream);border:2px solid #c2692a;
+  border-radius:12px;padding:12px;
+  box-shadow:2px 3px 0 #7c3a10;
+  display:flex;flex-direction:column;gap:6px;
+}
+.fi-emoji{font-size:32px;text-align:center;}
+.fi-name{font-family:'Fredoka One',cursive;font-size:14px;color:#7c3a10;text-align:center;}
+.fi-qty{font-size:12px;color:var(--soil-mid);text-align:center;}
+.fi-actions{display:flex;flex-direction:column;gap:5px;}
+.fi-btn{
+  padding:6px;border-radius:8px;font-family:'Fredoka One',cursive;
+  font-size:12px;cursor:pointer;border:1.5px solid;transition:all .12s;
+}
+.fi-btn:hover{transform:translateY(-1px);}
+.fi-eat{background:#e8f5e9;border-color:var(--green-mid);color:var(--green-deep);}
+.fi-give{background:#fff3e0;border-color:#e65100;color:#7c3a10;}
+.fi-sell-town{background:#e3f2fd;border-color:#1565c0;color:#0d47a1;}
+.food-empty{font-size:13px;color:var(--soil-mid);font-style:italic;padding:12px 0;}
+
+/* Town Stall map pin style */
+.mloc-stall{
+  background:linear-gradient(145deg,#fff8e1,#ffe082);
+  border-color:#f9a825;box-shadow:4px 5px 0 #e65100;
+}
+
+/* Cook animation flash */
+@keyframes cookPop{
+  0%{transform:scale(1);}
+  40%{transform:scale(1.15);}
+  100%{transform:scale(1);}
+}
+#disaster-overlay{
+  position:fixed;inset:0;z-index:590;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  pointer-events:none;opacity:0;
+  transition:opacity .6s ease;
+  background:rgba(40,15,0,0);
+}
+#disaster-overlay.show{
+  opacity:1;
+  background:rgba(40,15,0,.55);
+  backdrop-filter:blur(2px);
+}
+#disaster-card{
+  background:linear-gradient(145deg,#1a0a00,#2d1200);
+  border:2.5px solid #8b3a00;
+  border-radius:16px;
+  padding:32px 40px;
+  max-width:420px;width:90%;
+  text-align:center;
+  box-shadow:0 0 60px rgba(180,80,0,.4),4px 6px 0 #5c2000;
+  transform:scale(.85);
+  transition:transform .5s cubic-bezier(.34,1.28,.64,1);
+}
+#disaster-overlay.show #disaster-card{transform:scale(1);}
+#disaster-icon{font-size:64px;margin-bottom:12px;display:block;
+  animation:disasterShake .4s ease .3s both;}
+@keyframes disasterShake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-8px);}
+  40%{transform:translateX(8px);}
+  60%{transform:translateX(-5px);}
+  80%{transform:translateX(5px);}
+}
+#disaster-title{
+  font-family:'Fredoka One',cursive;
+  font-size:26px;color:#ff6b35;
+  margin-bottom:8px;letter-spacing:1px;
+}
+#disaster-desc{
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:16px;line-height:1.7;
+  color:rgba(255,200,150,.85);
+  margin-bottom:20px;
+}
+#disaster-gus{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:13px;color:rgba(255,180,100,.55);
+  margin-bottom:20px;line-height:1.6;
+}
+#disaster-close{
+  padding:10px 28px;
+  background:#8b3a00;border:2px solid #c4520a;
+  border-radius:24px;font-family:'Fredoka One',cursive;
+  font-size:15px;color:#fff;cursor:pointer;
+  box-shadow:2px 3px 0 #5c2000;
+  transition:all .15s;pointer-events:auto;
+}
+#disaster-close:hover{background:#c4520a;transform:translateY(-2px);}
+
+/* Gus warning banner */
+#gus-warning{
+  position:fixed;top:130px;left:50%;transform:translateX(-50%);
+  z-index:400;pointer-events:none;
+  background:linear-gradient(145deg,#fef3c7,#fde68a);
+  border:2.5px solid #d97706;border-radius:14px;
+  padding:12px 20px;max-width:420px;width:90%;
+  box-shadow:3px 4px 0 #92400e;
+  display:flex;align-items:flex-start;gap:12px;
+  opacity:0;transform:translateX(-50%) translateY(-12px);
+  transition:all .4s cubic-bezier(.34,1.28,.64,1);
+}
+#gus-warning.show{
+  opacity:1;transform:translateX(-50%) translateY(0);
+}
+#gus-warning .gw-avatar{font-size:28px;flex-shrink:0;margin-top:2px;}
+#gus-warning .gw-body{}
+#gus-warning .gw-title{
+  font-family:'Fredoka One',cursive;font-size:14px;
+  color:#92400e;margin-bottom:3px;
+}
+#gus-warning .gw-text{
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:15px;line-height:1.55;color:#78350f;
+}
+#hidden-scene-overlay{
+  position:fixed;inset:0;z-index:600;
+  background:#000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 1.4s ease;
+}
+#hidden-scene-overlay.show{opacity:1;pointer-events:auto;}
+#hidden-scene-text{
+  max-width:520px;padding:0 48px;
+  text-align:center;
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:21px;line-height:2.1;
+  color:rgba(255,255,255,0);
+  letter-spacing:.4px;
+  transition:color 2.5s ease 1.2s;
+}
+#hidden-scene-overlay.show #hidden-scene-text{color:rgba(255,255,255,.8);}
+#hidden-scene-dismiss{
+  position:absolute;bottom:44px;
+  font-family:'Lora',serif;font-style:italic;
+  font-size:12px;color:rgba(255,255,255,.22);
+  cursor:pointer;letter-spacing:2px;
+  opacity:0;animation:dismissAppear 1s ease 5s forwards;
+  border:none;background:none;
+}
+@keyframes dismissAppear{to{opacity:1;}}
+#hidden-scene-dismiss:hover{color:rgba(255,255,255,.5);}
+.hidden-hotspot{
+  position:absolute;z-index:12;
+  cursor:default;
+}
+.hidden-hotspot:hover{cursor:crosshair;}
+
 /* ══════════════════════════════════
    GUS CHAT PANEL
 ══════════════════════════════════ */
@@ -1636,6 +1967,32 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   </div>
 </div>
 
+<!-- Disaster Overlay -->
+<div id="disaster-overlay">
+  <div id="disaster-card">
+    <span id="disaster-icon">🐛</span>
+    <div id="disaster-title"></div>
+    <div id="disaster-desc"></div>
+    <div id="disaster-gus"></div>
+    <button id="disaster-close" onclick="Disasters.close()">Okay...</button>
+  </div>
+</div>
+
+<!-- Gus Warning Banner -->
+<div id="gus-warning">
+  <div class="gw-avatar">👴</div>
+  <div class="gw-body">
+    <div class="gw-title">Gus's Warning</div>
+    <div class="gw-text" id="gus-warning-text"></div>
+  </div>
+</div>
+
+<!-- Hidden Scene Overlay -->
+<div id="hidden-scene-overlay">
+  <div id="hidden-scene-text"></div>
+  <button id="hidden-scene-dismiss" onclick="HiddenScenes.close()">— leave —</button>
+</div>
+
 <!-- Gus Chat Panel -->
 <div id="gus-chat-backdrop" onclick="if(event.target===this)GusChat.close()">
   <div id="gus-chat-panel">
@@ -1718,17 +2075,88 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 <div id="nav-bar">
   <div id="nav-title">🌾 Little Farmer</div>
   <button class="nav-btn" id="nav-home"      onclick="goHome()">🗺 Map</button>
-  <button class="nav-btn" id="nav-shop"      onclick="goShop()">🏪 Shop</button>
   <button class="nav-btn" id="nav-farm"      onclick="goFarm()">🚜 Farm</button>
   <button class="nav-btn" id="nav-market"    onclick="goMarket()">🛒 Market</button>
   <button class="nav-btn" id="nav-warehouse" onclick="goWarehouse()">📦 Warehouse</button>
-  <button class="nav-btn" id="nav-quests"    onclick="goQuests()">📋 Quests <span id="nav-quest-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:3px;font-family:'Nunito',sans-serif;font-weight:700;"></span></button>
   <button class="nav-btn" id="nav-level"     onclick="goLevel()">⭐ Level</button>
+  <button class="nav-btn" id="nav-menu-btn"  onclick="MenuPanel.toggle()" title="Menu">📚</button>
   <div id="nav-right">
     <div id="nav-coins">🪙 <span id="nav-coin-val">50</span></div>
     <div id="nav-basket" onclick="goMarket()" title="Go to Market">🧺 <span id="nav-basket-val">0</span></div>
     <div id="nav-level-badge" class="nav-btn lv1-badge">Lv 1</div>
   </div>
+</div>
+
+<!-- Menu Panel -->
+<div id="menu-panel-backdrop" onclick="if(event.target===this)MenuPanel.close()">
+  <div id="menu-panel">
+    <div id="menu-panel-header">📚 Menu</div>
+
+    <div class="menu-item" onclick="MenuPanel.close();goJournal()">
+      <div class="menu-item-icon">📖</div>
+      <div class="menu-item-body">
+        <div class="menu-item-title">Fernhollow Journal</div>
+        <div class="menu-item-desc">Farm log, recipes, events & discoveries</div>
+      </div>
+    </div>
+
+    <div class="menu-item" style="opacity:.5;cursor:not-allowed">
+      <div class="menu-item-icon">🗺️</div>
+      <div class="menu-item-body">
+        <div class="menu-item-title">World Map</div>
+        <div class="menu-item-desc">Full Fernhollow area</div>
+      </div>
+      <span class="menu-item-soon">Soon</span>
+    </div>
+
+    <div class="menu-item" style="opacity:.5;cursor:not-allowed">
+      <div class="menu-item-icon">⚙️</div>
+      <div class="menu-item-body">
+        <div class="menu-item-title">Settings</div>
+        <div class="menu-item-desc">Sound, display, save</div>
+      </div>
+      <span class="menu-item-soon">Soon</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Journal Screen -->
+<div id="screen-journal" class="screen">
+
+  <div class="book-wrap">
+    <div class="j-book">
+      <!-- Left page -->
+      <div class="j-page-left" id="j-left">
+        <div class="j-page-left-spine"></div>
+        <div class="j-page-content" id="j-left-content"></div>
+      </div>
+      <!-- Right page (flips) -->
+      <div class="j-page-right-wrap" id="j-right-wrap">
+        <div class="j-page-front">
+          <div class="j-page-content" id="j-right-front-content"></div>
+        </div>
+        <div class="j-page-back">
+          <div class="j-page-content" id="j-right-back-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="j-tab-row">
+    <div class="j-tab active" onclick="Journal.selectTab('farm',this)">🌾 Farm</div>
+    <div class="j-tab" onclick="Journal.selectTab('recipes',this)">🍳 Recipes</div>
+    <div class="j-tab" onclick="Journal.selectTab('events',this)">⛈️ Events</div>
+    <div class="j-tab" onclick="Journal.selectTab('people',this)">💛 People</div>
+    <div class="j-tab" onclick="Journal.selectTab('discoveries',this)">🗺️ Finds</div>
+  </div>
+
+  <div class="j-flip-row">
+    <button class="j-flip-btn" id="j-btn-prev" onclick="Journal.prevPage()">← Previous</button>
+    <span class="j-page-counter" id="j-page-counter"></span>
+    <button class="j-flip-btn" id="j-btn-next" onclick="Journal.nextPage()">Next →</button>
+  </div>
+
 </div>
 
 <!-- ═══ HOME / MAP ═══ -->
@@ -1774,6 +2202,26 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
     </div>
     <!-- Walking destination label -->
     <div id="map-walking-label"></div>
+
+    <!-- ── HIDDEN SCENE HOTSPOTS ── -->
+    <!-- 1. Deep in the top-left forest -->
+    <div class="hidden-hotspot" style="left:22px;top:58px;width:80px;height:80px"
+      onclick="event.stopPropagation();HiddenScenes.enter('forest')"></div>
+    <!-- 2. Bottom-left corner, near the grass -->
+    <div class="hidden-hotspot" style="left:14px;top:760px;width:90px;height:80px"
+      onclick="event.stopPropagation();HiddenScenes.enter('field')"></div>
+    <!-- 3. Center bottom, between the trees -->
+    <div class="hidden-hotspot" style="left:548px;top:755px;width:60px;height:80px"
+      onclick="event.stopPropagation();HiddenScenes.enter('middle')"></div>
+    <!-- 4. Far top-right corner -->
+    <div class="hidden-hotspot" style="left:1310px;top:18px;width:80px;height:80px"
+      onclick="event.stopPropagation();HiddenScenes.enter('edge')"></div>
+    <!-- 5. Fog patch — right side, between Trading Post and Garden -->
+    <div style="position:absolute;left:1080px;top:560px;width:120px;height:70px;
+      background:radial-gradient(ellipse,rgba(200,220,230,.22) 0%,transparent 70%);
+      pointer-events:none;animation:fogDrift 6s ease-in-out infinite alternate;"></div>
+    <div class="hidden-hotspot" style="left:1090px;top:565px;width:100px;height:60px"
+      onclick="event.stopPropagation();HiddenScenes.enter('fog')"></div>
 
     <!-- PATHS -->
     <!-- Left spine vertical -->
@@ -1939,6 +2387,28 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
       <div class="map-loc-stem"></div>
     </div>
 
+    <!-- Kitchen -->
+    <div class="map-loc" style="left:640px;top:570px" onclick="event.stopPropagation();MapPlayer.walkTo('cooking', goCooking)">
+      <div class="map-tooltip">Cook meals from your harvest<br>Eat for buffs · Give · Sell</div>
+      <div class="map-loc-box" style="background:linear-gradient(145deg,#fff5eb,#ffe4c4);border-color:#c2692a;box-shadow:4px 5px 0 #7c3a10;min-width:100px;">
+        <span class="map-loc-icon">🍳</span>
+        <span class="map-loc-name">Kitchen</span>
+        <span class="map-loc-hint">Cook meals</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Town Stall -->
+    <div class="map-loc" style="left:820px;top:570px" onclick="event.stopPropagation();MapPlayer.walkTo('stall', goStall)">
+      <div class="map-tooltip">Sell cooked food at the town stall<br>Higher prices than raw crops!</div>
+      <div class="map-loc-box mloc-stall" style="min-width:100px;">
+        <span class="map-loc-icon">🏮</span>
+        <span class="map-loc-name">Town Stall</span>
+        <span class="map-loc-hint">Sell cooked food</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
     <!-- ── RIGHT ZONE ── -->
 
     <!-- Trading Post (Lv3) -->
@@ -1961,6 +2431,17 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
         <span class="map-loc-icon">🌿</span>
         <span class="map-loc-name">Back Garden</span>
         <span class="map-loc-hint">Special crops</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Gus's Apple Tree (unlocks at Gus affinity 100) -->
+    <div class="map-loc" id="map-apple-tree" style="left:200px;top:600px;display:none" onclick="event.stopPropagation();MapPlayer.walkTo('appletree', pickApple)">
+      <div class="map-tooltip">Gus's old apple tree.<br>Pick one apple per day.</div>
+      <div class="map-loc-box" style="background:linear-gradient(145deg,#f0fdf4,#dcfce7);border-color:#16a34a;box-shadow:4px 5px 0 #166534;min-width:90px;">
+        <span class="map-loc-icon">🍎</span>
+        <span class="map-loc-name">Apple Tree</span>
+        <span class="map-loc-hint" id="apple-tree-hint">Pick today</span>
       </div>
       <div class="map-loc-stem"></div>
     </div>
@@ -2013,6 +2494,65 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   <div class="upg-section">
     <div class="upg-section-title">🌸 Decorations <span style="font-size:12px;font-family:'Nunito',sans-serif;font-weight:400;color:var(--soil-mid)">Appear around your farm on the map</span></div>
     <div id="deco-shop-grid"></div>
+  </div>
+
+</div>
+
+<!-- ═══ COOKING ═══ -->
+<div id="screen-cooking" class="screen">
+
+  <div id="cooking-header">
+    <span style="font-size:36px">🍳</span>
+    <div>
+      <h2>Kitchen</h2>
+      <p>Cook meals from your harvest. Eat for tomorrow's buffs, give to NPCs, or sell at the Town Stall.</p>
+    </div>
+    <div style="margin-left:auto;text-align:right;">
+      <div style="font-size:10px;color:#a0522d;letter-spacing:.5px">COINS</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#7c3a10">🪙<span id="cook-coins">—</span></div>
+    </div>
+  </div>
+
+  <!-- Active buff display -->
+  <div id="cooking-buff-banner">
+    <span style="font-size:24px">✨</span>
+    <span id="buff-banner-text">No active buff</span>
+  </div>
+
+  <!-- Recipes -->
+  <div style="font-family:'Fredoka One',cursive;font-size:17px;color:var(--soil-dark);margin-bottom:12px;">🍽️ Recipes</div>
+  <div id="recipe-grid"></div>
+
+  <!-- Food basket -->
+  <div id="food-basket-section">
+    <div class="food-basket-title">
+      🧺 Food Basket
+      <span style="font-size:12px;font-family:'Nunito',sans-serif;font-weight:400;color:var(--soil-mid)">Ready to eat, give, or sell</span>
+    </div>
+    <div id="food-basket-grid"></div>
+  </div>
+
+</div>
+
+<!-- ═══ TOWN STALL ═══ -->
+<div id="screen-stall" class="screen" style="padding-top:92px;">
+
+  <div style="background:linear-gradient(145deg,#fff8e1,#ffe082);border:3px solid #f9a825;border-radius:16px;padding:16px 22px;margin-bottom:18px;box-shadow:4px 5px 0 #e65100;display:flex;align-items:center;gap:14px;">
+    <span style="font-size:36px">🏮</span>
+    <div>
+      <div style="font-family:'Fredoka One',cursive;font-size:26px;color:#7c3a10;">Town Stall</div>
+      <div style="font-size:12px;color:#a0522d;">Cooked food sells for much more than raw crops!</div>
+    </div>
+    <div style="margin-left:auto;text-align:right;">
+      <div style="font-size:10px;color:#a0522d;letter-spacing:.5px">COINS</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#7c3a10">🪙<span id="stall-coins">—</span></div>
+    </div>
+  </div>
+
+  <div id="stall-grid"></div>
+
+  <div style="font-size:13px;color:var(--soil-mid);font-style:italic;text-align:center;margin-top:8px;">
+    Cook meals in the Kitchen first, then sell them here.
   </div>
 
 </div>
@@ -2490,6 +3030,78 @@ const GARDEN_SEEDS=[
   {id:'herb',    name:'Herbs',   emoji:'🌿',cost:15,sell:35,days:3,desc:'Calla uses these at the clinic.'},
 ];
 
+// Recipes
+const RECIPES = [
+  {
+    id:'salad', name:'Fresh Salad', emoji:'🥗',
+    ingredients:{ lettuce:2 },
+    buff:{ desc:'Watering counts ×2 tomorrow', key:'waterBoost', val:true },
+    sellPrice:30,
+    giftBonus:{ hazel:8, gus:5 },
+    desc:'Simple and crisp.',
+  },
+  {
+    id:'vegsoap', name:'Vegetable Soup', emoji:'🍲',
+    ingredients:{ lettuce:1, carrot:1, potato:1 },
+    buff:{ desc:'Growth speed +1 tomorrow', key:'growthBoost', val:1 },
+    sellPrice:65,
+    giftBonus:{ gus:20, hazel:10 },
+    desc:'Gus\'s favourite. He\'ll remember this.',
+  },
+  {
+    id:'corn', name:'Roasted Corn', emoji:'🌽',
+    ingredients:{ corn:2 },
+    buff:{ desc:'Fishing success +20% tomorrow', key:'fishBoost', val:0.2 },
+    sellPrice:45,
+    giftBonus:{ gus:10, hazel:8 },
+    desc:'Smoky and sweet.',
+  },
+  {
+    id:'stew', name:'Tomato Stew', emoji:'🍅',
+    ingredients:{ tomato:2, carrot:1 },
+    buff:{ desc:'Sell prices +25% tomorrow', key:'sellBoost', val:0.25 },
+    sellPrice:80,
+    giftBonus:{ hazel:12, gus:8 },
+    desc:'Rich and hearty. Goes for a good price.',
+  },
+  {
+    id:'grillfish', name:'Grilled Fish', emoji:'🐟',
+    ingredients:{ herb:1, carp:1 },
+    buff:{ desc:'All buffs ×1.5 tomorrow', key:'megaBoost', val:true },
+    sellPrice:90,
+    giftBonus:{ gus:15, hazel:10 },
+    desc:'Herb-seasoned. Gus says it tastes like the old days.',
+  },
+  {
+    id:'lavsoap', name:'Lavender Cake', emoji:'💜',
+    ingredients:{ lavender:2 },
+    buff:{ desc:'Affinity gains ×2 tomorrow', key:'affinityBoost', val:true },
+    sellPrice:100,
+    giftBonus:{ gus:18, hazel:20 },
+    desc:'Fragrant and rare. Anyone who gets this will remember.',
+  },
+  {
+    id:'applecake', name:"Grandma's Apple Cake", emoji:'🍰',
+    ingredients:{ apple:2 },
+    buff:{ desc:'All friendship gains ×3 tomorrow', key:'friendBoost', val:3 },
+    sellPrice:0, // cannot sell — too precious
+    giftBonus:{ gus:35, hazel:30 },
+    desc:"Gus's recipe. Only someone he trusts knows how to make it.",
+    secret: true, // hidden until Gus affinity 100
+  },
+];
+
+// Food basket and active buff
+const foodBasket = {};
+RECIPES.forEach(r=>{ foodBasket[r.id]=0; });
+
+// Apple inventory (from Gus's tree)
+let appleCount     = 0;
+let lastAppleDay   = -1; // last day apple was picked
+let appleTreeVisible = false;
+
+let activeBuff = null; // { key, val, desc, expiresDay }
+
 // Fish data
 const FISH=[
   {id:'minnow',   name:'Minnow',       emoji:'🐟',sell:8,  rarity:0.35,desc:'Common little fish.'},
@@ -2634,7 +3246,8 @@ function updateMapHUD(){
   const mn=$('map-day-num');    if(mn) mn.textContent=day;
   const ml=$('map-hud-level');
   if(ml){ const lv=LEVELS[level]; ml.textContent=lv.icon+' '+lv.label; ml.className=lv.cls; }
-  // Trading Post pin
+  // Apple tree
+  updateAppleTreeVisibility();
   const tbox=$('map-trade-box');
   const tlock=$('map-trade-lock');
   const tpin=$('map-trade-pin');
@@ -2725,7 +3338,23 @@ function showLvlModal(lv){
 function closeLvlModal(){$('lvl-modal-backdrop').classList.remove('open');}
 
 // ── ROUTING ──
-const SCREEN_NAV={'screen-home':'nav-home','screen-shop':'nav-shop','screen-farm':'nav-farm','screen-market':'nav-market','screen-level':'nav-level','screen-garden':'nav-farm','screen-fishing':'nav-home','screen-trading':'nav-home','screen-warehouse':'nav-warehouse','screen-quests':'nav-quests','screen-upgrade':'nav-home'};
+const SCREEN_NAV={
+  'screen-home':     'nav-home',
+  'screen-farm':     'nav-farm',
+  'screen-garden':   'nav-farm',
+  'screen-market':   'nav-market',
+  'screen-warehouse':'nav-warehouse',
+  'screen-level':    'nav-level',
+  // These highlight Map when active
+  'screen-shop':     'nav-home',
+  'screen-fishing':  'nav-home',
+  'screen-trading':  'nav-home',
+  'screen-quests':   'nav-home',
+  'screen-upgrade':  'nav-home',
+  'screen-cooking':  'nav-home',
+  'screen-stall':    'nav-home',
+  'screen-journal':  'nav-menu-btn',
+};
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');
@@ -2932,7 +3561,9 @@ function handlePlot(i){
   }
   const c=cells[i];
   if(tool==='till'){
-    if(c.state==='empty'){c.state='tilled';setLog('Plot tilled! Pick a seed and plant it.','ok');trackTill();}
+    if(c.state==='empty'){c.state='tilled';setLog('Plot tilled! Pick a seed and plant it.','ok');trackTill();
+      if(State.tillCount===1) jLog('farm','🪱','Turned the first plot of soil. The earth smelled like rain.');
+    }
     else setLog('Already tilled or occupied.','warn');
   } else if(tool==='water'){
     if(['planted','growing'].includes(c.state)){
@@ -2944,6 +3575,7 @@ function handlePlot(i){
       basket[c.seed.id]++;
       setLog(`Picked ${c.seed.emoji} ${c.seed.name}! Added to basket. Sell at the Market 🛒`,'harvest');
       trackHarvest(false);
+      if(State.harvestCount===1) jLog('farm','🧺',`First harvest. ${c.seed.emoji} ${c.seed.name}. Held it for a moment before putting it in the basket.`);
       c.state='tilled';c.seed=null;c.daysPlanted=0;c.watered=false;
     } else if(['planted','growing'].includes(c.state)){
       setLog(`Not ready — ${c.seed.days-c.daysPlanted} more day(s). Water to speed up!`,'warn');
@@ -2956,6 +3588,7 @@ function handlePlot(i){
       c.state='planted';c.seed=selectedSeed;c.daysPlanted=0;c.watered=false;
       setLog(`Planted ${selectedSeed.emoji} ${selectedSeed.name}! Ready in ${selectedSeed.days} day(s).`,'ok');
       trackPlant(false);
+      if(State.plantCount===1) jLog('farm','🌱',`Planted the first seeds. ${selectedSeed.emoji} ${selectedSeed.name}. Didn't know what I was doing. Did it anyway.`);
     } else if(c.state==='empty') setLog('Till this plot first!','warn');
     else setLog('There is already a crop here.','warn');
   }
@@ -3014,9 +3647,12 @@ function nextDay(){
   if(newSeason!==prevSeason){
     showSeasonTransition(newSeason);
     trackSeasonChange();
+    jLog('farm', newSeason.icon,
+      `${newSeason.name} arrived. ${newSeason.sub}.`,
+      day);
   }
 
-  const speed=getSpeedMult(); // 1 normally, 2 in autumn
+  const speed = getSpeedMult() * Disasters.getSpeedPenalty();
   let readyCnt=0;
 
   // Advance main farm (blocked in winter — crops wither)
@@ -3057,7 +3693,7 @@ function nextDay(){
   } else if(readyCnt>0){
     msg=`Day ${day} — ${readyCnt} plot(s) ready to pick! 🎉`;
   } else {
-    const speedStr=speed>1?` (x${speed} growth — harvest time!)`:'';
+    const speedStr = speed < 1 ? ` ❄️ Cold snap — half growth speed` : speed > 1 ? ` (x${Math.round(speed*10)/10} growth — harvest time!)` : '';
     msg=`Day ${day} ${s.icon} — Day ${dayInSzn}/25 of ${s.name}${speedStr}`;
   }
   setLog(msg,'day');
@@ -3069,10 +3705,12 @@ function nextDay(){
 
   todayCaught=0;
   tradeDay=0;
-  ensureDailyQuests(); // refresh daily quests on new day
+  ensureDailyQuests();
   updateQuestBadge();
   checkAchievements();
   updateSeasonUI();
+  Disasters.checkWarning();  // Day 9: Gus warning
+  Disasters.checkDisaster(); // Day 10: bug blight hits
   renderGrid();
 }
 
@@ -3730,6 +4368,25 @@ const ACHIEVEMENTS = [
   { id:'deco_all',     icon:'✨', name:'Fully Decorated',   desc:'Buy every single decoration',               check:()=>FarmUpgrade&&DECORATIONS&&FarmUpgrade.decos.size>=DECORATIONS.length },
   { id:'gus_friend',  icon:'🤝', name:'Old Friends',        desc:'Reach 50 friendship with Gus',               check:()=>GusChat&&GusChat.affinity>=50 },
   { id:'gus_best',    icon:'💛', name:'Fernhollow Family',  desc:'Reach 100 friendship with Gus',              check:()=>GusChat&&GusChat.affinity>=100 },
+  // Disaster achievements
+  { id:'first_disaster', icon:'😱', name:'First Casualty',    desc:'Experience your first disaster',             check:()=>State.disastersLived>=1 },
+  { id:'disaster_5',     icon:'⛑️', name:'Tough Farmer',      desc:'Survive 5 disasters',                        check:()=>State.disastersLived>=5 },
+  { id:'disaster_10',    icon:'🦺', name:'Nothing Phases Me',  desc:'Survive 10 disasters',                       check:()=>State.disastersLived>=10 },
+  { id:'all_disasters',  icon:'🌪️', name:'Seen It All',        desc:'Experience all 6 types of disaster',         check:()=>State.allDisasterTypes&&State.allDisasterTypes.size>=6 },
+  { id:'storm_dodge',    icon:'☂️', name:'Storm Chaser',       desc:'Have zero crops watered when a storm hits',  check:()=>State.stormsWithNoLoss>=1 },
+  { id:'storm_dodge_3',  icon:'🌈', name:'Weather Prophet',    desc:'Dodge the storm 3 times',                    check:()=>State.stormsWithNoLoss>=3 },
+  { id:'blight_early',   icon:'🐛', name:'Bug Season',         desc:'Survive the first bug blight on Day 10',     check:()=>State.blightsSurvived>=1 },
+  { id:'fog_visit',      icon:'🌫️', name:'Fog Walker',         desc:'Experience the heavy fog',                   check:()=>State.fogDays>=1 },
+  { id:'raid_survive',   icon:'🦊', name:'Fox on the Farm',    desc:'Survive an animal raid',                     check:()=>State.raidCount>=1 },
+  { id:'raid_3',         icon:'🐾', name:'Known Thief',        desc:'Get raided 3 times and keep going',          check:()=>State.raidCount>=3 },
+  // Cooking
+  { id:'first_cook',     icon:'🍳', name:'First Cook',         desc:'Cook your first meal',                       check:()=>(State.dishesCooked||0)>=1 },
+  { id:'cook_5',         icon:'🍽️', name:'Home Cook',          desc:'Cook 5 meals',                               check:()=>(State.dishesCooked||0)>=5 },
+  { id:'cook_20',        icon:'👨‍🍳', name:'Chef of Fernhollow', desc:'Cook 20 meals',                              check:()=>(State.dishesCooked||0)>=20 },
+  { id:'sell_stall',     icon:'🏮', name:'Open for Business',  desc:'Sell your first dish at the Town Stall',     check:()=>totalEarn>0&&(State.dishesCooked||0)>0 },
+  { id:'all_recipes',    icon:'📖', name:'Full Menu',          desc:'Cook every recipe at least once',            check:()=>RECIPES&&RECIPES.every(r=>foodBasket[r.id]>0||(State.dishesCooked||0)>=RECIPES.length) },
+  { id:'apple_pick',     icon:'🍎', name:'From Gus\'s Tree',   desc:'Pick your first apple',                      check:()=>appleCount>=1 },
+  { id:'apple_cake',     icon:'🍰', name:'Grandmother\'s Recipe', desc:'Cook Grandma\'s Apple Cake',              check:()=>foodBasket['applecake']>0||(State.dishesCooked||0)>0&&appleCount>0 },
 ];
 
 // Stat counters tracked for achievements
@@ -3740,6 +4397,15 @@ const State = {
   questsDone:0, cyclesComplete:0,
   seasonsLived:{ spring:0, summer:0, autumn:0, winter:0 },
   unlockedAch: new Set(),
+  coldSnapDays: 0,
+  droughtDay:   -1,
+  // Disaster tracking
+  disastersLived:   0,
+  stormsWithNoLoss: 0,
+  blightsSurvived:  0,
+  raidCount:        0,
+  fogDays:          0,
+  allDisasterTypes: new Set(),
 };
 
 let _achToastTimer = null;
@@ -3921,14 +4587,12 @@ function checkQuestProgress(){
 
 function updateQuestBadge(){
   ensureDailyQuests();
-  const remaining=QP.dailyQuests.filter(q=>!QP.dailyDone.has(q.id)).length;
-  const badge=$('nav-quest-badge');
-  const mapHint=$('map-quest-hint');
-  if(badge){
-    if(remaining>0){ badge.style.display=''; badge.textContent=remaining; }
-    else badge.style.display='none';
-  }
-  if(mapHint) mapHint.textContent=remaining>0?`${remaining} quest(s) available`:'All done today!';
+  const remaining = QP.dailyQuests.filter(q=>!QP.dailyDone.has(q.id)).length;
+  // Update map notice board hint
+  const mapHint = $('map-quest-hint');
+  if(mapHint) mapHint.textContent = remaining > 0
+    ? `${remaining} quest(s) available`
+    : 'All done today! ✅';
 }
 
 function goQuests(){
@@ -4195,6 +4859,831 @@ function updateFarmMapVisual(){
 }
 
 // ══════════════════════════════════════════
+// COOKING SYSTEM
+// ══════════════════════════════════════════
+
+function goCooking(){
+  renderCooking();
+  showScreen('screen-cooking');
+}
+
+function goStall(){
+  renderStall();
+  showScreen('screen-stall');
+}
+
+function canCook(recipe){
+  return Object.entries(recipe.ingredients).every(([id,qty])=>{
+    // check basket (crops) or fishBasket or inventory
+    const inBasket = basket[id]||0;
+    const inFish   = fishBasket[id]||0;
+    const inInv    = inventory[id]||0;
+    return (inBasket+inFish+inInv) >= qty;
+  });
+}
+
+function deductIngredients(recipe){
+  Object.entries(recipe.ingredients).forEach(([id,qty])=>{
+    let remaining = qty;
+    // Deduct from basket first, then fishBasket, then inventory
+    const sources = [basket, fishBasket, inventory];
+    for(const src of sources){
+      if(src[id] && remaining > 0){
+        const take = Math.min(src[id], remaining);
+        src[id] -= take;
+        remaining -= take;
+      }
+    }
+  });
+}
+
+function cookRecipe(recipeId){
+  const r = RECIPES.find(x=>x.id===recipeId);
+  if(!r || !canCook(r)) return;
+  deductIngredients(r);
+  foodBasket[r.id]++;
+  State.dishesCooked = (State.dishesCooked||0) + 1;
+  showToast(`${r.emoji} ${r.name} cooked!`);
+  jLog('recipes', r.emoji, `Cooked ${r.name}. <em>${r.desc}</em>`);
+  checkAchievements();
+  renderCooking();
+}
+
+function eatFood(recipeId){
+  const r = RECIPES.find(x=>x.id===recipeId);
+  if(!r || !foodBasket[r.id]) return;
+  foodBasket[r.id]--;
+  activeBuff = { ...r.buff, expiresDay: day+1 };
+  showToast(`${r.emoji} Ate ${r.name}! Buff active tomorrow: ${r.buff.desc}`);
+  State.dishesEaten = (State.dishesEaten||0) + 1;
+  checkAchievements();
+  renderCooking();
+}
+
+function giveFood(recipeId){
+  const r = RECIPES.find(x=>x.id===recipeId);
+  if(!r || !foodBasket[r.id]) return;
+  foodBasket[r.id]--;
+  // Give to Gus for now (Hazel later)
+  const bonus = r.giftBonus?.gus || 10;
+  // Re-use GusChat affinity mechanism
+  const gain = Math.min(100, GusChat._affProxy() + bonus) - GusChat._affProxy();
+  GusChat._addAff(bonus);
+  showToast(`🎁 Gave ${r.emoji} ${r.name} to Gus! +${bonus} friendship`);
+  checkAchievements();
+  renderCooking();
+}
+
+function sellFoodTown(recipeId){
+  const r = RECIPES.find(x=>x.id===recipeId);
+  if(!r || !foodBasket[r.id]) return;
+  foodBasket[r.id]--;
+  const price = r.sellPrice;
+  coins += price; totalEarn += price;
+  updateNavCoins();
+  showToast(`🏮 Sold ${r.emoji} ${r.name} for 🪙${price}!`);
+  QP.earnedToday = (QP.earnedToday||0) + price;
+  QP.earnedThisSeason = (QP.earnedThisSeason||0) + price;
+  checkQuestProgress();
+  checkAchievements();
+  renderStall();
+  renderCooking();
+}
+
+function renderCooking(){
+  $('cook-coins').textContent = coins;
+
+  // Buff banner
+  const banner = $('cooking-buff-banner');
+  if(activeBuff && activeBuff.expiresDay > day){
+    banner.classList.add('active');
+    $('buff-banner-text').textContent = `Active buff: ${activeBuff.desc} (until Day ${activeBuff.expiresDay})`;
+  } else {
+    activeBuff = null;
+    banner.classList.remove('active');
+  }
+
+  // Recipes
+  const grid = $('recipe-grid'); grid.innerHTML='';
+  RECIPES.forEach(r=>{
+    // Hide secret recipes until unlocked
+    if(r.secret && (!GusChat || GusChat.affinity < 100)) return;
+    const can = canCook(r);
+    const card = document.createElement('div');
+    card.className = `recipe-card${can?'':' cant-cook'}`;
+
+    const ingList = Object.entries(r.ingredients)
+      .map(([id,qty])=>{
+        const item = [...SEEDS,...GARDEN_SEEDS,...FISH].find(x=>x.id===id);
+        const have = (basket[id]||0)+(fishBasket[id]||0)+(inventory[id]||0);
+        const ok = have>=qty;
+        return `<span style="color:${ok?'var(--green-deep)':'#dc2626'}">${item?.emoji||'?'} ${item?.name||id} ×${qty} (have ${have})</span>`;
+      }).join('<br>');
+
+    card.innerHTML=`
+      <span class="rc-emoji">${r.emoji}</span>
+      <div class="rc-name">${r.name}</div>
+      <div class="rc-ingredients">${ingList}</div>
+      <span class="rc-buff">✨ ${r.buff.desc}</span>
+      ${r.sellPrice > 0 ? `<span class="rc-sell-hint">🏮 Town Stall: 🪙${r.sellPrice}</span>` : '<span class="rc-sell-hint" style="color:#7c3a10">🎁 Gift only — too precious to sell</span>'}
+      <div class="rc-stock">In basket: ${foodBasket[r.id]||0}${r.id==='applecake'?` · 🍎 Apples: ${basket['apple']||0}`:''}${r.secret?'<br><span style="font-size:10px;color:#16a34a">🔓 Unlocked by Gus</span>':''}</div>
+      <button class="rc-cook-btn" ${can?'':'disabled'} onclick="cookRecipe('${r.id}')">
+        ${can?'🍳 Cook':'Missing ingredients'}
+      </button>`;
+    grid.appendChild(card);
+  });
+
+  // Food basket
+  const fbGrid = $('food-basket-grid'); fbGrid.innerHTML='';
+  const hasMeals = RECIPES.some(r=>foodBasket[r.id]>0);
+  if(!hasMeals){
+    fbGrid.innerHTML='<div class="food-empty">Nothing cooked yet — pick a recipe above!</div>';
+  } else {
+    RECIPES.forEach(r=>{
+      if(!foodBasket[r.id]) return;
+      const el=document.createElement('div');
+      el.className='food-item';
+      el.innerHTML=`
+        <div class="fi-emoji">${r.emoji}</div>
+        <div class="fi-name">${r.name}</div>
+        <div class="fi-qty">×${foodBasket[r.id]}</div>
+        <div class="fi-actions">
+          <button class="fi-btn fi-eat"       onclick="eatFood('${r.id}')">🍽️ Eat (buff tomorrow)</button>
+          <button class="fi-btn fi-give"      onclick="giveFood('${r.id}')">🎁 Give to Gus</button>
+          ${r.sellPrice > 0 ? `<button class="fi-btn fi-sell-town" onclick="sellFoodTown('${r.id}')">🏮 Sell 🪙${r.sellPrice}</button>` : ''}
+        </div>`;
+      fbGrid.appendChild(el);
+    });
+  }
+}
+
+function renderStall(){
+  $('stall-coins').textContent = coins;
+  const grid = $('stall-grid'); grid.innerHTML='';
+  const hasMeals = RECIPES.some(r=>foodBasket[r.id]>0);
+  if(!hasMeals){
+    grid.innerHTML=`<div style="text-align:center;padding:32px;color:var(--soil-mid);font-style:italic;font-size:14px;">
+      No cooked food to sell.<br>Visit the Kitchen first!
+      <br><br><button onclick="goCooking()" style="padding:8px 20px;background:var(--cream);border:2px solid #c2692a;border-radius:20px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;color:#7c3a10;">Go to Kitchen →</button>
+    </div>`;
+    return;
+  }
+  RECIPES.forEach(r=>{
+    if(!foodBasket[r.id]) return;
+    const el=document.createElement('div');
+    el.style.cssText='background:var(--cream);border:2px solid #f9a825;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:3px 4px 0 #e65100;display:flex;align-items:center;gap:16px;';
+    el.innerHTML=`
+      <span style="font-size:44px">${r.emoji}</span>
+      <div style="flex:1">
+        <div style="font-family:'Fredoka One',cursive;font-size:18px;color:#7c3a10">${r.name}</div>
+        <div style="font-size:12px;color:var(--soil-mid);margin-top:2px">${r.desc}</div>
+        <div style="font-size:12px;color:var(--green-deep);margin-top:4px">In basket: ${foodBasket[r.id]}</div>
+      </div>
+      <div style="text-align:center;flex-shrink:0">
+        <div style="font-family:'Fredoka One',cursive;font-size:22px;color:#7c3a10">🪙${r.sellPrice}</div>
+        <div style="font-size:10px;color:var(--soil-mid);margin-bottom:8px">per dish</div>
+        <button onclick="sellFoodTown('${r.id}')" style="padding:8px 16px;background:linear-gradient(135deg,#f9a825,#e65100);border:2px solid #e65100;border-radius:12px;font-family:'Fredoka One',cursive;font-size:13px;color:#fff;cursor:pointer;box-shadow:2px 2px 0 #c62828;">Sell 1</button>
+      </div>`;
+    grid.appendChild(el);
+  });
+}
+
+// Apply cooking buff in relevant places
+function getCookingBuffMultiplier(type){
+  if(!activeBuff || activeBuff.expiresDay <= day) return 1;
+  if(type==='sell'   && activeBuff.key==='sellBoost')   return 1 + activeBuff.val;
+  if(type==='growth' && activeBuff.key==='growthBoost') return 1 + activeBuff.val;
+  if(type==='mega')  return activeBuff.key==='megaBoost' ? 1.5 : 1;
+  return 1;
+}
+
+// ── APPLE TREE ──
+function pickApple(){
+  if(lastAppleDay === day){
+    showToast('Already picked today — come back tomorrow 🍎');
+    return;
+  }
+  lastAppleDay = day;
+  appleCount++;
+  // Update basket for recipe system
+  if(!basket['apple']) basket['apple'] = 0;
+  basket['apple']++;
+
+  const hint = document.getElementById('apple-tree-hint');
+  if(hint) hint.textContent = 'Come back tomorrow';
+
+  // Gus response lines
+  const lines = [
+    "That tree is older than me.\n\nMy grandfather planted it.\n\nEvery apple it grows, I think of him.",
+    "One apple. That's all she gives per day.\n\nAlways has.\n\nI stopped arguing with her about it years ago.",
+    "Take good care of that apple.\n\nYou know what it's good for.",
+    "She's a slow tree.\n\nPatient.\n\nLike your grandmother was.",
+  ];
+  const line = lines[Math.floor(Math.random()*lines.length)];
+
+  // Show as a little scene
+  const overlay = document.getElementById('hidden-scene-overlay');
+  const textEl  = document.getElementById('hidden-scene-text');
+  const dismiss = document.getElementById('hidden-scene-dismiss');
+  textEl.innerHTML = `<span style="font-size:48px;display:block;margin-bottom:20px">🍎</span>${line.replace(/\n/g,'<br>')}`;
+  overlay.classList.remove('show');
+  dismiss.style.animation = 'none';
+  void overlay.offsetWidth;
+  overlay.classList.add('show');
+  dismiss.style.animation = 'dismissAppear 1s ease 3s forwards';
+
+  showToast('🍎 Picked an apple from Gus\'s tree!');
+  checkAchievements();
+}
+
+function updateAppleTreeVisibility(){
+  const tree = document.getElementById('map-apple-tree');
+  if(!tree) return;
+  const visible = GusChat && GusChat.affinity >= 100;
+  tree.style.display = visible ? 'flex' : 'none';
+  appleTreeVisible = visible;
+
+  // Update hint
+  const hint = document.getElementById('apple-tree-hint');
+  if(hint) hint.textContent = lastAppleDay === day ? 'Come back tomorrow' : 'Pick today';
+}
+
+// Called when Gus hits 100 affinity for the first time
+function onGusMaxAffinity(){
+  if(sessionStorage.getItem('gus_max_triggered')) return;
+  sessionStorage.setItem('gus_max_triggered','1');
+
+  // ① Black screen story moment
+  setTimeout(()=>{
+    const overlay = document.getElementById('hidden-scene-overlay');
+    const textEl  = document.getElementById('hidden-scene-text');
+    const dismiss = document.getElementById('hidden-scene-dismiss');
+
+    textEl.innerHTML = `
+      Gus finds you at the farm one morning.<br><br>
+      He doesn't say anything for a while.<br>
+      Just stands there looking at the old apple tree.<br><br>
+      <em>"Your grandmother and I used to sit under that tree every autumn.<br>
+      Sixty years.<br>
+      She never told me why she left it to you instead of selling the place.<br>
+      I think I know now."</em><br><br>
+      He hands you a folded piece of paper.<br>
+      It's a recipe. Written in her handwriting.<br><br>
+      <em>"She said to give it to the right person.<br>
+      You're the right person."</em>
+    `;
+    overlay.classList.remove('show');
+    dismiss.style.animation = 'none';
+    void overlay.offsetWidth;
+    overlay.classList.add('show');
+    dismiss.style.animation = 'dismissAppear 1s ease 6s forwards';
+  }, 800);
+
+  // ③ Unlock apple cake recipe (show it in kitchen)
+  showToast('🍰 Recipe unlocked: Grandma\'s Apple Cake!');
+
+  // ④ Show apple tree on map
+  updateAppleTreeVisibility();
+}
+
+// ══════════════════════════════════════════
+// MENU PANEL
+// ══════════════════════════════════════════
+const MenuPanel = {
+  toggle(){
+    const el = document.getElementById('menu-panel-backdrop');
+    if(el.classList.contains('open')) this.close();
+    else el.classList.add('open');
+  },
+  close(){
+    document.getElementById('menu-panel-backdrop').classList.remove('open');
+  },
+};
+
+function goJournal(){ Journal.open(); showScreen('screen-journal'); }
+
+// Journal data store
+const JournalLog = {
+  farm:[], recipes:[], events:[], people:[], discoveries:[],
+  add(tab, icon, text, d){
+    const entry = { day: d??day, icon, text };
+    this[tab] = this[tab] || [];
+    this[tab].unshift(entry);
+    if(this[tab].length > 80) this[tab].pop();
+  },
+};
+function jLog(tab, icon, text, d){ JournalLog.add(tab, icon, text, d); }
+
+// ══════════════════════════════════════════
+// JOURNAL — FLIP BOOK
+// ══════════════════════════════════════════
+
+const Journal = (() => {
+  const ENTRIES_PER_PAGE = 5;
+  const TAB_TITLES = {
+    farm:'Farm Log', recipes:'Recipe Book',
+    events:'Events', people:'People', discoveries:'Discoveries',
+  };
+  const TAB_EMPTY = {
+    farm:'Nothing recorded yet.\nStart farming and\nthe pages will fill.',
+    recipes:'No recipes discovered.\nVisit the Kitchen.',
+    events:'No events recorded.\nFernhollow has been quiet.',
+    people:'No encounters recorded.\nTalk to Gus.',
+    discoveries:'Nothing found.\nExplore the map.',
+  };
+
+  let _tab = 'farm';
+  let _spread = 0;
+  let _flipping = false;
+
+  function _buildSpreads(tab){
+    const entries = JournalLog[tab] || [];
+    const pages = [];
+    for(let i=0;i<entries.length;i+=ENTRIES_PER_PAGE)
+      pages.push(entries.slice(i,i+ENTRIES_PER_PAGE));
+    if(pages.length===0) pages.push([]);
+    const spreads=[];
+    for(let i=0;i<pages.length;i+=2)
+      spreads.push([pages[i], pages[i+1]||null]);
+    return spreads;
+  }
+
+  function _renderPage(entries, pageNum, title, el){
+    if(!el) return;
+    const empty = !entries || entries.length===0;
+    el.innerHTML=`
+      <div class="j-page-header">
+        <span>${title}</span>
+        <span class="j-page-num">— ${pageNum} —</span>
+      </div>
+      ${empty
+        ? `<div class="j-empty">${(TAB_EMPTY[_tab]||'').replace(/\n/g,'<br>')}</div>`
+        : (entries||[]).map(e=>`
+          <div class="j-entry">
+            <div class="j-entry-day">Day ${e.day}</div>
+            <div class="j-entry-icon">${e.icon||'📝'}</div>
+            <div class="j-entry-text">${e.text}</div>
+          </div>`).join('')
+      }`;
+  }
+
+  function _render(){
+    const spreads = _buildSpreads(_tab);
+    const sp = _spread = Math.min(_spread, spreads.length-1);
+    const title = TAB_TITLES[_tab];
+    _renderPage(spreads[sp][0],  sp*2+1, title, document.getElementById('j-left-content'));
+    _renderPage(spreads[sp][1],  sp*2+2, title, document.getElementById('j-right-front-content'));
+    const counter = document.getElementById('j-page-counter');
+    if(counter) counter.textContent = `pp. ${sp*2+1}–${sp*2+2}`;
+    const prev = document.getElementById('j-btn-prev');
+    const next = document.getElementById('j-btn-next');
+    if(prev) prev.disabled = sp===0;
+    if(next) next.disabled = sp>=spreads.length-1;
+  }
+
+  function selectTab(tab, el){
+    _tab = tab; _spread = 0;
+    document.querySelectorAll('.j-tab').forEach(t=>t.classList.remove('active'));
+    if(el) el.classList.add('active');
+    _render();
+  }
+
+  function _flip(dir){
+    if(_flipping) return;
+    const spreads = _buildSpreads(_tab);
+    const next = _spread + dir;
+    if(next < 0 || next >= spreads.length) return;
+    _flipping = true;
+    const wrap = document.getElementById('j-right-wrap');
+    if(!wrap){ _spread=next; _render(); _flipping=false; return; }
+
+    if(dir > 0){
+      wrap.style.transition = 'transform .65s cubic-bezier(.645,.045,.355,1)';
+      wrap.style.transform  = 'rotateY(-180deg)';
+      wrap.style.zIndex = 5;
+      setTimeout(()=>{
+        _spread = next;
+        wrap.style.transition = 'none';
+        wrap.style.transform  = 'rotateY(0deg)';
+        wrap.style.zIndex = '';
+        _render();
+        _flipping = false;
+      }, 660);
+    } else {
+      wrap.style.transition = 'none';
+      wrap.style.transform  = 'rotateY(-180deg)';
+      wrap.style.zIndex = 5;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        wrap.style.transition = 'transform .65s cubic-bezier(.645,.045,.355,1)';
+        wrap.style.transform  = 'rotateY(0deg)';
+        setTimeout(()=>{
+          wrap.style.zIndex = '';
+          _spread = next;
+          _render();
+          _flipping = false;
+        }, 660);
+      }));
+    }
+  }
+
+  function nextPage(){ _flip(1); }
+  function prevPage(){ _flip(-1); }
+
+  function open(){
+    _spread = 0;
+    _render();
+  }
+
+  return { selectTab, nextPage, prevPage, open, showTab: selectTab };
+})();
+
+// ── DISASTER SYSTEM ──
+
+const Disasters = (() => {
+
+  const EVENTS = {
+    blight: {
+      icon:  '🐛',
+      title: 'Bug Blight!',
+      desc:  'Insects swept through the farm overnight.\n3 to 5 of your crops have been set back a full day.',
+      gusComment: [
+        '"I told you. The bugs come every spring. Been happening since before your grandmother\'s time."',
+        '"Could\'ve been worse. They didn\'t get the whole field."',
+        '"Next time, listen to old Gus."',
+      ],
+      seasons: ['spring','summer','autumn'], // not winter
+      apply(){
+        const targets = cells
+          .map((c,i)=>({c,i}))
+          .filter(({c})=>['planted','growing'].includes(c.state));
+        const count = Math.min(targets.length, 3 + Math.floor(Math.random()*3));
+        for(let i=targets.length-1;i>0;i--){
+          const j=Math.floor(Math.random()*(i+1));
+          [targets[i],targets[j]]=[targets[j],targets[i]];
+        }
+        targets.slice(0,count).forEach(({c})=>{
+          c.daysPlanted=Math.max(0,c.daysPlanted-1);
+          if(c.daysPlanted===0) c.state='planted';
+          else c.state='growing';
+        });
+        return count;
+      },
+    },
+
+    storm: {
+      icon:  '⛈️',
+      title: 'Storm Overnight!',
+      desc:  'Heavy rain flooded the farm.\nAll watered crops were submerged — set back to the beginning.',
+      gusComment: [
+        '"Overwatered. The storm did what too much water always does."',
+        '"Next time a storm\'s coming, don\'t water. Let the rain do it — or don\'t."',
+        '"Your grandmother lost a whole row of carrots to a storm once. Took it well. Replanted the next morning."',
+      ],
+      seasons: ['spring','summer','autumn'],
+      apply(){
+        let count = 0;
+        cells.forEach(c=>{
+          if(['planted','growing'].includes(c.state) && c.watered){
+            c.daysPlanted = 0;
+            c.state = 'planted';
+            c.watered = false;
+            count++;
+          }
+        });
+        return count;
+      },
+    },
+
+    coldsnap: {
+      icon:  '🌨️',
+      title: 'Cold Snap!',
+      desc:  'A sudden frost crept in from the mountains.\nCrop growth will be halved for the next 3 days.',
+      gusComment: [
+        '"Cold snap. Happens every few years. Nothing to do but wait it out."',
+        '"Cover what you can. The rest is up to the weather."',
+        '"Three days of slow growth. Use the time to fish."',
+      ],
+      seasons: ['spring','autumn'],
+      apply(){
+        State.coldSnapDays = 3;
+        return null;
+      },
+    },
+
+    drought: {
+      icon:  '🔥',
+      title: 'Drought!',
+      desc:  'The summer heat is relentless.\nWatering today had no effect — crops need double watering to make progress.',
+      gusComment: [
+        '"Drought. You\'ll need to water twice to get anything done today."',
+        '"The ground\'s too dry to take a single watering. Try again."',
+        '"Tough summer. Water everything twice if you want it to grow."',
+      ],
+      seasons: ['summer'],
+      apply(){
+        let count = 0;
+        cells.forEach(c=>{
+          if(c.watered){ c.watered = false; count++; }
+        });
+        State.droughtDay = day;
+        return count;
+      },
+    },
+
+    raid: {
+      icon:  '🦊',
+      title: 'Animal Raid!',
+      desc:  'Something got into the farm overnight.\n1 to 2 ripe crops have been taken.',
+      gusComment: [
+        '"Fox, most likely. They\'ve been bold this year."',
+        '"I\'ve seen this before. You\'ll need a better fence one day."',
+        '"Could\'ve been worse. At least they left the rest."',
+        '"Your grandmother used to leave out scraps to keep them away. Didn\'t always work."',
+      ],
+      seasons: ['spring','summer','autumn','winter'],
+      apply(){
+        const ready = cells.filter(c=>c.state==='ready');
+        const count = Math.min(ready.length, 1 + Math.floor(Math.random()*2));
+        // Shuffle and take
+        for(let i=ready.length-1;i>0;i--){
+          const j=Math.floor(Math.random()*(i+1));
+          [ready[i],ready[j]]=[ready[j],ready[i]];
+        }
+        ready.slice(0,count).forEach(c=>{
+          c.state='tilled'; c.seed=null; c.daysPlanted=0; c.watered=false;
+        });
+        State.raidCount = (State.raidCount||0) + 1;
+        return count;
+      },
+    },
+
+    fog: {
+      icon:  '🌫️',
+      title: 'Heavy Fog',
+      desc:  'A thick fog settled over Fernhollow overnight.\nNothing was damaged — but the valley feels different today.',
+      gusComment: [
+        '"Fog like this comes maybe once a year. I always stay inside."',
+        '"The fog knows things. I don\'t ask what."',
+        '"Your grandmother loved mornings like this. Said the fog made the farm feel like it was dreaming."',
+        '"Nothing to worry about. Probably."',
+      ],
+      seasons: ['spring','summer','autumn','winter'],
+      isNarrative: true, // no mechanical effect
+      apply(){
+        State.fogDays = (State.fogDays||0) + 1;
+        return null;
+      },
+    },
+  };
+
+  // Which disaster happened last (avoid repeats)
+  let _lastDisaster = null;
+  // Fixed tutorial disasters (Days 10 and 20, with warnings)
+  const TUTORIAL_DAYS = {
+    9:  { warn: 'blight' },
+    10: { trigger: 'blight' },
+    19: { warn: 'storm' },
+    20: { trigger: 'storm' },
+  };
+
+  const WARNING_LINES = {
+    blight:   'Tomorrow the bugs come. I can feel it.\n\nHarvest anything that\'s close to ready. The ones still growing — they\'ll be set back. Can\'t be helped.',
+    storm:    'Storm coming tomorrow. Big one.\n\nDon\'t water your crops tonight — anything already watered will be flooded. Let the dry ones be.',
+    coldsnap: 'Temperature\'s dropping fast. Frost tomorrow.\n\nNothing you can do — growth will slow for a few days. Good time to fish or sell.',
+    drought:  'Sky\'s bone dry. No rain coming.\n\nTomorrow the ground won\'t take a single watering. You\'ll need to water twice to get anything done.',
+  };
+
+  function checkWarning(){
+    const d = day;
+    // Tutorial warnings (Days 9, 19)
+    if(d <= 25 && TUTORIAL_DAYS[d]?.warn){
+      showWarning(WARNING_LINES[TUTORIAL_DAYS[d].warn]);
+    }
+  }
+
+  function checkDisaster(){
+    const d = day;
+
+    // Tutorial fixed disasters (Days 10, 20)
+    if(TUTORIAL_DAYS[d]?.trigger){
+      triggerDisaster(TUTORIAL_DAYS[d].trigger);
+      return;
+    }
+
+    // Day 26+: random disasters, NO warnings
+    if(d > 25){
+      // 15% chance per day, don't repeat last disaster
+      if(Math.random() > 0.02) return;
+
+      const season = getSeason().bg;
+      const pool = Object.entries(EVENTS)
+        .filter(([id, ev]) => ev.seasons.includes(season) && id !== _lastDisaster)
+        .map(([id]) => id);
+
+      if(pool.length === 0) return;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      triggerDisaster(pick);
+    }
+  }
+
+  function triggerDisaster(eventId){
+    const ev = EVENTS[eventId];
+    if(!ev) return;
+    _lastDisaster = eventId;
+    const affected = ev.apply();
+
+    // Track for achievements
+    State.disastersLived++;
+    State.allDisasterTypes.add(eventId);
+    if(eventId === 'storm'  && affected === 0) State.stormsWithNoLoss++;
+    if(eventId === 'blight') State.blightsSurvived++;
+    checkAchievements();
+
+    // Journal entry
+    const disasterLines = {
+      blight:   `The bugs came. ${affected||0} plot(s) set back. Gus said he knew.`,
+      storm:    affected===0 ? 'Storm hit — but nothing was watered. Lucky.' : `Storm flooded ${affected} watered plot(s). Won't make that mistake again.`,
+      coldsnap: 'A cold snap. Three days of half-speed growth. Used the time to fish.',
+      drought:  'Drought. Watering did nothing today. Had to do it twice.',
+      raid:     `A fox got in. Took ${affected||0} ripe crop(s). Found pawprints by the fence.`,
+      fog:      'Heavy fog over Fernhollow. Nothing damaged. But the valley felt different.',
+    };
+    jLog('events', ev.icon, disasterLines[eventId]||`${ev.title} occurred.`);
+    const comment  = ev.gusComment[Math.floor(Math.random()*ev.gusComment.length)];
+
+    document.getElementById('disaster-icon').textContent  = ev.icon;
+    document.getElementById('disaster-title').textContent = ev.title;
+
+    let affectedText = '';
+    if(ev.isNarrative)         affectedText = '';
+    else if(affected === null) affectedText = '';
+    else if(affected === 0)    affectedText = '<br><br><em style="font-size:13px;opacity:.7">Luckily, none of your crops were affected.</em>';
+    else                       affectedText = `<br><br><em style="font-size:13px;opacity:.7">${affected} plot(s) affected.</em>`;
+
+    document.getElementById('disaster-desc').innerHTML =
+      ev.desc.replace(/\n/g,'<br>') + affectedText;
+    document.getElementById('disaster-gus').innerHTML =
+      `<span style="font-size:16px">👴</span> <em>${comment}</em>`;
+
+    const overlay = document.getElementById('disaster-overlay');
+    overlay.style.pointerEvents = 'auto';
+    overlay.classList.add('show');
+
+    // Flash screen
+    const flash = document.createElement('div');
+    flash.style.cssText = 'position:fixed;inset:0;z-index:589;background:rgba(180,40,0,.25);pointer-events:none;animation:dustFade .6s ease forwards;';
+    document.body.appendChild(flash);
+    setTimeout(()=>flash.remove(), 600);
+
+    renderGrid();
+  }
+
+  function showWarning(text){
+    const el = document.getElementById('gus-warning');
+    document.getElementById('gus-warning-text').textContent = text;
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'), 9000);
+  }
+
+  function close(){
+    const overlay = document.getElementById('disaster-overlay');
+    overlay.classList.remove('show');
+    overlay.style.pointerEvents = 'none';
+  }
+
+  // Apply cold snap speed reduction in nextDay
+  function getSpeedPenalty(){
+    if(State.coldSnapDays > 0){
+      State.coldSnapDays--;
+      return 0.5;
+    }
+    return 1;
+  }
+
+  // Check if today is drought day (watering needs 2x)
+  function isDroughtDay(){ return State.droughtDay === day; }
+
+  return { checkWarning, checkDisaster, close, getSpeedPenalty, isDroughtDay };
+
+})();
+
+// ══════════════════════════════════════════
+// HIDDEN SCENES
+// ══════════════════════════════════════════
+
+const HiddenScenes = (() => {
+
+  // Each scene has variants by season, and some have random variants
+  const SCENES = {
+
+    forest: {
+      spring: [
+        "The trees here are older than the path.\n\nThey don't lean toward the light like the younger ones do.\n\nThey already know where it is.",
+        "Something moved between the branches.\n\nYou looked up.\n\nNothing.\n\nBut the feeling stayed.",
+      ],
+      summer: [
+        "The light doesn't reach this part of the forest properly.\n\nIt's cooler here.\n\nYou stay a little longer than you meant to.",
+        "There are no birds in this part of the trees.\n\nYou hadn't noticed until just now.\n\nYou notice now.",
+      ],
+      autumn: [
+        "The leaves fall here too.\n\nBut they fall differently.\n\nSlower.\n\nAs if they're not sure they want to go.",
+        "The fog comes in from the east.\n\nIt knows this part of the forest well.\n\nBetter than you do.",
+      ],
+      winter: [
+        "The snow doesn't settle between these trees.\n\nYou don't know why.\n\nThe ground is dry.\n\nThe branches are bare.\n\nSomething keeps it this way.",
+        "It's very quiet here in winter.\n\nNot peaceful-quiet.\n\nDifferent.",
+      ],
+    },
+
+    field: [
+      "You walked until the path ran out.\n\nThen you kept walking.\n\nThe grass is taller here.\n\nNo one cuts it.",
+      "You found a stone.\n\nSmall, grey, perfectly round.\n\nYou put it in your pocket.\n\nYou don't know why.\n\nYou don't put it back.",
+      "The field goes further than the map suggests.\n\nYou're not sure how far.\n\nYou stop walking before you find out.",
+      "From here the farmhouse looks very small.\n\nEverything looks very small from here.\n\nYou think that's probably fine.",
+    ],
+
+    middle: [
+      "Right in the middle of everything.\n\nAnd somehow no one comes here.\n\nYou sit down.\n\nThe grass is soft.",
+      "You counted the trees from here once.\n\nYou lost count at seventeen.\n\nYou started again.\n\nYou lost count again.",
+      "There's a sound here you can't quite place.\n\nNot wind.\n\nNot water.\n\nSomething slower.",
+      "Someone left a footprint here that isn't yours.\n\nIt rained three days ago.\n\nThe print is still sharp.",
+    ],
+
+    edge: [
+      "This is the edge of the map.\n\nYou knew there would be an edge.\n\nYou didn't think about what it would feel like to stand at it.",
+      "From here you can see the valley goes further.\n\nA lot further.\n\nFernhollow is very small from up here.\n\nYou knew that.\n\nSeeing it is different.",
+      "The wind is different up here.\n\nIt comes from a direction you don't have a name for.\n\nYou turn into it anyway.",
+      "You look out at the land beyond the map.\n\nIt looks back.\n\nNeither of you blink.",
+    ],
+
+    fog: [
+      "The fog is thicker here than anywhere else.\n\nIt moves when you move.\n\nBut always just behind you.\n\nAlways just out of sight.",
+      "You found something in the fog.\n\nA small sticker.\n\nA frog sitting on a leaf.\n\nNew.\n\nNo one else has been here.",
+      "You stood very still.\n\nThe fog stood very still.\n\nEventually one of you blinked.\n\nIt wasn't you.",
+      "The fog here smells different.\n\nLike rain that hasn't fallen yet.\n\nLike a season between seasons.\n\nLike something that has been here a very long time.",
+    ],
+
+  };
+
+  function getLines(sceneId){
+    const scene = SCENES[sceneId];
+    if(!scene) return ['...'];
+    // Simple array of lines
+    if(Array.isArray(scene)) return scene;
+    // Object with season keys: { spring:[], summer:[], autumn:[], winter:[] }
+    if(scene.spring || scene.summer || scene.autumn || scene.winter){
+      const s = getSeason().bg;
+      return scene[s] || scene.spring || ['...'];
+    }
+    // Object with a .lines property
+    if(scene.lines){
+      const l = scene.lines;
+      if(Array.isArray(l)) return l;
+      const s = getSeason().bg;
+      return l[s] || l.spring || ['...'];
+    }
+    return ['...'];
+  }
+
+  function enter(sceneId){
+    const lines = getLines(sceneId);
+    const text  = lines[Math.floor(Math.random() * lines.length)];
+
+    // Journal entry (first visit only)
+    const discNames = {
+      forest:'the old forest', field:'the far field', middle:'the middle of the map',
+      edge:'the edge of the map', fog:'the fog patch',
+    };
+    const already = JournalLog.discoveries.some(e=>e.text.includes(discNames[sceneId]||sceneId));
+    if(!already) jLog('discoveries','🔍',`Found something in ${discNames[sceneId]||sceneId}. Stayed a while.`);
+
+    const overlay = document.getElementById('hidden-scene-overlay');
+    const textEl  = document.getElementById('hidden-scene-text');
+    const dismiss = document.getElementById('hidden-scene-dismiss');
+
+    // Reset
+    textEl.innerHTML = text.replace(/\n/g, '<br>');
+    overlay.classList.remove('show');
+    dismiss.style.opacity = '0';
+    dismiss.style.animation = 'none';
+
+    void overlay.offsetWidth; // reflow
+
+    // Show
+    overlay.classList.add('show');
+    dismiss.style.animation = 'dismissAppear 1s ease 5s forwards';
+  }
+
+  function close(){
+    const overlay = document.getElementById('hidden-scene-overlay');
+    overlay.classList.remove('show');
+  }
+
+  return { enter, close };
+
+})();
+
+// ══════════════════════════════════════════
 // MAP PLAYER — walking character
 // ══════════════════════════════════════════
 
@@ -4213,6 +5702,9 @@ const MapPlayer = (() => {
     trading:   { x: 1005,y: 215 },
     garden:    { x: 1005,y: 490 },
     fishing:   { x: 1165,y: 195 },
+    cooking:   { x: 645, y: 675 },
+    stall:     { x: 825, y: 675 },
+    appletree: { x: 205, y: 700 },
   };
 
   let _pos = { x: 80, y: 260 };   // current position
@@ -4300,21 +5792,20 @@ const MapPlayer = (() => {
   }
 
   function walkToClick(e){
-    // If click was on a map-loc or its children, let that handle it
-    if(e.target.closest('.map-loc') || e.target.closest('#map-pond')) return;
+    if(e.target.closest('.map-loc') || e.target.closest('#map-pond') || e.target.closest('.hidden-hotspot')) return;
     if(_walking) return;
 
-    const canvas = document.getElementById('map-canvas');
-    const rect   = canvas.getBoundingClientRect();
-    // Account for canvas scroll offset
-    const scrollX = canvas.parentElement.scrollLeft || 0;
-    const scrollY = canvas.parentElement.scrollTop  || 0;
-    const tx = e.clientX - rect.left + scrollX - 16; // offset to center of character
-    const ty = e.clientY - rect.top  + scrollY - 52;
+    const canvas  = document.getElementById('map-canvas');
+    const rect    = canvas.getBoundingClientRect();
 
-    // Clamp to canvas bounds
-    const x = Math.max(0, Math.min(tx, 1400 - 32));
-    const y = Math.max(0, Math.min(ty, 900  - 52));
+    // rect.left can be negative when map is wider than viewport
+    // Use canvas-relative coords directly
+    const tx = e.clientX - rect.left - 16;  // 16 = half character width
+    const ty = e.clientY - rect.top  - 44;  // 44 = approx character height
+
+    // Clamp inside canvas
+    const x = Math.max(4, Math.min(tx, 1400 - 36));
+    const y = Math.max(4, Math.min(ty, 900  - 56));
 
     const d = _dist(_pos.x, _pos.y, x, y);
     if(d < 10) return;
@@ -4331,7 +5822,6 @@ const MapPlayer = (() => {
     p.classList.add('walking');
     p.style.transition = `left ${duration}s linear, top ${duration}s linear`;
 
-    // Dust trail
     _dustInterval = setInterval(() => spawnDust(), 250);
 
     p.style.left = x + 'px';
@@ -4339,7 +5829,7 @@ const MapPlayer = (() => {
 
     // Footstep marker
     const mark = document.createElement('div');
-    mark.style.cssText = `position:absolute;left:${x+8}px;top:${y+46}px;font-size:12px;pointer-events:none;z-index:15;animation:dustFade .5s ease forwards;`;
+    mark.style.cssText = `position:absolute;left:${x+6}px;top:${y+46}px;font-size:11px;pointer-events:none;z-index:15;animation:dustFade .5s ease forwards;`;
     mark.textContent = '👣';
     canvas.appendChild(mark);
     setTimeout(() => mark.remove(), 500);
@@ -4565,10 +6055,29 @@ const GusChat = (() => {
     section.style.display = 'block';
     const grid = $('gus-gift-grid');
     grid.innerHTML = '';
-
-    const allItems = [...ALL_SEEDS(),...FISH];
     let hasAny = false;
 
+    // ── Cooked food (shown first, highlighted) ──
+    if(typeof RECIPES !== 'undefined'){
+      RECIPES.forEach(recipe=>{
+        const qty = foodBasket[recipe.id] || 0;
+        if(qty === 0) return;
+        hasAny = true;
+        const el = document.createElement('div');
+        el.className = 'gift-item';
+        el.style.cssText='border-color:#c2692a;background:linear-gradient(145deg,#fff5eb,#ffe4c4);position:relative;';
+        el.innerHTML = `
+          <div style="position:absolute;top:-8px;right:-6px;background:#e65100;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;font-family:'Nunito',sans-serif;">COOKED</div>
+          <div class="gi-emoji">${recipe.emoji}</div>
+          <div class="gi-name" style="color:#7c3a10">${recipe.name}</div>
+          <div class="gi-qty">×${qty}</div>`;
+        el.onclick = ()=> giveMeal(recipe);
+        grid.appendChild(el);
+      });
+    }
+
+    // ── Raw crops and fish ──
+    const allItems = [...ALL_SEEDS(),...FISH];
     allItems.forEach(item=>{
       const pool = FISH.find(f=>f.id===item.id) ? fishBasket : basket;
       const qty = pool[item.id] || 0;
@@ -4582,15 +6091,64 @@ const GusChat = (() => {
     });
 
     if(!hasAny){
-      grid.innerHTML = '<div class="gift-empty">Nothing in your basket — harvest some crops or go fishing first!</div>';
+      grid.innerHTML = '<div class="gift-empty">Nothing to give — harvest crops, go fishing, or cook a meal first!</div>';
     }
 
-    // Back button
     const back = document.createElement('button');
     back.style.cssText='width:100%;margin-top:10px;padding:8px;background:var(--cream);border:2px solid var(--bark);border-radius:10px;font-family:\'Nunito\',sans-serif;font-size:13px;cursor:pointer;color:var(--soil-mid);';
     back.textContent='← Back';
     back.onclick = ()=>{ section.style.display='none'; $('gus-chat-options').style.display='flex'; };
     grid.appendChild(back);
+  }
+
+  // Give a cooked meal — higher affinity than raw ingredients
+  function giveMeal(recipe){
+    if(!foodBasket[recipe.id]) return;
+    foodBasket[recipe.id]--;
+    giftedToday = true;
+    const gain = recipe.giftBonus?.gus || 12;
+    affinity = Math.min(100, affinity + gain);
+    updateAffinityUI();
+    updateNavCoins();
+    checkAchievements();
+
+    const MEAL_RESPONSES = {
+      vegsoap: [
+        "Vegetable soup. You made this yourself?\n\nI haven't had a proper bowl of vegetable soup since... I don't remember when.\n\nThank you. I mean it.",
+        "This is your grandmother's recipe, isn't it. I can tell by the carrots.\n\nSit down. Have some with me.",
+      ],
+      salad: [
+        "A salad! Fresh from your own garden.\n\nYou know, most people don't bother with salad. They go straight for the hearty stuff.\n\nI respect that you bothered.",
+        "Fresh salad. Just what I needed today. Thank you.",
+      ],
+      corn: [
+        "Roasted corn. I haven't had this since the summer festival, five years ago.\n\nDo they still do the festival? I can't remember.\n\nThis is good. Really good.",
+        "Corn! You roasted it yourself? I'm impressed.",
+      ],
+      stew: [
+        "Tomato stew. The colour of it.\n\nYou've got the hang of cooking. I can tell.\n\nThis is better than anything I've made in years.",
+        "You made this? From your own tomatoes?\n\nThat's — yes. Thank you.",
+      ],
+      grillfish: [
+        "Grilled fish with herbs from the garden.\n\nI used to make this every Friday. Sixty years of Fridays.\n\nYou've made an old man very happy today.",
+        "Fish and herbs. The right combination.\n\nYou're going to be fine here. I can tell.",
+      ],
+      lavsoap: [
+        "Lavender cake.\n\nI didn't think anyone still made lavender cake.\n\nSit down for a moment. Let's not rush this.",
+        "Lavender cake. My wife used to make this.\n\nThank you.\n\nI don't say that lightly.",
+      ],
+    };
+
+    const responses = MEAL_RESPONSES[recipe.id] || [`That ${recipe.name} was wonderful. Thank you.`];
+    const line = responses[Math.floor(Math.random()*responses.length)];
+
+    $('gus-gift-section').style.display = 'none';
+    $('gus-chat-options').style.display = 'none';
+    $('gus-response-text').innerHTML = line.replace(/\n/g,'<br>');
+    $('gus-response').style.display = 'block';
+
+    showToast(`+${gain} friendship with Gus 💛`);
+    State.dishesEaten = (State.dishesEaten||0); // don't count as eaten
   }
 
   function giveGift(item, pool){
@@ -4604,10 +6162,12 @@ const GusChat = (() => {
       minnow:5, carp:7, perch:10, trout:13, bass:16, golden:30,
     };
     const gain = gains[item.id] || 5;
+    const prevAff = affinity;
     affinity = Math.min(100, affinity + gain);
     updateAffinityUI();
-    updateNavCoins(); // refresh basket count in nav
+    updateNavCoins();
     checkAchievements();
+    if(prevAff < 100 && affinity >= 100) onGusMaxAffinity();
 
     // Pick response
     const responses = GIFT_RESPONSES[item.id] || [`Thank you for the ${item.name}!`];
@@ -4645,7 +6205,24 @@ const GusChat = (() => {
     showOptions();
   }
 
-  return { open, close, backToOptions, get affinity(){ return affinity; } };
+  return { open, close, backToOptions,
+    _affProxy: ()=>affinity,
+    _addAff: (n)=>{
+      const prev = affinity;
+      affinity=Math.min(100,affinity+n);
+      updateAffinityUI();
+      checkAchievements();
+      // Journal milestones
+      const milestones={20:'Gus started calling me by name.',40:'Gus said I remind him of someone. He didn\'t say who.',60:'Gus told me about his grandfather\'s apple tree.',80:'Gus said he looks out the window in the morning now. To check the farm is alright.',100:'Gus gave me the recipe. The one written in her handwriting.'};
+      for(const [threshold, text] of Object.entries(milestones)){
+        if(prev < +threshold && affinity >= +threshold){
+          jLog('people','👴', text);
+        }
+      }
+      if(prev < 100 && affinity >= 100) onGusMaxAffinity();
+    },
+    get affinity(){ return affinity; }
+  };
 
 })();
 
@@ -4825,6 +6402,10 @@ ensureSeasonQuest();
 updateQuestBadge();
 checkAchievements();
 MapPlayer.init();
+updateAppleTreeVisibility();
+// Day 1 journal entry
+jLog('farm','🚂','Arrived in Fernhollow. The farmhouse smelled like someone left in the middle of making tea.',1);
+jLog('people','👴','Met Gus. He said I was shorter than he thought.',1);
 Tutorial.start();
 window.addEventListener('resize',buildFence);
 </script>
