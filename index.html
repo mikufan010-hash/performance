@@ -2036,7 +2036,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
 </div>
 
 <!-- Gus floating button (all screens) -->
-<div id="gus-float-btn" onclick="GusChat.open()" title="Talk to Gus" style="
+<div id="gus-float-btn" onclick="MenuPanel.toggle()" title="Menu" style="
   position:fixed;bottom:54px;right:16px;z-index:200;
   width:46px;height:46px;border-radius:50%;
   background:linear-gradient(145deg,#fef3c7,#fde68a);
@@ -2045,7 +2045,7 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
   box-shadow:3px 4px 0 var(--bark);
   display:flex;align-items:center;justify-content:center;
   transition:transform .15s;
-" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">👴</div>
+" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">📚</div>
 
 <!-- Tutorial System -->
 <div id="tutorial-backdrop"></div>
@@ -2169,15 +2169,6 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
     <div class="map-hud-pill">🧺 <span id="map-basket-val">0</span></div>
     <div class="map-hud-pill">📅 Day <span id="map-day-val">1</span></div>
     <div id="map-hud-level" class="lv1-badge">🌱 Lv 1</div>
-    <button id="gus-hud-btn" onclick="GusChat.open()" title="Talk to Gus" style="
-      width:38px;height:38px;border-radius:50%;
-      background:linear-gradient(145deg,#fef3c7,#fde68a);
-      border:2px solid var(--bark);
-      font-size:20px;cursor:pointer;
-      box-shadow:2px 3px 0 var(--bark);
-      transition:all .15s;display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;
-    " onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">👴</button>
   </div>
 
   <!-- The map itself -->
@@ -2326,6 +2317,17 @@ body{font-family:'Nunito',sans-serif;background:var(--sky);min-height:100vh;over
         <span class="map-loc-icon">🏗️</span>
         <span class="map-loc-name">Upgrade</span>
         <span class="map-loc-hint">Farm shop</span>
+      </div>
+      <div class="map-loc-stem"></div>
+    </div>
+
+    <!-- Gus's House -->
+    <div class="map-loc" style="left:260px;top:420px" onclick="event.stopPropagation();MapPlayer.walkTo('gushouse', GusChat.open.bind(GusChat))">
+      <div class="map-tooltip">Gus's place.<br>Fernhollow's oldest farmer.</div>
+      <div class="map-loc-box" style="background:linear-gradient(145deg,#fef9ee,#fde68a);border-color:#92400e;box-shadow:4px 5px 0 #78350f;min-width:90px;">
+        <span class="map-loc-icon">🏠</span>
+        <span class="map-loc-name">Gus's House</span>
+        <span class="map-loc-hint" id="gus-house-hint">Talk to Gus</span>
       </div>
       <div class="map-loc-stem"></div>
     </div>
@@ -3246,6 +3248,14 @@ function updateMapHUD(){
   const mn=$('map-day-num');    if(mn) mn.textContent=day;
   const ml=$('map-hud-level');
   if(ml){ const lv=LEVELS[level]; ml.textContent=lv.icon+' '+lv.label; ml.className=lv.cls; }
+  // Gus house hint
+  const gusHint = $('gus-house-hint');
+  if(gusHint && GusChat){
+    const aff = GusChat.affinity;
+    gusHint.textContent = aff >= 80 ? 'Old Friend · Visit' :
+                          aff >= 40 ? 'Friend · Visit' :
+                          aff > 0   ? 'Neighbour · Visit' : 'Talk to Gus';
+  }
   // Apple tree
   updateAppleTreeVisibility();
   const tbox=$('map-trade-box');
@@ -5168,8 +5178,8 @@ const JournalLog = {
   add(tab, icon, text, d){
     const entry = { day: d??day, icon, text };
     this[tab] = this[tab] || [];
-    this[tab].unshift(entry);
-    if(this[tab].length > 80) this[tab].pop();
+    this[tab].push(entry); // chronological order
+    if(this[tab].length > 80) this[tab].shift();
   },
 };
 function jLog(tab, icon, text, d){ JournalLog.add(tab, icon, text, d); }
@@ -5290,7 +5300,8 @@ const Journal = (() => {
   function prevPage(){ _flip(-1); }
 
   function open(){
-    _spread = 0;
+    const spreads = _buildSpreads(_tab);
+    _spread = Math.max(0, spreads.length - 1); // start on last page
     _render();
   }
 
@@ -5705,6 +5716,7 @@ const MapPlayer = (() => {
     cooking:   { x: 645, y: 675 },
     stall:     { x: 825, y: 675 },
     appletree: { x: 205, y: 700 },
+    gushouse:  { x: 265, y: 520 },
   };
 
   let _pos = { x: 80, y: 260 };   // current position
